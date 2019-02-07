@@ -1,4 +1,4 @@
-# EAP Credentials Provisioning and Management  (EAP-CProM)
+# EAP Credentials Provisioning and Management  (EAP-CREDS)
 
 This project is aimed at providing a generic EAP mechanism for Credentials Provisioning and Management.
 Credentials can be of any type: x.509 certificate, public/private key, username/password.
@@ -14,4 +14,4 @@ made at any time or place.
 
 # Planned Work
 
-Document the OCSP over DNS proposal and submit to IETF for evaluation and possible standardization.
+Document the EAP-CREDS proposal and submit to IETF for evaluation and possible standardization.
