@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE rfc SYSTEM 'rfc2629.dtd' [
+    <!ENTITY rfc2119 PUBLIC '' 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.2119.xml'>
+    <!-- <!ENTITY rfc3986 PUBLIC '' 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.3986.xml'> -->
+    <!-- <!ENTITY rfc4501 PUBLIC '' 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.4501.xml'> -->
+    <!-- <!ENTITY rfc5019 PUBLIC '' 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.5019.xml'> -->
+    <!-- <!ENTITY rfc5234 PUBLIC '' 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.5234.xml'> -->
+    <!ENTITY rfc5272 PUBLIC '' 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.5272.xml'>
+    <!-- <!ENTITY rfc5280 PUBLIC '' 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.5280.xml'> -->
+    <!ENTITY rfc6402 PUBLIC '' 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.6402.xml'>
+    <!ENTITY rfc7030 PUBLIC '' 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.7030.xml'>
+    <!-- <!ENTITY ietf-acme-acme PUBLIC '' 'http://xml.resource.org/public/rfc/bibxml/reference.I-D.ietf-acme-acme.xml'> -->
+]>
+
+<rfc category="exp" docName="draft-pala-eap-creds-00" ipr="trust200902">
+    
+<?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
+
+<?rfc toc="yes" ?>
+<?rfc tocdepth="5"?>
+<?rfc symrefs="yes" ?>
+<?rfc sortrefs="yes"?>
+<?rfc iprnotified="no" ?>
+<?rfc strict="yes" ?>
+<?rfc compact="yes" ?>
+<?rfc subcompact="no" ?>
+
+  <front>
+  <title abbrev="EAP-CPROM">Credentials Provisioning and Management via EAP (EAP-CPROM)</title>
+  <author initials="M.P." surname="Pala" fullname="Massimiliano Pala">
+    <organization>CableLabs</organization>
+    <address>
+      <postal>
+        <street>858 Coal Creek Cir</street>
+        <city>Louisville</city>
+        <region>CO</region>
+        <code>80027</code>
+        <country>US</country>
+      </postal>
+      <email>m.pala@openca.org</email>
+      <uri>http://www.linkedin.com/in/mpala</uri>
+    </address>
+  </author>
+ 
+  <date month="February" year="2019" />
+  <area>Security</area>
+  <workgroup></workgroup>
+  <keyword>PKI</keyword>
+  <keyword>EAP</keyword>
+  <keyword>Provisioning</keyword>
+  <abstract>
+    <t>
+        With the increase number of devices, protocols, and applications that rely on strong credentials
+        (e.g., digital certificates, keys, or tokens) for network access, the need for a standard
+        credentials provisioning layer is paramount. In particular, since EAP is deployed for
+        authentication needs, the authors extend this use-case by including support for provisioning and
+        management of credentials.
+    
+        <vspace blankLines="1" />
+
+        In particular, this specification defines how to support the provisioning of strong
+        credentials to users and/or devices without the need for providing IP connectivity.
+
+        The use of EAP not only for provisiong but also for managing network credentials provides a
+        general conduit that can be exploited in different environments (e.g., Wired and WiFi networks
+        credentials management).
+   </t>
+  </abstract>
+</front>
+
+<middle>
+
+    <section title="Requirements notation">
+        <t>
+            The key words "MUST", "MUST NOT", "REQUIRED", "SHALL",
+            "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY",
+            and "OPTIONAL" in this document are to be interpreted as
+            described in <xref target="RFC2119"/>.
+        </t>
+    </section>
+
+    <section anchor="intro" title="Introduction"> 
+        <t>
+            Because of the increasing number of highly available and highly utilized websites that 
+            require secure communications to protect the flow of information from the server 
+            to the client and the raising number of devices (IoT) that require strong authentication
+            capabilities, the need for a low-cost and efficient approach to network credentials
+            management is evident.
+
+            <vspace blankLines="1" />
+
+            This specification addresses the problem of providing a simple-to-use and simple-to-deploy
+            system for credentials management by extending the EAP protocol to support credentials
+            provisioning and management functionality.
+        </t>
+    </section>
+
+    <section anchor="existing_solutions" title="Overview of existing solutions">
+        <t>
+            Currently there are many protocols that address the lifecycle of credentials. In particular,
+            when it comes to digital certificates, some of the most deployed management protocols are:
+
+            <list style="symbols">
+              <t>Automated Certificate Management Environment <!-- <xref target="I-D.ietf-acme-acme"/> --></t>
+              <t>Certificate Management over CMS (CMC) <xref target="RFC5272"/> <xref target="RFC6402"/></t>
+              <t>Enrollment over Secure Transport (EST) <xref target="RFC7030"/></t>
+            </list>
+
+        </t>
+    </section>
+
+    <section anchor="scope" title="Scope Statement">
+        <t>
+            This document focuses only on the definition of 
+        </t>
+    </section>
+
+    <section title="Protocol Overview">
+        <t>
+            Protocol Overview
+   
+            <!--
+            In particular, clients using OCSP-over-DNS, SHOULD:
+            <list style="numbers">
+                <t> 
+                    Lookup the OCSP URI provided in the AIA of the certificate to be checked.
+                    The format of the URI comprises the id-ad-ocsp identifier and a base URL
+                    where the scheme (``dns://'') is used.
+                    The format of the full URI is discussed in <xref target="uri" />.
+                </t>
+                <t>
+                    Retrieve the DNS record carrying the required OCSP response.
+                </t>
+            </list>
+            -->
+        </t>
+    </section>
+
+    <section anchor="iana" title="IANA Considerations">
+        <t>
+            This document uses a new DEAP type, CPROM, whose value (TBD) MUST be allocated by IANA from
+            the EAP TYPEs subregistry of the RADIUS registry.
+        </t>
+    </section>
+
+    <section anchor="security" title="Security Considerations">
+        <t>
+            Several security considerations need to be explicitly considered for the system administrators
+            and application developers to understand the weaknesses of the overall architecture.
+        </t>
+
+    </section>
+
+    <section anchor="acks" title="Acknowledgments">
+        <t>
+            The authors would like to thank everybody who provided insightful comments and helped in the
+            definition of the deployment considerations.
+        </t>
+    </section>
+
+</middle>
+
+<back>
+<references title='Normative References'>
+
+<!-- &rfc3986; -->
+<!-- &rfc4501; -->
+<!-- &rfc5019; -->
+<!-- &rfc5234; -->
+&rfc5272;
+<!-- &rfc5280; -->
+&rfc6402;
+&rfc7030;
+<!-- &ietf-acme-acme; -->
+&rfc2119;
+
+</references>
+
+</back>
+</rfc>
+
+
+
