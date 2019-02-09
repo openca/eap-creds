@@ -130,16 +130,18 @@
               <t>Automated Certificate Management Environment <!-- <xref target="I-D.ietf-acme-acme"/> --> </t>
             </list>
 
-            However, none of these can be used without the client having IP connectivity. The EAP-CREDS
-            fixes this issue by defining a series of messages that can be used to encapsulate the
-            provisioning messages for the supported standard protocol. In particular, examples of the
-            message flow for the major provisioning protocols are provided in Annex <xref target="ann_examples" />.
+            However, none of these protocols provide native support for client that do not have IP connectivity
+            yet (e.g., because they do not have network-access credentials, yet). The EAP-CREDS
+            provides the possibility to use such protocols (i.e., message-based) by defining a series of
+            messages that can be used to encapsulate the provisioning messages for the specified protocol.
+            In particular, examples of the message flow for the major provisioning protocols are provided
+            in Annex <xref target="ann_examples" />.
 
             <vspace blankLines="1" />
 
             In addition to these protocols, EAP-CREDS also defines a series of simple
             messages that provide a generic enrollment protocol that allows not only
-            certificates but also other types of secrets (e.g., username/password pairs
+            certificates but also other types of credentials (e.g., username/password pairs
             or symmetric secrets) to be delivered to the client as part of the provisioning
             and/or renewal process. The set of messages that make up the generic
             provisioning protocol is referred to as the CREDS protocol (not to be
@@ -168,7 +170,7 @@
     <section title="EAP-CREDS Protocol">
         <t>
             This section outlines the operation of the protocol and message flows.
-            The format of the CREDS messages is given in <xref target="creds_msgs" />.
+            The format of the CREDS messages is given in <xref target="creds_msg" />.
         </t>
 
         <section title="Message Flow">
@@ -201,12 +203,12 @@
     |                                                  |      .
     |                                                  |      :
     |<----------- EAP-Request/EAP-CREDS ---------------|      |
-    |      (Type=Init,Vers,Supported Protocols,        |      |
+    |      (Type=Init,Ver,Supported Protocols,         |      |
     |       Providers,Capabilities,Profiles)           |      |
     |                                                  |      |
     |                                                  |      |
     |------------ EAP-Response/EAP-CREDS ------------->|      |
-    |      (Type=Init,Verp,Proto,Provider,             |      v
+    |      (Type=Init,Ver,Proto,Provider,              |      v
     |       Crypto,Profile,token, action)              |  Phase One
     :                                                  :  Ends
     .                                                  .
@@ -293,18 +295,27 @@
                                                                                                         
     .                                                  .  
     |                                                  |  Phase Three
-    |------------ EAP-Response/EAP-CREDS ------------->|    Begin
-    |      (Type=Validate,ProtoData)                   |      .
+    |<----------- EAP-Request/EAP-CREDS ---------------|    Begin
+    |      (Type=Validate,Challenge)                   |      .
     |                                                  |      |
+    |                                                  |      |
+    |------------ EAP-Response/EAP-CREDS ------------->|      |
+    |      (Type=Validate,ExtraChallenge,              |      |
+    |       ChallengeResponse,Challenge)               |      |
     :                                                  :      :
     .                                                  .      :
 
-    .                                                  .      :
-    :                                                  :      |
-    |                                                  |      v
-    |<----------- EAP-Request/EAP-CREDS ---------------|  Phase Three
-    |      (Type=Validate,Challenge)                   |    Ends
-    |                                                  |     
+    :                                                  :      :
+    :                                                  |      |
+    |                                                  |      |
+    |<----------- EAP-Request/EAP-CREDS ---------------|      |
+    |      (Type=Validate,ChallengeResponse)           |      |
+    |                                                  |      |
+    |------------ EAP-Request/EAP-CREDS -------------->|      |
+    |      (Type=Validate,EMPTY)                       |      v
+    |                                                  |  Phase Three
+    |                                                  |  Ends
+    |                                                  |
     |<----------- EAP-Success -------------------------|  EAP Success
     |                                                  |
 
@@ -314,9 +325,26 @@
               validate (proof) that the new credentials have been installed correctly
               before issuing the final Success message.
 
-              In order to do that, the server and the client exchange one or more of
+              In order to do that, the server and the client exchange two or three
               EAP-Request/EAP-CREDS(Type=Validate) and EAP-Response/EAP-CREDS(Type=Validate)
-              message pairs.
+              messages where the correctness of the exchanged credentials is verified by
+              the server and (optionally) by the client.
+
+              In particular, when the client receives the first Validate message from the
+              server, it calculates the response to the challenge (based on the type of
+              credentials and the protocol itself - if supported, this would be a 'test'
+              authentication) and sends the response back to the server.
+
+              Optionally, the client can add the ExtraChallenge TLV that carries the extra
+              challenge information that was used to calculate the ChallengeResponse TLV
+              (if any). This field can be used to prevent the use of the Validate phase
+              as an encryption or validation oracle.
+
+              Optionally, the client can add the Challent TLV to the response. When the
+              server receives the EAP-Response/EAP-CREDS(Type=Validate) with the Challenge
+              TLV in it, it MUST calculate the response to the challenge and send back the
+              response to the client in an EAP-Request/EAP-CREDS(Type=Validate) with the
+              ChallengeResponse TLV and, optionally, the ExtraChallenge TLV.
             </t>
             <t>
               In case of issues with the validation of the newly deployed credentials, both
@@ -327,7 +355,7 @@
         </section>
     </section>
 
-    <section anchor="creds_msgs" title="Messages Format">
+    <section anchor="creds_msg" title="Message Format">
       <!--
         <t>
             The EAP-CREDS defines the following Messages:
@@ -342,6 +370,7 @@
 
         <section anchor="creds_msg_gen" title="Message Format">
       -->
+      <section anchor="creds_header" title="Message Header">
         <t>
             The EAP-CREDS messages consist of the standard EAP header (see Section 4
             of <xref target="RFC3748" />), followed by the version of the EAP-CREPS
@@ -349,13 +378,17 @@
             The header has the following structure:
         </t>
         <figure><artwork><![CDATA[
+
   0                   1                   2                   3
   0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
  |     Code      |  Identifier   |             Length            |
+ +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+ |     Type      | Flags |  Ver  |         Message Length        |
+ +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+ |         Message Length        |               Data           ...
  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-.
- |     Type      |  Ver  |  Res  |              Data            ...
- +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-.
+
 ]]></artwork></figure>
 
         <t>
@@ -369,9 +402,60 @@
           The Ver (Version) bitfield (4 bits) identifies the version of the
           EAP-CREDS protocol used for the exchange.
           This document defines the value to use for this field as '0x1' (0001).
-          The Res (Reserved) bitfield (4 bits) is not used in v1 and shall be 
-          set to 0x0 (0000).
         </t>
+        <t>
+          The Flags bitfield (4 bits) is used for Fragmentation support. In
+          particular the following bits are defined (compatible with EAP-TTLS)
+          for the Flags bitfield:
+        </t>
+<figure><artwork><![CDATA[
+
+    0 1 2 3
+   +-+-+-+-+
+   |L M S R|
+   +-+-+-+-+
+
+ ]]></artwork></figure>
+        <t>Where:</t>
+        <t>L (bit)
+          <list>
+            <t>
+              The L bit is set to indicate the presence of the four-octet TLS
+              Message Length field.
+            </t>
+          </list>
+        </t>
+        <t>M (bit)
+          <list>
+            <t>The M bit indicates that more fragments are to come.</t>
+          </list>
+        </t>
+        <t>S (bit)
+          <list>
+            <t>
+              The S bit indicates a Start message. The S bit MUST be set on the
+              first packet sent by the server to initiate the EAP-CREDS protocol.
+              It MUST NOT be set on any other packet.</t>
+          </list>
+        </t>
+        <t>R (bit)
+          <list>
+            <t>The R bit is not used and its value should be ignored.</t>
+          </list>
+        </t>
+        <t>
+          The Message Length field is four octets, and is present only if
+          the L bit is set.  This field provides the total length of the raw
+          data message sequence prior to fragmentation.
+        </t>
+        <t>
+          For all packets other than a Start packet, the Data field consists
+          of the raw TLS message sequence or fragment thereof.  For a Start
+          packet, the Data field may optionally contain a TLV sequence.
+        </t>
+      </section>
+
+      <section title="Message Payload">
         <t>
           The Data part of the message is organized as zero, one, or more TLV
           objects whose structure is defined in <xref target="RFC7170" />.
@@ -449,8 +533,48 @@
 
         </section>
 
-        <section anchor="frag" title="Fragmentation">
-        </section>
+      </section>
+
+    </section>
+
+    <section anchor="frag" title="Fragmentation">
+      <t>
+        Because of limitations stemming from the EAP carrier protocol (e.g.,
+        PPP, EAPOL, RADIUS), it may be necessary to fragment an EAP-CREDS
+        message across multiple EAP messages.
+      </t>
+      <t>
+        Each fragment except for the last MUST have the M bit set, to
+        indicate that more data is to follow; the final fragment MUST NOT
+        have the M bit set.
+      </t>
+      <t>
+        If there are multiple fragments, the first fragment MUST have the L
+        bit set and include the length of the entire raw message prior to
+        fragmentation.  Fragments other than the first MUST NOT have the L
+        bit set.  Unfragmented messages MAY have the L bit set and include
+        the length of the message (though this information is redundant).
+      </t>
+      <t>
+        Upon receipt of a packet with the M bit set, the receiver MUST
+        transmit an Acknowledgement packet.  The receiver is responsible for
+        reassembly of fragmented packets.
+      </t>
+      <section title="Acknowledgement Packets">
+        <t>
+          An Acknowledgement packet is an EAP-CREDS packet with no additional
+          data beyond the Flags octet, and with the L, M, and S bits of the
+          Flags octet set to 0.  (Note, however, that the V field MUST still be
+          set to the appropriate version number.)
+        </t>
+        <t>
+          An Acknowledgement packet is sent in response to an EAP packet
+          with the M bit set.
+        </t>
+      </section>
+    </section>
+
+    <section title="EAP-CREDS Messages">
 
         <section anchor="creds_req" title="EAP-CREDS-Request">
             <t>
