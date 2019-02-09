@@ -1,18 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE rfc SYSTEM 'rfc2629.dtd' [
+
+    <!-- Normative References -->
     <!ENTITY rfc2119 PUBLIC '' 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.2119.xml'>
     <!-- <!ENTITY rfc3986 PUBLIC '' 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.3986.xml'> -->
     <!-- <!ENTITY rfc4501 PUBLIC '' 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.4501.xml'> -->
+    <!ENTITY rfc3748 PUBLIC '' 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.3748.xml'>
+    <!ENTITY rfc4210 PUBLIC '' 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.4210.xml'>
     <!-- <!ENTITY rfc5019 PUBLIC '' 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.5019.xml'> -->
     <!-- <!ENTITY rfc5234 PUBLIC '' 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.5234.xml'> -->
     <!ENTITY rfc5272 PUBLIC '' 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.5272.xml'>
+    <!ENTITY rfc5280 PUBLIC '' 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.5280.xml'>
     <!-- <!ENTITY rfc5280 PUBLIC '' 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.5280.xml'> -->
     <!ENTITY rfc6402 PUBLIC '' 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.6402.xml'>
     <!ENTITY rfc7030 PUBLIC '' 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.7030.xml'>
+    <!ENTITY rfc7170 PUBLIC '' 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.7170.xml'>
+    <!ENTITY rfc8126 PUBLIC '' 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.8126.xml'>
+
+    <!-- Informative References -->
     <!-- <!ENTITY ietf-acme-acme PUBLIC '' 'http://xml.resource.org/public/rfc/bibxml/reference.I-D.ietf-acme-acme.xml'> -->
 ]>
 
-<rfc category="exp" docName="draft-pala-eap-creds-00" ipr="trust200902">
+<rfc category="std" docName="draft-pala-eap-creds-00" ipr="trust200902">
     
 <?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
 
@@ -26,7 +35,7 @@
 <?rfc subcompact="no" ?>
 
   <front>
-  <title abbrev="EAP-CPROM">Credentials Provisioning and Management via EAP (EAP-CPROM)</title>
+  <title abbrev="EAP-CREDS">Credentials Provisioning and Management via EAP (EAP-CREDS)</title>
   <author initials="M.P." surname="Pala" fullname="Massimiliano Pala">
     <organization>CableLabs</organization>
     <address>
@@ -51,19 +60,21 @@
   <abstract>
     <t>
         With the increase number of devices, protocols, and applications that rely on strong credentials
-        (e.g., digital certificates, keys, or tokens) for network access, the need for a standard
-        credentials provisioning layer is paramount. In particular, since EAP is deployed for
-        authentication needs, the authors extend this use-case by including support for provisioning and
-        management of credentials.
-    
+        (e.g., digital certificates, keys, or tokens) for network access, the need for
+        a standardized credentials provisioning and management framework is paramount.
+
+        The .1x architecture allows for entities (e.g., devices, applications, etc.) to authenticate to
+        the network by providing a communication channel where different methods can be used to
+        exchange different types of credentials.
+
+        However, the need for managing these credentials (i.e., provisioning and renewal) is still a
+        hard problem to solve.
+
         <vspace blankLines="1" />
 
-        In particular, this specification defines how to support the provisioning of strong
-        credentials to users and/or devices without the need for providing IP connectivity.
-
-        The use of EAP not only for provisiong but also for managing network credentials provides a
-        general conduit that can be exploited in different environments (e.g., Wired and WiFi networks
-        credentials management).
+        This specifications define how to support the provisioning and management of authentication
+        credentials that can be exploited in different environments (e.g., Wired, WiFi, cellular, etc.)
+        to users and/or devices by using EAP together with standard provisioning protocols.
    </t>
   </abstract>
 </front>
@@ -81,17 +92,29 @@
 
     <section anchor="intro" title="Introduction"> 
         <t>
-            Because of the increasing number of highly available and highly utilized websites that 
-            require secure communications to protect the flow of information from the server 
-            to the client and the raising number of devices (IoT) that require strong authentication
-            capabilities, the need for a low-cost and efficient approach to network credentials
-            management is evident.
+            Many environments are, today, moving towards requiring strong authentication when
+            it comes to gain access to networks. The .1x architecture provides the network
+            administrators with the possibility to check credentials presented by a device
+            even before providing any IP service to it.
 
             <vspace blankLines="1" />
 
-            This specification addresses the problem of providing a simple-to-use and simple-to-deploy
-            system for credentials management by extending the EAP protocol to support credentials
-            provisioning and management functionality.
+            However, the provisioning and management of these credentials is a hard problem
+            to solve and many vendors opt for long-lived credentials that can not be easily
+            revoked, replaced, or simply renewed.
+
+            <vspace blankLines="1" />
+
+            This specification addresses the problem of providing a simple-to-use and
+            simple-to-deploy conduit for credentials management by extending the EAP
+            protocol to support credentials provisioning and management functionality.
+
+            In particular, the EAP-CREDS method defined here provides a generic framework
+            that can carry the messages for provisioning different types of credentials.
+            The method can be use as a stand-alone method or it can be used as an inner
+            methods of EAP-TTLS, EAP-TEAP, or any other tunnelling method that can provide
+            the required encryption and (at minimum) server-side authentication to deliver
+            server-side generated secrets (e.g., private keys, passwords, secret keys, etc.)
         </t>
     </section>
 
@@ -101,24 +124,408 @@
             when it comes to digital certificates, some of the most deployed management protocols are:
 
             <list style="symbols">
-              <t>Automated Certificate Management Environment <!-- <xref target="I-D.ietf-acme-acme"/> --></t>
-              <t>Certificate Management over CMS (CMC) <xref target="RFC5272"/> <xref target="RFC6402"/></t>
+              <t>Certificate Management Protocol (CMP) <xref target="RFC4210" /></t>
+              <t>Certificate Management over CMS (CMC) <xref target="RFC5272"/><xref target="RFC6402"/></t>
               <t>Enrollment over Secure Transport (EST) <xref target="RFC7030"/></t>
+              <t>Automated Certificate Management Environment <!-- <xref target="I-D.ietf-acme-acme"/> --> </t>
             </list>
 
+            However, none of these can be used without the client having IP connectivity. The EAP-CREDS
+            fixes this issue by defining a series of messages that can be used to encapsulate the
+            provisioning messages for the supported standard protocol. In particular, examples of the
+            message flow for the major provisioning protocols are provided in Annex <xref target="ann_examples" />.
+
+            <vspace blankLines="1" />
+
+            In addition to these protocols, EAP-CREDS also defines a series of simple
+            messages that provide a generic enrollment protocol that allows not only
+            certificates but also other types of secrets (e.g., username/password pairs
+            or symmetric secrets) to be delivered to the client as part of the provisioning
+            and/or renewal process. The set of messages that make up the generic
+            provisioning protocol is referred to as the CREDS protocol (not to be
+            confused with the EAP-CREDS).
         </t>
     </section>
 
     <section anchor="scope" title="Scope Statement">
         <t>
-            This document focuses only on the definition of 
+            This document focuses on the definition of the EAP-CREDS method to convey
+            credentials provisioning and managing messages between the client and the
+            AAA server. Moreover, the document defines how to encode messages for the
+            main IETF provisioning protocols.
+
+            <vspace blankLines="1" />
+
+            This document, however, does not provide specifications for how and where
+            the credentials are generated. In particular, the credentials could be
+            generated directly within the AAA or at a different location (i.e., the
+            Certificate Service Provider or CSP) site. Different authentication
+            mechanisms (e.g., TLS, etc.) can be used to secure the communication
+            between the server's endpoint and the CSP.
         </t>
     </section>
 
-    <section title="Protocol Overview">
+    <section title="EAP-CREDS Protocol">
         <t>
-            Protocol Overview
-   
+            This section outlines the operation of the protocol and message flows.
+            The format of the CREDS messages is given in <xref target="creds_msgs" />.
+        </t>
+
+        <section title="Message Flow">
+            <t>
+                EAP-CREDS message flow is logically subdivided into three different
+                phases:
+                <list style="numbers">
+                    <t>Phase 1. CREDS Initialization</t>
+                    <t>Phase 2. Provisioning Protocol Flow</t>
+                    <t>Phase 3. Credentials Validation</t>
+                </list>
+            </t>
+          </section>
+          <section anchor="creds_phase_one" title="Phase One: Initialization">
+
+            <t>
+              The following figure provides the message flow for Phase One:
+            </t>
+            <figure><artwork><![CDATA[
+
++------------+                                  +--------------+
+|  EAP Peer  |                                  |  EAP Server  |
++------------+                                  +--------------+
+    |                                                  |
+    |<----------- EAP-Request/Identity -|              |
+    |                                                  |
+    |                                                  |
+    |------------ EAP-Response/Identity -------------->|  Phase One
+    |      (NAI=register@realm|NAI=manage@realm)       |  Begins
+    |                                                  |      .
+    |                                                  |      :
+    |<----------- EAP-Request/EAP-CREDS ---------------|      |
+    |      (Type=Init,Vers,Supported Protocols,        |      |
+    |       Providers,Capabilities,Profiles)           |      |
+    |                                                  |      |
+    |                                                  |      |
+    |------------ EAP-Response/EAP-CREDS ------------->|      |
+    |      (Type=Init,Verp,Proto,Provider,             |      v
+    |       Crypto,Profile,token, action)              |  Phase One
+    :                                                  :  Ends
+    .                                                  .
+
+]]></artwork></figure>
+            <t>
+                During the CREDS initialization, after the initial exchange
+                of the EAP-Request/Identity and EAP-Response/Identity, the list of
+                supported CREDS features is sent by the server to the peer in a
+                EAP-Request/EAP-CREDS(Type=Init) message.
+
+                When EAP-CREDS is used as the inner method of a Tunneling mechanism
+                (e.g., EAP-TEAP or EAP-TTLS), the initial EAP-Request/Identity and
+                EAP-Response/Identity messages MAY be omitted.
+            </t>
+            <t>
+                The peer selects the protocol and parameters for the exchange and sends back
+                the EAP-Response/EAP-CREDS(Type=Init) response to the server.
+            </t>
+            <t>
+                The server checks that the requested protocol, action, and parameters are
+                supported and, if not, it sends an error message to the peer and notify the
+                outer (tunneling) layer (if any). In case the server can serve the request
+                from the client, it will send a EAP-Response/EAP-CREDS(Type=Init) message
+                back with an empty body.
+            </t>
+          </section>
+          <section anchor="creds_phase_two" title="Phase Two: Provisioning">
+            <t>
+              The following figure provides the message flow for Phase 2:
+            </t>
+            <figure><artwork><![CDATA[
+
++------------+                                  +--------------+
+|  EAP Peer  |                                  |  EAP Server  |
++------------+                                  +--------------+
+    |                                                  |
+    :                                                  :
+    .                                                  .
+    |                                                  |  Phase Two
+    |                                                  |  Begins
+    |<----------- EAP-Request/EAP-CREDS ---------------|      .
+    |      (Type=ProtoFlow,Empty)                      |      :
+    |                                                  |      |
+    |                                                  |      |
+    |------------ EAP-Response/EAP-CREDS ------------->|      |
+    |      (Type=ProtoFlow,ProtoData)                  |      |
+    |                                                  |      |
+    :                                                  :      :
+    .                                                  .      .
+    :                                                  :      :
+    |                                                  |      |
+    |<----------- EAP-Request/EAP-CREDS ---------------|      |
+    |      (Type=ProtoFlow,ProtoData)                  |      |
+    |                                                  |      |
+    |                                                  |      |
+    |------------ EAP-Response/EAP-CREDS ------------->|      v
+    |      (Type=ProtoFlow,EMPTY)                      |  Phase Two
+    |                                                  |  Ends
+    :                                                  :
+
+]]></artwork></figure>
+            <t>
+                From this moment on, the communication between the client and the server
+                continues until the selected protocol and action is correctly performed
+                or a failure is detected and reported. In particular, the client and the
+                server communicates by exchanging EAP-Request/EAP-CREDS(Type=ProtoFlow)
+                and EAP-Response/EAP-CREDS(Type=ProtoFlow) messages. The exchange of messages
+                continues until the protocol has reached an end and the client sends an
+                empty EAP-Response/EAP-CREDS(Type=ProtoFlow) message to the server.
+            </t>
+          </section>
+          <section anchor="creds_phase_three" title="Phase Three: Validation">
+            <t>
+              The following figure provides the message flow for Phase 3:
+            </t>
+            <figure><artwork><![CDATA[
+
++------------+                                  +--------------+
+|  EAP Peer  |                                  |  EAP Server  |
++------------+                                  +--------------+
+    |                                                  |
+    :                                                  :
+                                                                                                        
+    .                                                  .  
+    |                                                  |  Phase Three
+    |------------ EAP-Response/EAP-CREDS ------------->|    Begin
+    |      (Type=Validate,ProtoData)                   |      .
+    |                                                  |      |
+    :                                                  :      :
+    .                                                  .      :
+
+    .                                                  .      :
+    :                                                  :      |
+    |                                                  |      v
+    |<----------- EAP-Request/EAP-CREDS ---------------|  Phase Three
+    |      (Type=Validate,Challenge)                   |    Ends
+    |                                                  |     
+    |<----------- EAP-Success -------------------------|  EAP Success
+    |                                                  |
+
+]]></artwork></figure>
+            <t>
+              Phase three is optional and it is used by the server to request the client to
+              validate (proof) that the new credentials have been installed correctly
+              before issuing the final Success message.
+
+              In order to do that, the server and the client exchange one or more of
+              EAP-Request/EAP-CREDS(Type=Validate) and EAP-Response/EAP-CREDS(Type=Validate)
+              message pairs.
+            </t>
+            <t>
+              In case of issues with the validation of the newly deployed credentials, both
+              the client and the server should consider those credentials invalid (or
+              unusable) and should issue the required failure message(s).
+            </t>
+
+        </section>
+    </section>
+
+    <section anchor="creds_msgs" title="Messages Format">
+      <!--
+        <t>
+            The EAP-CREDS defines the following Messages:
+            <list style="symbols">
+                <t>EAP-CREDS-Init</t>
+                <t>EAP-CREDS-ProtoFlow</t>
+                <t>EAP-CREDS-Validate<t>
+            </list>
+            Each of these message types have the basic structure as identified in <xref target="creds_msg_gen" />
+            and contain zero, one, or more TLVs as defined in <xref target="creds_msg_tlv" />.
+        </t>
+
+        <section anchor="creds_msg_gen" title="Message Format">
+      -->
+        <t>
+            The EAP-CREDS messages consist of the standard EAP header (see Section 4
+            of <xref target="RFC3748" />), followed by the version of the EAP-CREPS
+            (4 bits) and a field (4 bits) reserved for future use.
+            The header has the following structure:
+        </t>
+        <figure><artwork><![CDATA[
+  0                   1                   2                   3
+  0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+ +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+ |     Code      |  Identifier   |             Length            |
+ +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-.
+ |     Type      |  Ver  |  Res  |              Data            ...
+ +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-.
+]]></artwork></figure>
+
+        <t>
+          Where the Code, Identifier, Length, and Type fields are all part of the EAP
+          header as defined in <xref target="RFC3748" />.
+        </t>
+        <t>
+          The Type field in the EAP header is &lt;TBD&gt; for EAP-CREDS.
+        </t>
+        <t>
+          The Ver (Version) bitfield (4 bits) identifies the version of the
+          EAP-CREDS protocol used for the exchange.
+          This document defines the value to use for this field as '0x1' (0001).
+          The Res (Reserved) bitfield (4 bits) is not used in v1 and shall be 
+          set to 0x0 (0000).
+        </t>
+        <t>
+          The Data part of the message is organized as zero, one, or more TLV
+          objects whose structure is defined in <xref target="RFC7170" />.
+        </t>
+
+        <section anchor="creds_msg_tlv" title="TLVs Format">
+          <t>
+            Each TLV object is defined as follows:
+          </t>
+<figure><artwork><![CDATA[
+  0                   1                   2                   3
+  0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+ +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+ |M|S|            TLV Type       |            Length             |
+ +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+ |                              Value...
+ +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+]]></artwork></figure>
+          <t>Where:</t>
+          <t>
+            M (bit)
+            <list>
+              <t>This bit indicates if support for this TLV is deemed mandatory
+                 (i.e., the receiving peer MUST support it) or optional.
+                 The allowed values for this field are:
+                 <list>
+                   <t>0: Optional TLV</t>
+                   <t>1: Mandatory TLV</t>
+                 </list>
+                 When support for the TLV is Optional, the value for 'M' SHALL
+                 be set to zero (0). When Mandatory, the value for 'M' SHALL be
+                 set to one (1).
+               </t>
+             </list>
+          </t>
+          <t>S (bit)
+            <list>
+              <t>
+                This bit is used to convey the sensitiveness of the information
+                that is carried in the TLV.
+                The allowed values for this field are:
+                
+                <list>
+                  <t>0: No Sensitive Information</t>
+                  <t>1: Sensitive Information</t>
+                </list>
+
+                When the information carried in the value of the TLV does not
+                disclose any sensitive information (e.g., a password or an
+                unencrypted private key), the value zero (0) SHALL be used.
+                The value of one (1) SHALL be used when sensitive information
+                is carried in the TLV. 
+
+                <vspace blankLines="1" />
+
+                It is important to notice that the receiving peer should verify, when
+                the 'S' bit is set to one (1) in a TLV, that the EAP-CREDS
+                method is executed in a secure tunnel: if no outer protection
+                is provided, the information transfered in the TLV is to be
+                considered compromised and appropriate measures MUST be taken
+                to preserve the security of the peer's credentials.
+              </t>
+            </list>
+          </t>
+          <t>TLV-Type
+            <list>
+              <t>
+                This field is used to indicate the type of data that the TLV
+                carries.
+                The allowed values for this field are:
+
+              </t>
+            </list>
+          </t>
+
+        </section>
+
+        <section anchor="frag" title="Fragmentation">
+        </section>
+
+        <section anchor="creds_req" title="EAP-CREDS-Request">
+            <t>
+                Provides a description of the CREDS-Request TLV.
+            </t>
+        </section>
+
+        <section title="EAP-CREDS-Response">
+            <t>
+                Provides a description of the CREDS-Response TLV.
+            </t>
+        </section>
+
+    </section>
+
+    <section anchor="err_handling" title="Error Handling">
+        <t>
+
+        </t>
+    </section>
+
+    <section anchor="tunnel" title="EAP-CREDS as tunneled method">
+        <t>
+            When no secrets have to be shared across the two parties, the EAP-CREDS
+            method MAY be used as a stand-alone method for credentials provisioning
+            and management. 
+
+            However, when secrets have to be shared, the EAP-CREDS method MUST
+            be used as the inner method of EAP-TEAP, EAP-TTLS, or any other tunnelled
+            method that provides, at minimum, server-side authentication and secrecy
+            (encryption) to the subsequent method, i.e. EAP-CREDS.
+
+            In other words, the method assumes that an appropriate protection outer
+            layer has been established to prevent the possibility to leak information
+            or to allow man-in-the-middle attacks.
+        </t>
+
+        <section anchor="teap_creds" title="Using EAP-CREDS with EAP-TEAP">
+            <figure><artwork><![CDATA[
+   +--------+             +-------------+
+   | Client |             |     AAA     |
+   +--------+             +-------------+
+       |                         |
+       |  ClientHello            |
+       |------------------------>|
+       |  ServerHello,           |
+       |  Certificate(1),        |
+       |  ServerKeyExchange,     |
+       |  CertificateRequest(2), | 
+       |  ServerHelloDone,       | 
+       |<------------------------|
+       |  Certificate(3),        |
+       |  ClientKeyExchange,     |
+       |  CertificateVerify,     |
+       |  ChangeCipherSpec,      |
+       |  Finished               |
+       |------------------------>|
+       |  ChangeCipherSpec,      |
+       |  Finished               |
+       |<------------------------|
+       //                        //
+       // <---- EAP-CREDS ---->  //
+       //                        //
+       |  Crypto-Binding TLV     |
+       |<------------------------|
+       |  Crypto-Binding TLV     |
+       |------------------------>|
+       |  Result TLV             |
+       |<------------------------|
+       |  Result TLV             |
+       |------------------------>|
+       |      EAP-Success        |
+       |<------------------------|
+
+            ]]></artwork></figure>
             <!--
             In particular, clients using OCSP-over-DNS, SHOULD:
             <list style="numbers">
@@ -133,14 +540,143 @@
                 </t>
             </list>
             -->
-        </t>
+        </section>
+
+        <section anchor="ttls_creds" title="Using EAP-CREDS with EAP-TTLS">
+            <figure><artwork><![CDATA[
+   +--------+             +-------------+
+   | Client |             |     AAA     |
+   +--------+             +-------------+
+       |                         |
+       |  ClientHello            |
+       |------------------------>|
+       |  ServerHello,           |
+       |  Certificate(1),        |
+       |  ServerKeyExchange,     |
+       |  CertificateRequest(2), | 
+       |  ServerHelloDone,       | 
+       |<------------------------|
+       |  Certificate(3),        |
+       |  ClientKeyExchange,     |
+       |  CertificateVerify,     |
+       |  ChangeCipherSpec,      |
+       |  Finished               |
+       |------------------------>|
+       |  ChangeCipherSpec,      |
+       |  Finished               |
+       |<------------------------|
+       :                         :
+       //                        //
+       // <---- EAP-CREDS ---->  //
+       //                        //
+       :                         :
+       |      EAP-Success        |
+       |<------------------------|
+
+]]></artwork></figure>
+        </section>
+    </section>
+
+    <section anchor="eap_creds_creds" title="EAP-CREDS and Simple Provisioning Protocol (SPP)">
+      <t>
+        EAP-CREDS supports a Simple Provisioning Protocol (SPP) which comprises a series of
+        messages that enables the management not only of certificates, but also of other types
+        of credentials like username/password pairs, asymmetric keys, and symmetric keys.
+      </t>
+      <t>
+        EAP-CREDS/SSP defines the following flow of messages for requesting the provisioning
+        of credentials. 
+      </t>
     </section>
 
     <section anchor="iana" title="IANA Considerations">
         <t>
-            This document uses a new DEAP type, CPROM, whose value (TBD) MUST be allocated by IANA from
+            This document uses a new EAP type, EAP-CREDS, whose value (TBD) MUST be allocated by IANA from
             the EAP TYPEs subregistry of the RADIUS registry.
+            This section provides guidance to the Internet Assigned Numbers Authority (IANA) regarding
+            registration of values related to the EAP-CREDS protocol, in accordance with <xref target="RFC8126" />.
         </t>
+
+        <t>
+            The EAP Method Type number for EAP-CREDS needs to be assigned.
+        </t>
+
+        <t>
+            This document also requires IANA to create new registries as defined in
+            the following subsections.
+        </t>
+
+        <section anchor="iana_msgtype" title="Message Types">
+            <t>
+                EAP-CREDS Request and Response pairs are identified by an integer Message Type.
+                The following Message Types are defined by EAP-CREDS:
+            </t>
+
+            <texttable anchor="iana_msgtype_table" title="EAP-CREDS Messages">
+                <ttcol align="center">Message Type</ttcol>
+                <ttcol align="left">Purpose</ttcol>
+                <c>1</c>
+                <c>Initialization</c>
+                <c>2</c>
+                <c>Provisioning protocol messages exchange</c>
+            </texttable>
+
+            <t>
+                Assignment of new values for new Message Types MUST be done through
+                IANA with "Expert Review" as defined in <xref target="RFC8126" />.
+            </t>
+
+        </section>
+
+        <section anchor="iana_proto" title="Provisioning Protocols">
+
+            <texttable anchor="iana_proto_table" title="EAP-CREDS Inner Protocol Identifiers">
+                <ttcol align="center">Message Type</ttcol>
+                <ttcol align="left">Purpose</ttcol>
+                <c>0</c>
+                <c>Unspecified</c>
+                <c>1</c>
+                <c>CREDS</c>
+                <c>2</c>
+                <c>CMP</c>
+                <c>3</c>
+                <c>EST</c>
+                <c>4</c>
+                <c>CMC</c>
+                <c>5</c>
+                <c>ACME</c>
+            </texttable>
+
+            <t>
+                Assignment of new values for new cryptosuites MUST be done through
+                IANA with "Specification Required" and "IESG Approval" as defined
+                in <xref target="RFC8126" />.
+            </t>
+
+        </section>
+
+        <section anchor="iana_token" title="Token Types">
+
+            <texttable anchor="iana_token_table" title="Token Types">
+                <ttcol align="center">Token Type</ttcol>
+                <ttcol align="left">Description</ttcol>
+                <c>0</c>
+                <c>Unspecified</c>
+                <c>1</c>
+                <c>JWT</c>
+                <c>2</c>
+                <c>OAuth1</c>
+                <c>3</c>
+                <c>OAuth2</c>
+            </texttable>
+
+            <t>
+                Assignment of new values for new Message Types MUST be done through
+                IANA with "Expert Review" as defined in <xref target="RFC8126" />.
+            </t>
+
+        </section>
+
     </section>
 
     <section anchor="security" title="Security Considerations">
@@ -148,6 +684,15 @@
             Several security considerations need to be explicitly considered for the system administrators
             and application developers to understand the weaknesses of the overall architecture.
         </t>
+        <t>
+          As part of the TLS negotiation, the server presents a certificate to
+          the peer.  The peer SHOULD verify the validity of the EAP server
+          certificate and SHOULD also examine the EAP server name presented in
+          the certificate in order to determine whether the EAP server can be
+          trusted.  When performing server certificate validation,
+          implementations MUST provide support for the rules in <xref target="RFC5280" /> for
+          validating certificates against a known trust anchor.
+      </t>
 
     </section>
 
@@ -163,18 +708,56 @@
 <back>
 <references title='Normative References'>
 
-<!-- &rfc3986; -->
-<!-- &rfc4501; -->
-<!-- &rfc5019; -->
-<!-- &rfc5234; -->
-&rfc5272;
-<!-- &rfc5280; -->
-&rfc6402;
-&rfc7030;
-<!-- &ietf-acme-acme; -->
-&rfc2119;
+    &rfc2119;
+    &rfc3748;
+    <!-- &rfc3986; -->
+    <!-- &rfc4501; -->
+    &rfc4210;
+    <!-- &rfc5019; -->
+    <!-- &rfc5234; -->
+    &rfc5272;
+    &rfc5280;
+    &rfc6402;
+    &rfc7030;
+    &rfc7170;
+    &rfc8126;
 
 </references>
+
+<!--
+<references title='Informative References'>
+
+&ietf-acme-acme;
+
+</references>
+-->
+
+<section anchor="ann_examples" title="EAP-CREDS Example Message Flow for Provisioning Standards">
+
+  <section title="EAP-CREDS and CMP">
+      <t>
+          Describe how to use EAP-CREDS with CMP.
+      </t>
+  </section>
+
+  <section title="EAP-CREDS and EST">
+      <t>
+          Describe how to use EAP-CREDS with EST.
+      </t>
+  </section>
+
+  <section title="EAP-CREDS and CMS">
+      <t>
+          Describe how to use EAP-CREDS with CMS.
+      </t>
+  </section>
+
+  <section title="EAP-CREDS and ACME">
+      <t>
+          Describe how to use EAP-CREDS with ACME.
+      </t>
+  </section>
+</section>
 
 </back>
 </rfc>
