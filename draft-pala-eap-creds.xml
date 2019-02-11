@@ -120,7 +120,7 @@
 
     <section anchor="existing_solutions" title="Overview of existing solutions">
         <t>
-            Currently there are many protocols that address the lifecycle of credentials. In particular,
+            Currently there are many protocols that address credentials lifecycle management. In particular,
             when it comes to digital certificates, some of the most deployed management protocols are:
 
             <list style="symbols">
@@ -160,7 +160,7 @@
 
             This document, however, does not provide specifications for how and where
             the credentials are generated. In particular, the credentials could be
-            generated directly within the AAA or at a different location (i.e., the
+            generated directly within the AAA server or at a different location (i.e., the
             Certificate Service Provider or CSP) site. Different authentication
             mechanisms (e.g., TLS, etc.) can be used to secure the communication
             between the server's endpoint and the CSP.
@@ -524,9 +524,17 @@
             <list>
               <t>
                 This field is used to indicate the type of data that the TLV
-                carries.
-                The allowed values for this field are:
-
+                carries. The different types of TLVs are described in <xref target="creds_tlvs" />.
+              </t>
+            </list>
+          </t>
+          <t>Length
+            <list>
+              <t>
+                This field carries the size of the value of the TLV. In particular,
+                the overall size of a TLV (i.e., the header plus the value) can be
+                calculated by adding the size of the header (4 octects) to the value
+                of the Length field (i.e., the size of the TLV's value).
               </t>
             </list>
           </t>
@@ -535,6 +543,145 @@
 
       </section>
 
+  </section>
+
+  <section anchor="creds_tlvs" title="EAP-CREDS defined TLVs">
+    <t>
+        EAP-CREDS messages's payload comprieses zero, one, or
+        more TLVs that are encoded in a single EAP-CREDS message.
+
+        <vspace blankLines="1" />
+
+        This section describes the structure of the different
+        supported TLVs while the next section [<xref target="creds_msg" />]
+        describes the different types of EAP-CREDS messages and the
+        required (and optional) TLVs for each message type.
+    </t>
+
+    <section anchor="tlv_protocols" title="The Protocol TLV">
+      <t>
+          The Protocol TLV Description
+      </t>
+      <figure><artwork><![CDATA[
+  0                   1                   2                   3
+  0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+ +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+ |M|S|            TLV Type       |            Length             |
+ +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+ |                           32 bit Integer                      |
+ +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+]]></artwork></figure>
+      <t>Where the TLVs configuration is as follows:
+        <list>
+          <t>M (bit) = 1 [ Support is Required ]</t>
+          <t>S (bit) = 0 [ Not Sensitive ]</t>
+          <t>TLV Type = &lt;TBD&gt;</t>
+          <t>Length = 4</t>
+        </list>
+      </t>
+      <t>
+        And the Value configuration is as follows:
+        <list>
+          <t>Value (integer) = &lt;Provisioning Protocol Identifier&gt;</t>
+        </list>
+        The allowed values for this field are maintained in a subdirectory by IANA.
+        The initial values for the provisioning protocol identifiers can be found
+        in <xref target="iana_proto" />.
+      </t>
+    </section>
+
+    <section anchor="tlv_capabilities" title="The Capabilities TLV">
+      <t>
+      </t>
+    </section>
+
+    <section anchor="tlv_profiles" title="The Profiles TLV">
+      <t>
+      </t>
+    </section>
+
+    <section anchor="tlv_status" title="The Status TLV">
+      <t>
+      </t>
+    </section>
+
+    <section anchor="tlv_credinfo" title="The CredInfo TLV">
+      <t>
+        Type (Int; 1Byte) | HashAlgoId (Int; 1 byte) |
+        Installed On (GMT; 15 bytes) | ExpiresOn (GMT; 15 bytes) |
+        Salt/Nonce (RND; 32 bytes) | id_len (Int; 2 bytes) | id_value |
+        cred_hash_len (Int; 2 bytes) | Cred_Hash (Binary; 20-64 bytes)
+      </t>
+      <figure><artwork><![CDATA[
+  0                   1                   2                   3
+  0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+ +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+ |M|S|            TLV Type       |            Length             |
+ +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+ |                           32 bit Integer                      |
+ +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+]]></artwork></figure>
+
+    </section>
+
+    <section anchor="tlv_crypto" title="The Crypto TLV">
+      <t>
+      </t>
+    </section>
+
+    <section anchor="tlv_auth_token" title="The AuthToken TLV">
+      <t>
+      </t>
+    </section>
+
+    <section anchor="tlv_action" title="The NextAction TLV">
+      <t>
+      </t>
+    </section>
+
+    <section anchor="tlv_challenge" title="The Challenge TLV">
+      <t>
+      </t>
+    </section>
+
+    <section anchor="tlv_extra_challenge" title="The ExtraChallenge TLV">
+      <t>
+      </t>
+    </section>
+
+    <section anchor="tlv_challenge_response" title="The ChallengeResponse TLV">
+      <t>
+      </t>
+    </section>
+
+    <section anchor="tlv_errors" title="The Error TLV">
+      <t>
+      </t>
+    </section>
+
+  </section>
+
+  <section title="EAP-CREDS Messages">
+
+    <section anchor="creds_req" title="EAP-CREDS-Request">
+      <t>
+          Provides a description of the CREDS-Request TLV.
+      </t>
+    </section>
+
+    <section title="EAP-CREDS-Response">
+      <t>
+          Provides a description of the CREDS-Response TLV.
+      </t>
+    </section>
+
+  </section>
+
+    <section anchor="err_handling" title="Error Handling">
+        <t>
+            This section provides a description of the error handling by
+            using the CREDS-Error-TLV in a CREDS message.
+        </t>
     </section>
 
     <section anchor="frag" title="Fragmentation">
@@ -572,28 +719,7 @@
           with the M bit set.
         </t>
       </section>
-    </section>
 
-    <section title="EAP-CREDS Messages">
-
-        <section anchor="creds_req" title="EAP-CREDS-Request">
-            <t>
-                Provides a description of the CREDS-Request TLV.
-            </t>
-        </section>
-
-        <section title="EAP-CREDS-Response">
-            <t>
-                Provides a description of the CREDS-Response TLV.
-            </t>
-        </section>
-
-    </section>
-
-    <section anchor="err_handling" title="Error Handling">
-        <t>
-
-        </t>
     </section>
 
     <section anchor="tunnel" title="EAP-CREDS as tunneled method">
