@@ -496,13 +496,13 @@
   0                   1                   2                   3
   0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
- |                TLV Type       |            Length             |
+ |                TLV Type       |            Length            ...
  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
- |                               |          Value...
+...                              |          Value...
  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 ]]></artwork></figure>
           <t>Where:</t>
-          <t>TLV-Type
+          <t>TLV-Type (uint16)
             <list>
               <t>
                 This field is used to indicate the type of data that the TLV
@@ -510,7 +510,7 @@
               </t>
             </list>
           </t>
-          <t>Length
+          <t>Length (uint32)
             <list>
               <t>
                 This field carries the size of the value of the TLV. In particular,
@@ -537,7 +537,7 @@
           <c>1</c>
           <c>EAP-CREDS Version TLV</c>
           <c>2</c>
-          <c>Provisioning Protocol TLV</c>
+          <c>Provisioning Protocols TLV</c>
           <c>3</c>
           <c>Provisioning Provider TLV</c>
           <c>4</c>
@@ -571,50 +571,58 @@
         supported TLVs and their usage in the different messages.
       </t>
 
-    <section anchor="tlv_protocols" title="The Protocol TLV">
+    <section anchor="tlv_protocols" title="The Protocols TLV">
 
       <figure><artwork><![CDATA[
   0                   1                   2                   3
   0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
- |           TLV Type            |            Length             |
+ |           TLV Type            |            Length            ...
  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
- |     Protocol ID (uint16)      |        Protocol Version       |
+...                              |      Protocol ID and Version ...
  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+...                              |      Protocol ID and Version ...
+ +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+...                              | 
+ +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-..
+
 ]]></artwork></figure>
-    <t>TLV Type
+    <t>TLV Type (uint32)
         <list>
             <t>&lt;TBD&gt; - Provisioning Protocol TLV</t>
         </list>
     </t>
-    <t>Length
+    <t>Length (uint16)
         <list>
             <t>4 octets</t>
         </list>
     </t>
-    <t>Protocol ID
+    <t>Protocol ID and Version (uint16, uint16)
         <list>
             <t>
-                The Protocol ID field is 2 octets. The allowed values
-                for this field are maintained in a subdirectory by IANA.
-                The initial values for the provisioning protocol identifiers
+                The Protocol ID and Version field is 4 octets in size and
+                sub-divided into two separate uint16 values. The Provisioning
+                Protocol TLVs can have one or more Protocol ID and Version
+                values for this TLV.
+            </t>
+            <t>
+                The first uint16 value represents the protocol identifier and
+                the initial values for the provisioning protocol identifiers
                 can be found in <xref target="iana_proto" />.
             </t>
-        </list>
-    </t>
-    <t>Protocol Version
-        <list>
             <t>
-                The Protocol Version field is 2 octet (uint16). When no
-                version is specified for a protocol (i.e., either it does
+                The second uint16 value represents the specific version of
+                the identified protocol. 
+                When no version is specified for a protocol (i.e., either it does
                 not support multiple versions or it does not matter), the
-                value should be set to '0x0'.
+                value of this field should be set to '0x0'.
             </t>
         </list>
     </t>
+
     </section>
 
-    <section anchor="tlv_profiles" title="The Profiles TLV">
+    <section anchor="tlv_profiles" title="The Profile TLV">
       <t>
       </t>
     </section>
