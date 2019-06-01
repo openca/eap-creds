@@ -373,7 +373,7 @@
       <section anchor="creds_header" title="Message Header">
         <t>
             The EAP-CREDS messages consist of the standard EAP header (see Section 4
-            of <xref target="RFC3748" />), followed by the version of the EAP-CREDS
+            of <xref target="RFC3748" />), followed by the version of the EAP-CREPS
             (4 bits) and a field (4 bits) reserved for future use.
             The header has the following structure:
         </t>
@@ -404,9 +404,54 @@
           This document defines the value to use for this field as '0x1' (0001).
         </t>
         <t>
-          The Flags bitfield (4 bits) is currently not used and it is reserved
-          for future use. The value of the bitfield shall be ignored when the
-          Version ('Ver') field is set to '0x1' (0001).
+          The Flags bitfield (4 bits) is used for Fragmentation support. In
+          particular the following bits are defined (compatible with EAP-TTLS)
+          for the Flags bitfield:
+        </t>
+<figure><artwork><![CDATA[
+
+    0 1 2 3
+   +-+-+-+-+
+   |L M S R|
+   +-+-+-+-+
+
+ ]]></artwork></figure>
+        <t>Where:</t>
+        <t>L (bit)
+          <list>
+            <t>
+              The L bit is set to indicate the presence of the four-octet TLS
+              Message Length field.
+            </t>
+          </list>
+        </t>
+        <t>M (bit)
+          <list>
+            <t>The M bit indicates that more fragments are to come.</t>
+          </list>
+        </t>
+        <t>S (bit)
+          <list>
+            <t>
+              The S bit indicates a Start message. The S bit MUST be set on the
+              first packet sent by the server to initiate the EAP-CREDS protocol.
+              It MUST NOT be set on any other packet.</t>
+          </list>
+        </t>
+        <t>R (bit)
+          <list>
+            <t>The R bit is not used and its value should be ignored.</t>
+          </list>
+        </t>
+        <t>
+          The Message Length field is four octets, and is present only if
+          the L bit is set.  This field provides the total length of the raw
+          data message sequence prior to fragmentation.
+        </t>
+        <t>
+          For all packets other than a Start packet, the Data field consists
+          of the raw TLS message sequence or fragment thereof.  For a Start
+          packet, the Data field may optionally contain a TLV sequence.
         </t>
       </section>
 
@@ -424,12 +469,57 @@
   0                   1                   2                   3
   0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
- |                TLV Type       |            Length             |
+ |M|S|            TLV Type       |            Length             |
  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
- |                               |          Value...
+ |                              Value...
  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 ]]></artwork></figure>
           <t>Where:</t>
+          <t>
+            M (bit)
+            <list>
+              <t>This bit indicates if support for this TLV is deemed mandatory
+                 (i.e., the receiving peer MUST support it) or optional.
+                 The allowed values for this field are:
+                 <list>
+                   <t>0: Optional TLV</t>
+                   <t>1: Mandatory TLV</t>
+                 </list>
+                 When support for the TLV is Optional, the value for 'M' SHALL
+                 be set to zero (0). When Mandatory, the value for 'M' SHALL be
+                 set to one (1).
+               </t>
+             </list>
+          </t>
+          <t>S (bit)
+            <list>
+              <t>
+                This bit is used to convey the sensitiveness of the information
+                that is carried in the TLV.
+                The allowed values for this field are:
+                
+                <list>
+                  <t>0: No Sensitive Information</t>
+                  <t>1: Sensitive Information</t>
+                </list>
+
+                When the information carried in the value of the TLV does not
+                disclose any sensitive information (e.g., a password or an
+                unencrypted private key), the value zero (0) SHALL be used.
+                The value of one (1) SHALL be used when sensitive information
+                is carried in the TLV. 
+
+                <vspace blankLines="1" />
+
+                It is important to notice that the receiving peer should verify, when
+                the 'S' bit is set to one (1) in a TLV, that the EAP-CREDS
+                method is executed in a secure tunnel: if no outer protection
+                is provided, the information transfered in the TLV is to be
+                considered compromised and appropriate measures MUST be taken
+                to preserve the security of the peer's credentials.
+              </t>
+            </list>
+          </t>
           <t>TLV-Type
             <list>
               <t>
@@ -443,7 +533,7 @@
               <t>
                 This field carries the size of the value of the TLV. In particular,
                 the overall size of a TLV (i.e., the header plus the value) can be
-                calculated by adding the size of the header (6 octects) to the value
+                calculated by adding the size of the header (4 octects) to the value
                 of the Length field (i.e., the size of the TLV's value).
               </t>
             </list>

@@ -1,4 +1,5 @@
 # Makefile for RFC
+MAKE := $(MAKE) -s
 
 XML2RFC=xml2rfc
 XML2HTML=xml2html
@@ -23,8 +24,8 @@ txt::
 	  echo "  * Compiling: $$i [TXT]" ; \
 	  out=`echo $$i | sed "s|.xml|.txt|"` ; \
 	  out=`cat "$$i" | grep docName | head -n 1 | sed "s|.*docName\=\"||" | sed "s|\".*||"`; \
-	  echo "    - [TXT] format ... \c" && \
-	  $(XML2RFC) "$$i" -u -o "$$out.txt" \
+	  echo -E -n "    - [TXT] format ... " && \
+	  $(XML2RFC) "$$i" -o "$$out.txt" \
 		2>err-txt.txt >log-txt.txt && \
 	  	echo "Ok." || echo "ERROR (check the err file)."; \
 	done ; \
@@ -36,8 +37,8 @@ html::
 	  echo "  * Compiling: $$i [HTML]" ; \
 	  out=`echo "$$i" | sed "s|.xml|.html|"` ; \
 	  out=`cat "$$i" | grep docName | head -n 1 | sed "s|.*docName\=\"||" | sed "s|\".*||"`; \
-	  echo "    - [HTML] format ... \c" && \
-	  $(XML2RFC) "$$i" --html -u -o "$$out.html" \
+	  echo -E -n "    - [HTML] format ... " && \
+	  $(XML2RFC) "$$i" --html -o "$$out.html" \
 		2>>err-html.txt >>log-html.txt && \
 	  	echo "Ok." || echo "ERROR (check the err file)."; \
 	done ; \
