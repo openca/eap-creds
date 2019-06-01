@@ -535,7 +535,7 @@
           <c>0</c>
           <c>Error TLV</c>
           <c>1</c>
-          <c>EAP-CREDS Version TLV</c>
+          <c>Creds Version TLV</c>
           <c>2</c>
           <c>Provisioning Protocols TLV</c>
           <c>3</c>
@@ -571,7 +571,54 @@
         supported TLVs and their usage in the different messages.
       </t>
 
-    <section anchor="tlv_protocols" title="The Protocols TLV">
+    <section anchor="tlv_versions" title="The Creds-Versions TLV">
+
+      <figure><artwork><![CDATA[
+  0                   1                   2                   3
+  0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+ +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+ |           TLV Type            |            Length            ...
+ +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+...                              |            Version            |
+ +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+ |           Version            ...
+ +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+]]></artwork></figure>
+    <t>TLV Type (uint16)
+        <list>
+            <t>&lt;TBD&gt; - Creds Versions TLV</t>
+        </list>
+    </t>
+    <t>Length (uint32)
+        <list>
+            <t>4 octets</t>
+        </list>
+    </t>
+    <t>Version (List of uint16)
+        <list>
+            <t>
+                The Version field is a uint16 value and represents the specific
+                version of the EAP-CREDS protocol that are supported by the end
+                point.
+            </t>
+            <t>
+                When multiple versions of EAP-CREDS are supported, each of the
+                'Version' values in the TLV indicates a specific version that the
+                end point supports.
+            </t>
+            <t>
+                When no version is specified (i.e., either it does
+                not support multiple versions or it does not matter), the
+                value of this field should be set to '0x0' and there should be
+                only one 'Version' value.
+            </t>
+        </list>
+    </t>
+
+    </section>
+
+    <section anchor="tlv_protocols" title="The Provisioning-Protocols TLV">
 
       <figure><artwork><![CDATA[
   0                   1                   2                   3
@@ -587,9 +634,9 @@
  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-..
 
 ]]></artwork></figure>
-    <t>TLV Type (uint32)
+    <t>TLV Type (uint16)
         <list>
-            <t>&lt;TBD&gt; - Provisioning Protocol TLV</t>
+            <t>&lt;TBD&gt; - Provisioning Protocols TLV</t>
         </list>
     </t>
     <t>Length (uint16)
@@ -597,7 +644,7 @@
             <t>4 octets</t>
         </list>
     </t>
-    <t>Protocol ID and Version (uint16, uint16)
+    <t>Protocol ID and Version (List of { uint16, uint16 })
         <list>
             <t>
                 The Protocol ID and Version field is 4 octets in size and
@@ -622,9 +669,90 @@
 
     </section>
 
+       <section anchor="tlv_provider" title="The Provisioning-Provider TLV">
+
+      <figure><artwork><![CDATA[
+  0                   1                   2                   3
+  0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+ +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+ |           TLV Type            |            Length            ...
+ +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+...                              |    Provider Identifying Data ...
+ +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+]]></artwork></figure>
+    <t>TLV Type (uint16)
+        <list>
+            <t>&lt;TBD&gt; - Provisioning-Providers TLV</t>
+        </list>
+    </t>
+    <t>Length (uint32)
+        <list>
+            <t>4 octets</t>
+        </list>
+    </t>
+    <t>Provider Identifying Data (octet string)
+        <list>
+            <t>
+                The Provider Identifying Data is used to provide indication to
+                the other party about which providers are supported. The data
+                used in this field is left to be interpreted by the end-point
+                and it is orthogonal to EAP-CREDS data types.
+            </t>
+            <t>
+                For example, an end-point could use the string representation
+                (i.e., dotted representation) of the Object Identifier (OID) that
+                corresponds to the IANA's Private Enterprise Number (PEN) of the
+                specific supported provider or of the Certificate Policy supported
+                (e.g., the OID could be the OID of the supported Certificate Policy).
+            </t>
+        </list>
+    </t>
+
+    </section>
+
     <section anchor="tlv_profiles" title="The Profile TLV">
-      <t>
-      </t>
+
+      <figure><artwork><![CDATA[
+  0                   1                   2                   3
+  0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+ +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+ |           TLV Type            |            Length            ...
+ +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+...                              |    Profile Identifying Data  ...
+ +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+]]></artwork></figure>
+    <t>TLV Type (uint16)
+        <list>
+            <t>&lt;TBD&gt; - Profile Identifying Data TLV</t>
+        </list>
+    </t>
+    <t>Length (uint32)
+        <list>
+            <t>4 octets</t>
+        </list>
+    </t>
+    <t>Profile Identifying Data (octet string)
+        <list>
+            <t>
+                The Profile Identifying Data is used to provide indication to
+                the other party about which profiles are supported when requesting
+                credentials management.
+            </t>
+            <t>
+                Also in this case, the data used in this field is left to be
+                interpreted by the end-point and it is orthogonal to EAP-CREDS data
+                types.
+            </t>
+            <t>
+                An example of values for this field, an end-point could use the
+                string representation (i.e., dotted representation) of the
+                Object Identifier (OID) of the specific profile supported (e.g., could
+                be defined in the Certificate Policy of the credentials' provider).
+            </t>
+        </list>
+    </t>
     </section>
 
     <section anchor="tlv_credinfo" title="The CredInfo TLV">
