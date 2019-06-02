@@ -21,7 +21,7 @@
     <!-- <!ENTITY ietf-acme-acme PUBLIC '' 'http://xml.resource.org/public/rfc/bibxml/reference.I-D.ietf-acme-acme.xml'> -->
 ]>
 
-<rfc category="std" docName="draft-pala-eap-creds-00" ipr="trust200902">
+<rfc category="std" docName="draft-pala-eap-creds-01" ipr="trust200902">
     
 <?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
 
@@ -51,7 +51,7 @@
     </address>
   </author>
  
-  <date month="February" year="2019" />
+  <date month="March" year="2019" />
   <area>Security</area>
   <workgroup></workgroup>
   <keyword>PKI</keyword>
@@ -63,12 +63,25 @@
         (e.g., digital certificates, keys, or tokens) for network access, the need for
         a standardized credentials provisioning and management framework is paramount.
 
-        The .1x architecture allows for entities (e.g., devices, applications, etc.) to authenticate to
+        The 802.1x architecture allows for entities (e.g., devices, applications, etc.) to authenticate to
         the network by providing a communication channel where different methods can be used to
         exchange different types of credentials.
 
         However, the need for managing these credentials (i.e., provisioning and renewal) is still a
         hard problem to solve.
+
+	<vspace blankLines="1" />
+
+	EAP-CREDS, if implemented in Managed Networks (e.g., Cable Modems), could
+        enable our operators to offer a registration and credentials management service
+        integrated in the home WiFi thus enabling visibility about registered devices.
+        During initialization, EAP-CREDS also allows for MUD files or URLs to
+        be transferred between the EAP Peer and the EAP Server, thus giving
+        detailed visibility about devices when they are provisioned with credentials
+	for accessing the networks. The possibility provided by EAP-CREDS can help to
+	secure home or business networks by leveraging the synergies of the security
+	teams from the network operators thanks to the extended knowledge of what
+	and how is registered/authenticated.
 
         <vspace blankLines="1" />
 
