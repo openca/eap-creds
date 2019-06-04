@@ -14,7 +14,7 @@ all:: banner $(SOURCES)
 clean:
 	@rm -f draft-*.{txt,html} err*.txt log*.txt
 
-$(SOURCES)::
+$(SOURCES):: clean
 	@$(MAKE) txt
 	@$(MAKE) html
 
