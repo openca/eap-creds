@@ -1,0 +1,41 @@
+
+@startuml
+
+'' header information
+header
+<font color="red">Cable<b>Labs</b></font>
+endheader
+
+'' Use this to hide the foot boxes
+hide footbox
+
+skinparam sequenceMessageAlign center
+skinparam NoteBorderColor black
+'' skinparam BackgroundColor #ddd
+
+skinparam sequence {
+	borderColor black
+	ArrowColor black
+	ActorBorderColor black
+	ParticipantBorderColor black
+	LifeLineBorderColor black
+	LifeLineBackgroundColor white
+}
+
+'' Participants Declaration
+Participant "EAP Peer" as P #eee
+Participant "EAP Server" as S #eee
+
+autonumber 1 "[##]"
+S->P: EAP-Request/EAP-CREDS(Type=Validate)\n    { CredInfo, Challenge }
+note right #fff: Phase Three\nBegins
+
+P->S: EAP-Response/EAP-CREDS(Type=Validate)\n    { Challenge, ChallengeResponse,\n      [ ExtraChallenge ] }
+
+S->P: EAP-Request/EAP-CREDS(Type=Validate)\n    { Challenge, ChallengeResponse }
+
+P->S: EAP-Response/EAP-CREDS(Type=Validate)\n    { << Empty Body >> }
+note right #fff: Phase Three\nEnds
+
+
+@enduml

@@ -1,0 +1,85 @@
+
+@startuml
+
+'' header information
+header
+<font color="red">Cable<b>Labs</b></font>
+endheader
+
+'' Use this to hide the foot boxes
+hide footbox
+
+skinparam sequenceMessageAlign center
+skinparam NoteBorderColor black
+'' skinparam BackgroundColor #ddd
+
+skinparam sequence {
+	borderColor black
+	ArrowColor black
+	ActorBorderColor black
+	ParticipantBorderColor black
+	LifeLineBorderColor black
+	LifeLineBackgroundColor white
+}
+
+'' (*) --> "Send Init Message"
+''    --> "Get Response"
+''
+''    if "Error ?" then
+''      -->[Yes] \
+''      if "Is Recoverable ?" then
+''        -->[Yes] "Send Init Message"
+''      else
+''        -->[No] (*)
+''      endif
+''
+''    else
+''      -->[No] "Start Phase Two"
+''      -->(*)
+''    endif
+
+start
+
+if (Start Phase Two) then (No)
+  stop;
+endif
+
+repeat
+while (CredInfo Available ?) is (Yes)
+
+  if (Action Needed) then (Yes)
+    : Send ProtoFlow
+      First Message;
+
+    while (Get Message From Peer) is (Yes)
+
+      if (Message is Empty) then (No)
+      
+	      if (Error Detected) then (Yes)
+	        : Generate the appropriate error message;
+	        stop;
+	      endif
+
+	    else
+	      ->No;
+      endif
+
+      if (End Phase Two ?) then (Yes)
+        stop;
+      endif
+
+    endwhile (No)
+
+  else (No)
+  endif
+endwhile (No)
+
+if (Register / New Creds ?) then (No)
+  stop;
+endif
+
+repeat while (Continue ?) is (Yes)
+->No;
+stop
+
+@enduml

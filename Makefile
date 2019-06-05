@@ -12,6 +12,9 @@ all:: banner $(SOURCES)
 	@echo
 	 
 clean:
+	@rm -f err*.txt log*.txt
+
+distclean:
 	@rm -f draft-*.{txt,html} err*.txt log*.txt
 
 $(SOURCES):: clean

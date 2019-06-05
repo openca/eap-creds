@@ -1,0 +1,41 @@
+
+@startuml
+
+'' header information
+header
+<font color="red">Cable<b>Labs</b></font>
+endheader
+
+'' Use this to hide the foot boxes
+hide footbox
+
+skinparam sequenceMessageAlign center
+skinparam NoteBorderColor black
+'' skinparam BackgroundColor #ddd
+
+''skinparam shadowing<<no_shadow>> true
+''skinparam shadowing<<with_shadow>> false
+
+skinparam sequence {
+	borderColor black
+	ArrowColor black
+	ActorBorderColor black
+	ParticipantBorderColor black
+	LifeLineBorderColor black
+	LifeLineBackgroundColor white
+}
+
+'' Participants Declaration
+Participant "EAP Peer" as P #eee
+Participant "EAP Server" as S #eee
+
+P<->S: Outer Tunnel Established
+
+autonumber 1 "[##]"
+S->P: EAP-Request/EAP-CREDS(Type=Init)\n    { [ Version+ ] }
+note right: Phase One\nBegins
+
+P->S: EAP-Response/EAP-CREDS(Type=Init)\n    { [  Version  ], Protocol+,\n      [ CredInfo+ ], [ Token ]\n      [ Challenge ], [ Challenge-Rsp ] }
+note right: Phase One\nEnds
+
+@enduml

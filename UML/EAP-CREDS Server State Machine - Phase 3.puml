@@ -1,0 +1,54 @@
+
+@startuml
+
+'' header information
+header
+<font color="red">Cable<b>Labs</b></font>
+endheader
+
+'' Use this to hide the foot boxes
+hide footbox
+
+skinparam sequenceMessageAlign center
+skinparam NoteBorderColor black
+'' skinparam BackgroundColor #ddd
+
+skinparam sequence {
+	borderColor black
+	ArrowColor black
+	ActorBorderColor black
+	ParticipantBorderColor black
+	LifeLineBorderColor black
+	LifeLineBackgroundColor white
+}
+
+'' (*) --> "Send Init Message"
+''    --> "Get Response"
+''
+''    if "Error ?" then
+''      -->[Yes] \
+''      if "Is Recoverable ?" then
+''        -->[Yes] "Send Init Message"
+''      else
+''        -->[No] (*)
+''      endif
+''
+''    else
+''      -->[No] "Start Phase Two"
+''      -->(*)
+''    endif
+
+start
+
+repeat
+  : Send Init Message;
+  : Get Response;
+  if (No Errors ?) then (Yes)
+    : Start Phase Two;
+    stop;
+  endif
+repeat while (Is It Recoverable?) is (Yes)
+->No;
+stop
+
+@enduml
