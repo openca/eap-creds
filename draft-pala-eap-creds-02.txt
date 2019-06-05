@@ -9,7 +9,7 @@ Expires: December 6, 2019
 
 
       Credentials Provisioning and Management via EAP (EAP-CREDS)
-                        draft-pala-eap-creds-01
+                        draft-pala-eap-creds-02
 
 Abstract
 
