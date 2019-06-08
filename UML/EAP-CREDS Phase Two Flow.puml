@@ -26,18 +26,18 @@ skinparam sequence {
 Participant "EAP Peer" as P #eee
 Participant "EAP Server" as S #eee
 
-autonumber 3 "[##]"
+autonumber 1 "[##]"
 
-S->P: EAP-Request/EAP-CREDS(Type=ProtoFlow)\n    { [ Version   ], Protocol, Action,\n      [ CredInfo  ], [ ProvParams ],\n      [ ProtoData ] }
+S->P: EAP-Request/EAP-CREDS(Type=ProtoFlow)\n    { PhaseCtrl(=START), Protocol, Action,\n      [ CredInfo  ], [ Params ],\n      [ ProtoData ], [ Profile ] }
 note right #fff: Phase Two\nBegins
 
 P->S: EAP-Response/EAP-CREDS(Type=ProtoFlow)\n    { ProtoData, [ ProtoHeaders ] }
 
+S->P: EAP-Response/EAP-CREDS(Type=ProtoFlow)\n    { ProtoData, [ ProtoHeaders ] }
+
 ...
 
-S->P: EAP-Request/EAP-CREDS(Type=ProtoFlow)\n    { ProtoData, [ ProtoHeaders ] }
-
-P->S: EAP-Response/EAP-CREDS(Type=ProtoFlow)\n    { << Empty Body >> }
+S->P: EAP-Request/EAP-CREDS(Type=ProtoFlow)\n    { PhaseCtrl(=END) }
 note right #fff: Phase Two\nEnds
 
 
