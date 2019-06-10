@@ -32,12 +32,12 @@ Participant "EAP Server" as S #eee
 P<->S: Outer Tunnel Established
 
 autonumber 1 "[##]"
-S->P: EAP-Request/EAP-CREDS(Type=Init)\n    { PhaseCtrl(=START), [ Version+ ] }
+S->P: EAP-Request/EAP-CREDS(Type=Init)\n    { [ Version+ ], [ Challenge ] }
 note right: Phase One\nBegins
 
-P->S: EAP-Response/EAP-CREDS(Type=Init)\n    { Protocol+, Encodings,\n      Formats, [  Version  ]\n      [ CredInfo+ ], [ StorageInfo ]\n      [ Token ], [ Challenge ],\n      [ Challenge-Rsp ], [ Profile+],\n      PhaseCtrl(=END) }
+P->S: EAP-Response/EAP-CREDS(Type=Init)\n    { Protocol+, Encodings,\n      Formats, [  Version  ]\n      [ Creds-Info+ ], [ Storage-Info ]\n      [ Net-Usage], [ Token ],\n      [ Challenge-Rsp ], [ Profile+ ] }
 
-S->P: EAP-Request/EAP-CREDS(Type=Init)\n    { PhaseCtrl(=END), Version }
+S->P: EAP-Request/EAP-CREDS(Type=Init)\n    { Version }
 note right: Phase One\nEnds
 
 @enduml

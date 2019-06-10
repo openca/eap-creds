@@ -27,12 +27,12 @@ Participant "EAP Peer" as P #eee
 Participant "EAP Server" as S #eee
 
 autonumber 1 "[##]"
-S->P: EAP-Request/EAP-CREDS(Type=Validate)\n    { PhaseCtrl(=START), CredInfo,\n     Challenge }
+S->P: EAP-Request/EAP-CREDS(Type=Validate)\n    { Cred-Info, Challenge }
 note right #fff: Phase Three\nBegins
 
-P->S: EAP-Response/EAP-CREDS(Type=Validate)\n    { Challenge, ChallengeResponse,\n      [ ExtraChallenge ] }
+P->S: EAP-Response/EAP-CREDS(Type=Validate)\n    { Challenge-Response, [ Challenge ] }
 
-S->P: EAP-Request/EAP-CREDS(Type=Validate)\n    { Challenge, ChallengeResponse\n      PhaseCtrl(=END) }
+S->P: EAP-Request/EAP-CREDS(Type=Validate)\n    { [ Challenge-Response ] }
 
 note right #fff: Phase Three\nEnds
 
