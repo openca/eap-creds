@@ -232,7 +232,7 @@
           session with an error.
         </t>
         <t>
-          The Peer and the Server exchange ProtoFlow messages until an error is detected (and the
+          The Peer and the Server exchange Provisioning messages until an error is detected (and the
           appropriate error message is sent to the other party) or until Phase Two is successfully
           completed.
         </t>
@@ -296,17 +296,24 @@
               earlier phase.
             </t>
             <t>
-              Phase transitioning is controlled by the Server via the ('Phase-Control')
-              TLV: when a messages is the last of one phase or the first of another one,
-              the ('Phase-Control') TLV is added to the message with the 'S' bit set
-              appropriately, and the value set to the phase number that is transitioning.
+              Phase transitioning is controlled by the Server. In particular, the
+              server, after the last message of a phase, it can decide to either
+              (a) start the next phase by sending the first message of the next
+              phase, or (b) continue the same phase by sending another "first"
+              message of the phase (e.g., managing a second set of credentials) - 
+              this is allowed only in Phase Two and Phase Three but NOT in Phase One,
+              or (c) terminate the EAP session.
             </t>
             <t>
               <list style="hanging">
                 <t hangText="Phase One (Required).">
                   Initialization. During this phase the Peer and the Server
                   exchange the information needed to select the appropriate
-                  credentials management protocol. In particular, the Sever sends
+                  credentials management protocol.
+
+                  Phase One flow is composed by only messages.
+
+                  In particular, the Sever sends
                   its initial message of type ('EAP-CREDS-Init'). The Peer replies with
                   the details about which provisioning protocols are supported, and additional
                   information such as the list of installed credentials and, optionally,
@@ -315,14 +322,15 @@
                 <t hangText="Phase Two (Optional).">
                   Provisioning Protocol Flow. In this phase, the Peer and the Server
                   exchange the provisioning protocol's messages encapsulated in a
-                  EAP-CREDS message of type ProtoFlow. The messages use two main TLVs.
+                  EAP-CREDS message of type Provisioning. The messages use two main TLVs.
                   The first one is the ('Provisioning-Headers') TLV which is optional
                   and carries information that might be normally coveyed via the transport
                   protocol (e.g., HTTP headers). The second one is the ('Provisioning-Data'),
                   which is required and carries the provisioning protocol's
                   messages. The server can decide to repeat
                   phase two again to register new credentials or to renew a separate
-                  set of credentials. When no more credentials have to be managed,
+                  set of credentials by issuing a new ('Provisioning') message for the
+                  new target. When no more credentials have to be managed,
                   the Server can start phase three or simply terminate the EAP session.
                 </t>
                 <t hangText="Phase Three (Optional).">
@@ -341,27 +349,26 @@
             <t>
               In order to keep track of starting and ending a phase, EAP-CREDS defines
               several bits and fields in the EAP-CREDS message headers. In particular,
-              as described in <xref target="creds_header" />, the 'S' and 'E' bits are
-              used to indicate the 'S'tart or the 'E'nd of a phase, while the 'Phase'
+              as described in <xref target="creds_header" />, the 'S' bit is
+              used to indicate the beginning (or Start) of a phase, while the 'Phase'
               field (4 bits) is used to indicate the phase for this message. 
             </t>
             <t>
               In EAP-CREDS, phase transitioning is under the sole control of the Server,
-              therefore the 'S' or 'E' bits are meaningful only in messages sent by the Server.
-              The value of the 'S' and 'E' bits in Peer's messages are ignored.
+              therefore the value of the 'S' bit is meaningful only in messages sent by the Server.
+              The value of the 'S' bit in Peer's messages SHALL be set to '0x0' and SHALL be
+              ignored by the server.
             </t>
             <t>
               When starting a new phase, the Server MUST set the 'S' bit
               to '1' and the 'Phase' field to the current phase number (e.g., one, two, or three).
-              On the other hand, when a phase is to be completed, the last message from the
-              Server MUST have the 'E' (End) bit set to '1' and the value of the 'Phase'
-              field MUST be set to the phase number that is ending.
             </t>
             <t>
               In case the first message of a phase is to be repeated (e.g., because of
-              a recoverable error or becuase processing multiple credentials), the
-              'S' bit SHALL be set to '1' only on the first occurrency and set to '0'
-              in subsequent messages.
+              processing multiple credentials), the
+              'S' bit SHALL be set to '0' (i.e., it should be set to '1' only on the first
+              occurrency and set to '0'
+              in subsequent messages).
             </t>
             <t>
               <list>
@@ -380,11 +387,11 @@
             <t>
               The following figure provides the message flow for Phase One:
             </t>
-<figure><artwork><![CDATA[
+<figure title="EAP-CREDS Phase One Message Flow"><artwork><![CDATA[
 
- ,--------.                              ,----------.         
- |EAP Peer|                              |EAP Server|         
- `---+----'                              `----+-----'         
+  ,--------.                              ,----------.         
+  |EAP Peer|                              |EAP Server|         
+  `---+----'                              `----+-----'         
      |        Outer Tunnel Established        |               
      | <-------------------------------------->               
      |                                        |               
@@ -393,17 +400,13 @@
      | <---------------------------------------  |Begins     |
      |                                        |  `-----------'
      | [2] EAP-Response/EAP-CREDS(Type=Init)  |               
-     |     { Protocol+, Encodings,            |               
-     |       Formats, [  Version  ]           |               
-     |       [ Creds-Info+ ], [ Storage-Info ]|               
-     |       [ Net-Usage], [ Token ],         |               
-     |       [ Challenge-Rsp ], [ Profile+ ] }|               
+     |     { Protocol+, [ Encoding+ ],        |               
+     |       [ Format+ ] , [  Version  ]      |  ,---------!. 
+     |       [ Creds-Info+ ], [ Storage-Info ]|  |Phase One|_\
+     |       [ Net-Usage], [ Token ],         |  |Ends       |
+     |       [ Challenge-Rsp ], [ Profile+ ] }|  `-----------'
      | --------------------------------------->               
      |                                        |               
-     |  [3] EAP-Request/EAP-CREDS(Type=Init)  |  ,---------!. 
-     |      { Version }                       |  |Phase One|_\
-     | <---------------------------------------  |Ends       |
-     |                                        |  `-----------'
      |                                        |               
 
 ]]></artwork></figure>
@@ -467,8 +470,9 @@
                   Ultimately, the Peer MAY include additional metadata regarding the status of
                   the Peer. To this end, the Peer can use a ('Storage-Info') TLV to provide the server
                   with additional data about the Peer's capabilities and resources. Also, the
-                  ('Network-Usage') TLV can be used to provide the Server with the network resources
-                  needed and the intended utilization patterns by the device.
+                  ('Network-Usage') TLV can be used to provide the Server with the indication of
+                  which network resources are needed by the Peer and what is its intended
+                  utilization pattern(s).
                 </t>
                 <t>
                   The server checks that the Peer's selected protocol, version, and
@@ -493,29 +497,12 @@
                 </t>
               </list>
             </t>
-            <t>[3] The Server sends EAP-Request/EAP-CREDS(Type=Init)
-              <list>
-                <t>
-                  In order to terminate Phase One, the Server sends a last message that
-                  carries the ('Phase-Control') TLV with the 'S' bit set to '0' (end of
-                  phase) and the value shall be set to '1' (phase one). On top of that,
-                  the Server also sends one ('Version') TLV (mandatory) to announce the
-                  selected EAP-CREDS version to speak.
-                </t>
-                <t>
-                  When registering new credentials (e.g., no 'Credentials-Info' TLV was
-                  sent by the Peer and the Peer is authorized to present new credentials),
-                  the Server MAY add a ('Profile') TLV to indicate the selected
-                  profile for the new credentials that will be provisioned in Phase Two.
-                </t>
-              </list>
-            </t>
 
             <section anchor="phase_one_state_machine" title="Phase One State Machine">
               <t>
                 The Server's state machine is depicted in the following Figure:
               </t>
-              <figure><artwork><![CDATA[
+              <figure title="EAP Creds Phase One State Machine"><artwork><![CDATA[
 
 +-------------------+
 |  Start Phase One  |
@@ -523,29 +510,29 @@
           |
           v
 +-------------------+
-| Send the Init Msg |<------------------+
-+-------------------+                   |
-          |                             |
-          v                             |
-+-------------------+                   |
-| Receives Peer's   |                   |
-|    Init Msg       |                   |
-+-------------------+                   |
-          |                             | Yes
-          v                             ^
- +------------------+  Yes   +---------------------+
- | Checks for Error |>------>|    Recoverable ?    |
+| Send the Init Msg |
++-------------------+                   
+          |                             
+          v                             
++-------------------+                   
+| Receives Peer's   |                   
+|    Init Msg       |                   
++-------------------+                   
+          |                             
+          v                             
+ +------------------+ Yes    +---------------------+
+ | Checks for Error |------->|    Send Error Msg   |
  +------------------+        +---------------------+
           |  No                         |
           v                             v
++-------------------+  No    +---------------------+
+|  Provisioning ?   |------->|   End EAP Session   |
 +-------------------+        +---------------------+
-|    End Phse One   |        |    Send Error Msg   |
-+-------------------+        +---------------------+
-                                        |
-                                        v
-                             +---------------------+
-                             |   End EAP Session   |
-                             +---------------------+
+          |  Yes       
+          v           
++-------------------+
+|  Start Phase Two  |
++-------------------+
 
                 ]]></artwork></figure>
               <t>
@@ -556,7 +543,7 @@
                   The Server selects
                   the action, the provisioning protocol, and associated parameters.
                   Phase Two officially begins with the next message exchanged (i.e. an
-                  EAP-Request/EAP-CREDS(Type=ProtoFlow)),which MUST include the
+                  EAP-Request/EAP-CREDS(Type=Provisioning)),which MUST include the
                   ('Phase-Control') TLV with the 'S' bit set to '1' and the value set
                   to '2'. The message MUST also includes, at minimum,
                   the selected ('Action') and ('Protocol') TLVs.
@@ -583,34 +570,35 @@
               The following figure provides the message flow for Phase 2:
             </t>
 
-<figure><artwork><![CDATA[
+<figure title="EAP-CREDS Phase Two Message Flow"><artwork><![CDATA[
 
- ,--------.                                 ,----------.         
- |EAP Peer|                                 |EAP Server|         
- `---+----'                                 `----+-----'         
-     | [1] EAP-Request/EAP-CREDS(Type=ProtoFlow) |               
-     |     { Protocol, Action,                   |  ,---------!. 
-     |       [ CredInfo  ], [ Params ],          |  |Phase Two|_\
-     |       [ ProtoData ], [ Profile ] }        |  |Begins     |
-     | <------------------------------------------  `-----------'
-     |                                           |               
-     | [2] EAP-Response/EAP-CREDS(Type=ProtoFlow)|               
-     |     { ProtoData, [ ProtoHeaders ] }       |               
-     | ------------------------------------------>               
-     |                                           |               
-     | [3] EAP-Response/EAP-CREDS(Type=ProtoFlow)|               
-     |     { ProtoData, [ ProtoHeaders ] }       |               
-     | <------------------------------------------               
-     |                                           |               
-     .                                           .               
-     .                                           .               
-     .                                           .               
-     .                                           .               
-     | [4] EAP-Request/EAP-CREDS(Type=ProtoFlow) |  ,---------!. 
-     |     { [ ProtoData ] }                     |  |Phase Two|_\
-     | <------------------------------------------  |Ends       |
-     |                                           |  `-----------'
-     |                                           |               
+,--------.                                     ,----------.         
+|EAP Peer|                                     |EAP Server|         
+`---+----'                                     `----+-----'         
+   |  [1] EAP-Request/EAP-CREDS(Type=Provisioning) |               
+   |      { Protocol, Action,                      |  ,---------!. 
+   |        [ CredInfo  ], [ Params ],             |  |Phase Two|_\
+   |        [ ProtoData ], [ ProtoHeaders ] }      |  |Begins     |
+   | <----------------------------------------------  `-----------'
+   |                                               |               
+   | [2] EAP-Response/EAP-CREDS(Type=Provisioning) |               
+   |     { ProtoData, [ ProtoHeaders ] }           |               
+   | ---------------------------------------------->               
+   |                                               |               
+   .                                               .               
+   .                                               .               
+   .                                               .               
+   .                                               .               
+   | [N] EAP-Response/EAP-CREDS(Type=Provisioning) |               
+   |     { [ CredInfo ], [ ProtoData ],            |               
+   |       [ ProtoHeaders ] }                      |               
+   | <----------------------------------------------               
+   |                                               |               
+   | [N+1] EAP-Request/EAP-CREDS(Type=Provisioning)|  ,---------!. 
+   |     { [ ProtoData ], [ ProtoHeaders ] }       |  |Phase Two|_\
+   | ---------------------------------------------->  |Ends       |
+   |                                               |  `-----------'
+   |                                               |               
 
 ]]></artwork></figure>
             <t>[1] The Server sends EAP-Request/EAP-CREDS(Type=Init)
@@ -625,7 +613,7 @@
               <list>
                 <t>
                   After that, the Peer sends its first message to the Server by sending the
-                  EAP-Response/EAP-CREDS(Type=ProtoFlow) message. This message contains
+                  EAP-Response/EAP-CREDS(Type=Provisioning) message. This message contains
                   the selected provisioning protocol's message data and some extra fields
                   (e.g., transport-protocol headers) in the ('Provisioning-Data') and 
                   ('Protocol-Headers') TLVs respectively.
@@ -635,61 +623,83 @@
             <t> [3] The Server sends EAP-Request/EAP-CREDS(Type=Init)
               <list>
                 <t>
-                  The Server replies to the Peer's message with EAP-Request/EAP-CREDS(Type=ProtoFlow)
+                  The Server replies to the Peer's message with EAP-Request/EAP-CREDS(Type=Provisioning)
                   messages until the provisioning protocol reaches an end or an error condition
                   arise (non-recoverable).
                 </t>
               </list>
             </t>
-            <t>[N] The Server sends EAP-Request/EAP-CREDS(Type=ProtoFlow)
+            <t>[N] The Server sends EAP-Request/EAP-CREDS(Type=Provisioning)
               <list>
                 <t>
-                  The Server terminates Phase Two by
-                  sending a final message carrying the ('Phase-Control') TLV with the 'S' bit
-                  set to '0' and the value set to '2' (thus indicating the end of Phase Two).
+                  When the provisioning protocol has been executed for the specific set of
+                  credentials, the server sends a last message that MUST include the description
+                  of the provisioned credentials in a ('Credentials-Info') TLV and MUST set the 'D'
+                  bit in the EAP-CREDS message header to '1' to indicates that the server does not
+                  have any more ('Provisioning') messages for this credenital.
                   The final message does not need to be an empty one, i.e. other TLVs are still
                   allowed in the same message (e.g., the 'Provisioning-Data' and the
                   'Provisioning-Headers' ones).
                 </t>
               </list>
             </t>
+            <t>[N+1] The Peer sends EAP-Request/EAP-CREDS(Type=Provisioning)
+              <list>
+                <t>
+                  The Peer MUST reply to the server with a ('Provisioning') message that MUST
+                  have the 'D' bit in the EAP-CREDS message header set to '1', thus indicating
+                  that the credentials have been installed correctly. In case of errors, the Peer
+                  MUST include the appropriate ('Error') TLV.
+                  Also in this case, the final message does not need to be an empty one,
+                  i.e. other TLVs are still allowed in the same message (e.g., the 'Provisioning-Data'
+                  and the 'Provisioning-Headers' ones).
+                </t>
+              </list>
+            </t>
+            <t>
+              At this point, the Server can decide to provision (or manage) another set of credentials
+              by issuing a new ('Provisioning') message, or it can decide to start Phase Three by
+              sending its first ('Validate') message, or it can terminate the EAP session.
+            </t>
 
             <section anchor="phase_two_state_machine" title="Phase Two State Machine">
             <t>
               The Server's state machine for Phase Two is depicted in the following Figure:
             </t>
-<figure><artwork><![CDATA[
-                 +-------------------+
-                 |  Start Phase Two  |
-                 +-------------------+
-                            |
-                            v
-             Yes +-------------------+ No
-          +-----<|  New Credentials  |>-----+
-          |      |    Available ?    |      |
-          |      +-------------------+      |
-          |                ^                |
-          v                |                v
-+-------------------+      |      +-------------------+
-| Action Needed for |>-----+      |   Register New    |
-|   Credentials ?   | No          |    Credentials    |
-+-------------------+             +-------------------+
-          v Yes                      Yes v       v No
-          |                              |       |
-          |      +-------------------+   |       |
-          +----->|   Provisioning    |<--+       |
-                 |     Protocol      |           |
-                 +-------------------+           |
-                           |  No                 |
-                           v                     |
-                 +------------------+            |
-                 | End of Provision |            |
-                 +------------------+            |
-                           |                     |
-                           v                     |
-                 +------------------+            |
-                 | End of Phase Two |<-----------+
-                 +------------------+
+<figure title="EAP-CREDS Phase Two State Machine"><artwork><![CDATA[
+
+                   +-------------------+
+                   |  Start Phase Two  |
+                   +-------------------+
+                              |
+                              v
+                   +-------------------+ 
++----------------->|  New Credentials  |
+|            +----<|    Available ?    |>-----+
+|            | Yes +-------------------+ No   |
+|            |               ^                |
+|            v               |                v
+|  +-------------------+     |      +-------------------+
+|  | Action Needed for |>----+      |   Register New    |
+|  |   Credentials ?   | No         |    Credentials    |
+|  +-------------------+            +-------------------+
+|            v Yes                     Yes v       v No
+|            |                             |       |
+|            |     +-------------------+   |       |
+|            +---->|   Provisioning    |<--+       |
+|                  |     Protocol      |           |
+|                  +-------------------+           |
+|                            |                     |
+|                            v                     |
+|              No  +------------------+            |
++-----------------<| End of Provision |            |
+                   +------------------+            |
+                         Yes |                     |
+                             v                     |
+                   +------------------+            |
+                   | End of Phase Two |<-----------+
+                   +------------------+
+   
 ]]></artwork></figure>
 
                 <t>
@@ -711,24 +721,20 @@
               The following figure provides the message flow for Phase 3:
             </t>
 
-<figure><artwork><![CDATA[
+<figure title="EAP-CREDS Phase Three Message Flow"><artwork><![CDATA[
 
- ,--------.                                ,----------.           
- |EAP Peer|                                |EAP Server|           
- `---+----'                                `----+-----'           
-     | [1] EAP-Request/EAP-CREDS(Type=Validate) |  ,-----------!. 
-     |     { Cred-Info, Challenge }             |  |Phase Three|_\
-     | <-----------------------------------------  |Begins       |
-     |                                          |  `-------------'
-     | [2] EAP-Response/EAP-CREDS(Type=Validate)|                 
-     |     { Challenge-Response, [ Challenge ] }|                 
-     | ----------------------------------------->                 
-     |                                          |                 
-     | [3] EAP-Request/EAP-CREDS(Type=Validate) |  ,-----------!. 
-     |     { [ Challenge-Response ] }           |  |Phase Three|_\
-     | <-----------------------------------------  |Ends         |
-     |                                          |  `-------------'
-     |                                          |                 
+,--------.                                ,----------.           
+|EAP Peer|                                |EAP Server|           
+`---+----'                                `----+-----'           
+   | [1] EAP-Request/EAP-CREDS(Type=Validate) |  ,-----------!. 
+   |     { Cred-Info, Challenge }             |  |Phase Three|_\
+   | <-----------------------------------------  |Begins       |
+   |                                          |  `-------------'
+   | [2] EAP-Response/EAP-CREDS(Type=Validate)|  ,-----------!. 
+   |     { Challenge-Response }               |  |Phase Three|_\
+   | ----------------------------------------->  |Ends         |
+   |                                          |  `-------------'
+   |                                          |                 
 
 ]]></artwork></figure>
             <t>
@@ -752,13 +758,15 @@
                   In order to start Phase Three, the Server sends an
                   EAP-Request/EAP-CREDS(Type=Validate) message to the Peer.
                   The Server MUST include the ('Credentials-Info') TLV to provide the indication about
-                  which set of credentials the Server intends to validate. The Server MUST also include a
-                  randomly generated challenge in the message to the client.
+                  which set of credentials the Server intends to validate. The Server MUST also include a randomly generated challenge in the message to the client. The type of challenge
+                  determines how the ('Challenge-Response') is calculated. EAP-CREDS defines the
+                  asymmetric and symmetric challenges in <xref target="eap_creds_challenge_types" />
+                  and others can be defined according to the specified rules.
                 </t>
                 <t>
-                  As usual, the Server MUST also include the ('Phase-Control') TLV in its first
-                  message of Phase Three. In this case, the 'S' bit shall be set to '1' and the
-                  value shall be set to '3' (beginning of Phase Three).
+                  As usual, the Server MUST set, in the headers, the 'S' bit to '1' in its first
+                  message of Phase Three and the 'Phase' value shall be set to '3'
+                  (beginning of Phase Three).
                 </t>
               </list>
             </t>
@@ -767,8 +775,9 @@
                 <t>
                   When the client receives the Validate message from the server, it calculates the
                   response to the challenge and sends the response back to the server in a
-                  EAP-Response/EAP-CREDS(Type=Validate) message. The Peer MUST
-                  calculate the response as follows:
+                  EAP-Response/EAP-CREDS(Type=Validate) message. 
+                  When the EAP-CREDS-ASYMMETRIC-CHALLENGE and EAP-CREDS-SYMMETRIC-CHALLENGE values
+                  are used in the Challenge type, the Peer MUST calculate the response as follows:
                   <list>
                     <t>
                         Public-Key
@@ -812,39 +821,12 @@
                   </list>
                 </t>
                 <t>
-                  Optionally, the client can add a separate ('Challenge-Data') TLV in its
-                  reply to request that the network proves it can calculate responses. This extra
-                  challenge is only available for symmetric secrets (it is not used to verify
-                  again the identity of the server, but it is used for the server to prove it
-                  does have the right symmetric data on its side too). This 'extra' challenge carries the
-                  Peer-generated challenge information that the Server MUST use to calculate
-                  the corresponding ('Challenge-Response') TLV.
+                  The initial values for the type of challenges are described in the <xref target="eap_creds_challenge_types" />. Other types of challenges MAY be defined according
+                  to the specified procedures.
                 </t>
+                
                 <t>
-                  <list>
-                    <t>
-                      NOTE WELL: The Server might not be able to respond to the extra challenge
-                      from the client because it might not posses the secret key (e.g., in case
-                      of public-key cryptography, the private key might not be shared with the Server,
-                      therefore it cannot generate signatures that the client can verify). In
-                      that case, the Server will NOT add the
-                      ('Challenge-Response') TLV to its reply, but it MUST add the appropriate
-                      ('Errror') TLV.
-                    </t>
-                  </list>
-                </t>
-              </list>
-            </t>
-            <t>[3] The Server sends EAP-Request/EAP-CREDS(Type=Validate)
-              <list>
-                <t>
-                  When the server receives the EAP-Response/EAP-CREDS(Type=Validate) with the Challenge
-                  TLV in it, it MUST calculate the response to the challenge and send back the
-                  response to the client in an EAP-Request/EAP-CREDS(Type=Validate) with the
-                  ('Challenge-Response') TLV.
-                </t>
-                <t>
-                  In case of issues with the validation of the newly deployed credentials, both
+                  In case of issues with the validation of newly deployed credentials, both
                   the Server and the Peer should consider those credentials invalid (or
                   unusable) and should issue the required failure message(s).
                 </t>
@@ -855,7 +837,8 @@
             <t>
               The Server's state machine for Phase Three is depicted in the following Figure:
             </t>
-<figure><artwork><![CDATA[
+<figure title="EAP-CREDS Phase Three State Machine"><artwork><![CDATA[
+
                                  +-------------------+
                                  | Start Phase Three |
                                  +-------------------+
@@ -874,7 +857,7 @@
 |           |             v Yes                             |   |
 |           |             |                                 |   |
 |           |             |      +---------------------+    |   |
-|           |             +----->|     Send Validate   |    |   |
+|           |             +----->|    Send Validate    |    |   |
 |           |                    |       Messsage      |    |   |
 |           |                    +---------------------+    |   |
 |           |                              |                |   |
@@ -892,6 +875,7 @@
                                 +---------------------+         |
                                 |   End Phase Three   |<--------+
                                 +---------------------+
+
 ]]></artwork></figure>
           </section>
         </section>
@@ -902,7 +886,7 @@
             The EAP-CREDS defines the following message types:
             <list style="numbers">
                 <t>EAP-CREDS/Init</t>
-                <t>EAP-CREDS/ProtoFlow</t>
+                <t>EAP-CREDS/Provisioning</t>
                 <t>EAP-CREDS/Validate</t>
             </list>
         </t>
@@ -927,7 +911,7 @@
  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
  |     Code      |  Identifier   |             Length            |
  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
- |     Type      |J|S|E|F| Phase |         Message Length        |
+ |     Type      |J|S|F|D| Phase |         Message Length        |
  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
  |         Message Length        |               Data           ...
  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-.
@@ -948,9 +932,9 @@
         <t>
           The Flags bitfield is used to convey status information (e.g., extra long
           message, phase number, phase transitioning state). The transition-control
-          bits (i.e., 'S' and 'E' bits) are set in Server's messages and are ignored in Peer's messages (the
-          Server is the entity that unilaterally controls the phase transition
-          process).
+          bit (i.e., the 'S' bit) are set in Server's messages and are ignored in
+          Peer's messages (the Server is the entity that unilaterally controls the
+          phase transition process).
           The meanins of the bits in the 'Flags' field are as follows:
           <list>
             <t>Bit 'J' (Jumbo Message) - If set, it idicates the presence of the 'Message Length' field.
@@ -963,18 +947,25 @@
                        (and the 'F' bit MUST be set to '0').</t>
             <t>Bit 'S' (Start) - If set, this message is the first one of a new EAP-CREDS phase.
                        The value of the new phase is encoded in the 'Phase' field.</t>
-            <t>Bit 'E' (End) - If set, this message is the last of an EAP-CREDS phase.
-                       The value of the new phase is encoded in the 'Phase' field.</t>
             <t>Bit 'F' - If set, this message is a fragment of a message. In this case, the
                        'Data' field is to be concatenated with all messages with the 'F' bit
                        set to '1' until the message with the 'F' bit set to '0' that indicates
                        the end of the message. If the message is not fragmented, the 'F' bit
                        MUST be set to '0'. The use of this bit is required when the tunneling
                        method does not provide support for messages up to 2^32 bits in size.</t>
+            <t>Bit 'D' - This bit is used in Phase Two and Phase Three to indicate that the
+                       specific operation for the identified credential is over. For example,
+                       when multiple credentials exist on the Peer and the Server needs to
+                       manage and validate one of them. In its last message, when the provisioning
+                       protocol is done, the server sets the 'D' (Done) bit to indicate that
+                       it is done. The Peer, in its reply, sets the bit to indicate
+                       the end of provisioning for this credentials is also over. After that, the
+                       Server can continue Phase Two, transition to Phase Three, or terminate
+                       the EAP session.</t>
           </list>
         </t>
         <t>
-          The Phase field is a uint4 and identifies the EAP-CREDS phase for the current message.
+          The Phase field is a 4-bits value and identifies the EAP-CREDS phase for the current message.
           The version of EAP-CREDS described in this document supports three values for this
           field:
           <list>
@@ -1258,7 +1249,7 @@
  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
  |   TLV Type    |                  TLV Length                   |
  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
- |                           Challenge Data                     ...
+ |   Ch. Type    |           Challenge Data                     ...
  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 
 ]]></artwork></figure>
@@ -1271,6 +1262,18 @@
         <list>
             <t>3 octets</t>
         </list>
+    </t>
+    <t>Challenge Type (uint8)
+      <list>
+        <t>
+          This field carries the type of Challenge. In particular, the challenge
+          type determines how the Peer MUST calculate the ('Challenge-Response').
+          The initial values for this fiel are listed in <xref target="eap_creds_challenge_types" />.
+          Please refer to <xref target="creds_phase_three" /> for a detailed explanation
+          of how to calculate the response to the challenge for the challenge types
+          defined in this document.
+        </t>
+      </list>
     </t>
     <t>Challenge Data (> 1 octet)
         <list>
@@ -2420,7 +2423,7 @@
           <c>EAP-CREDS-Init</c>
           <c>Initialization Phase</c>
           <c>1</c>
-          <c>EAP-CREDS-ProtoFlow</c>
+          <c>EAP-CREDS-Provisioning</c>
           <c>Carries Provisioning Protocol Messages</c>
           <c>2</c>
           <c>EAP-CREDS-Validate</c>
@@ -2555,20 +2558,20 @@
 
         </section>
 
-        <section anchor="creds_msg_protoflow" title="The EAP-CREDS-ProtoFlow Message">
+        <section anchor="creds_msg_protoflow" title="The EAP-CREDS-Provisioning Message">
 
             <t>
-                The EAP-CREDS-ProtoFlow message type is used in Phase Two only of EAP-CREDS. The
+                The EAP-CREDS-Provisioning message type is used in Phase Two only of EAP-CREDS. The
                 message flow is depicted in <xref target="creds_phase_two" />. This message type
                 supports the following TLVs: Protocol, Profile, Credentials-Info, Provisioning-Headers,
                 Provisioning-Data, Token-Data, and Error.
             </t>
             <t>
                 After the exchange of phase one messages, the Server
-                MAY start phase two by issuing an ('EAP-CREDS-ProtoFlow') message for the Peer
+                MAY start phase two by issuing an ('EAP-CREDS-Provisioning') message for the Peer
                 where it encodes all the required details for starting the provisioning process.
                 In particular, the server sends the selected ('Action'), ('Protocol'), and metadata
-                to the client in a EAP-Request/EAP-CREDS(Type=ProtoFlow) message.
+                to the client in a EAP-Request/EAP-CREDS(Type=Provisioning) message.
                 The header's 'S' bit MUST be set to '1' (Start) and the 'Phase' value set to '2'
                 (Phase Two begins).
             </t>
@@ -2584,7 +2587,7 @@
             </t>
             <t>
                 The client checks that all the selected parameters are supported for the selected
-                credentials and, if no errors are detected, it sends its first ('EAP-CREDS-ProtoFlow')
+                credentials and, if no errors are detected, it sends its first ('EAP-CREDS-Provisioning')
                 message to the Server with the ('Provisioning-Headers') and ('Provisioning-Data')
                 TLVs only.
             </t>
@@ -2739,7 +2742,7 @@
       <section anchor="eap_creds_spp_encoding" title="SPP Message Format">
         <t>
             The SPP Messages are constructed with zero, one, or more TLVs and encoded in the
-            ('Provisioning-Data') TLV in EAP-CREDS/ProtoFlow message types.
+            ('Provisioning-Data') TLV in EAP-CREDS/Provisioning message types.
             The size of the encpasulating ('Provisioning-Data') TLV
             provides the size of the whole message.
         </t>
@@ -2751,17 +2754,17 @@
  ,--------.                                 ,----------.
  |EAP Peer|                                 |EAP Server|
  `---+----'                                 `----+-----'
-     | [1] EAP-Request/EAP-CREDS(Type=ProtoFlow) |      
+     | [1] EAP-Request/EAP-CREDS(Type=Provisioning) |      
      |   { Protocol(=SPP), Action,               |      
      |     [ CredsInfo ] [ Params ],             |      
      |     [ ProvData(=CredsData) ] }            |      
      | <------------------------------------------      
      |                                           |      
-     | [2] EAP-Response/EAP-CREDS(Type=ProtoFlow)|      
+     | [2] EAP-Response/EAP-CREDS(Type=Provisioning)|      
      |   { [ ProvData(=CredsData) ] }            |      
      | ------------------------------------------>      
      |                                           |      
-     | [3] EAP-Response/EAP-CREDS(Type=ProtoFlow)|      
+     | [3] EAP-Response/EAP-CREDS(Type=Provisioning)|      
      |   { [ ProvData(=CredsData) ] }            |      
      | <------------------------------------------      
      |                                           |      
@@ -2788,7 +2791,7 @@
           Server MAY start Phase Two when the presented credentials information from the Peer
           triggers the Renew or the Remove action.
         </t>
-        <t>[1] The Server sends EAP-Request/EAP-CREDS(Type=ProtoFlow)
+        <t>[1] The Server sends EAP-Request/EAP-CREDS(Type=Provisioning)
           <list>
             <t>
               When registering new credentials, the first message from the Server, MUST not carry a ('Credentials-Info')
@@ -2828,12 +2831,12 @@
             </t>
           </list>
         </t>
-        <t>[2] The Peer sends EAP-Response/EAP-CREDS(Type=ProtoFlow)
+        <t>[2] The Peer sends EAP-Response/EAP-CREDS(Type=Provisioning)
           <list>
             <t>
               When Peer-generation is selected (either Peer-only or combined Peer and Server side) and Phase
               Two has not terminated yet, the Peer MUST
-              reply to the Server's message with its own 'ProtoFlow' response. The response
+              reply to the Server's message with its own 'Provisioning' response. The response
               MUST carry either (a) its own generated share of the key in a ('Credentials-Data') TLV
               (if the credentials that are provisioned are symmetric and the configuration calls for a
               share of the key to be provided by the Peer) or (b) a PKCS#10 request in a ('Certificate-Request')
@@ -2842,7 +2845,7 @@
             </t>
           </list>
         </t>
-        <t>[3] The Server sends EAP-Request/EAP-CREDS(Type=ProtoFlow)
+        <t>[3] The Server sends EAP-Request/EAP-CREDS(Type=Provisioning)
           <list>
             <t>
               The last message of SPP is from the Server and it is used to deliver the finalized
@@ -2882,17 +2885,17 @@
  ,--------.                                      ,----------.
  |EAP Peer|                                      |EAP Server|
  `---+----'                                      `----+-----'
-     | [1] EAP-Request/EAP-CREDS(Type=ProtoFlow)      |      
+     | [1] EAP-Request/EAP-CREDS(Type=Provisioning)      |      
      |   { Protocol(=SPP), Action, [ Creds-Info ],    |      
      |     [ Prov-Params ], [ Profile ]               |      
      |     [ Prov-Data(=[Creds-Info],[Creds-Data]) ] }|      
      | <-----------------------------------------------      
      |                                                |      
-     |   [2] EAP-Response/EAP-CREDS(Type=ProtoFlow)   |      
+     |   [2] EAP-Response/EAP-CREDS(Type=Provisioning)   |      
      |     { [ Prov-Data(=[Creds-Data]) ] }           |      
      | ----------------------------------------------->      
      |                                                |      
-     |  [3] EAP-Response/EAP-CREDS(Type=ProtoFlow)    |      
+     |  [3] EAP-Response/EAP-CREDS(Type=Provisioning)    |      
      |    { [ Prov-Data(=Creds-Info,[Creds-Data]) ] } |      
      | <-----------------------------------------------      
      |                                                |      
@@ -2930,7 +2933,7 @@
               <xref target="eap_creds_spp_server_side_only_fig" />.
             </t>
             <t>
-              In this case, the Server sends the first ProtoFlow message (which is also the last one),
+              In this case, the Server sends the first Provisioning message (which is also the last one),
               which MUST carry, the following data:
               <list style="symbols">
                 <t>The ('Credentials-Info') TLV that specifies the info for the provisioned secret, and</t>
@@ -2961,7 +2964,7 @@
               <xref target="eap_creds_spp_client_side_only_fig" />.
             </t>
             <t>
-              In this case, the Server MUST include, in its first ProtoFlow message and encoded in the ('Provisioning-Data') TLV, the following data:
+              In this case, the Server MUST include, in its first Provisioning message and encoded in the ('Provisioning-Data') TLV, the following data:
               <list style="symbols">
                 <t>The ('Credentials-Info') TLV that specifies the target credentials, and</t>
                 <t>The ('Protocol') TLV that specifies the provisioning protocol to be used, and</t>
@@ -2973,7 +2976,7 @@
               because the Server is not involved in the secret generation (client-side only).
             </t>
             <t>
-              The Peer MUST reply with its own ProtoFlow message where the Peer MUST encode the following
+              The Peer MUST reply with its own Provisioning message where the Peer MUST encode the following
               data in the ('Provisioning-Data') TLV:
               <list>
                 <t>The ('Credentials-Data') TLV that provides the secret that is being registered</t>
@@ -3265,6 +3268,28 @@
 
         </section>
 
+        <section anchor="eap_creds_challenge_types" title="Challenge Types">
+
+            <texttable anchor="eap_creds_challenge_types_table" title="Challenge Type">
+                <ttcol align="center">ID</ttcol>
+                <ttcol align="left">Data Type</ttcol>
+                <c>0</c>
+                <c>Not Specified</c>
+
+                <c>1</c>
+                <c>EAP-CREDS-ASYMMETRIC</c>
+
+                <c>2</c>
+                <c>EAP-CREDS-SYMMETRIC</c>
+            </texttable>
+
+            <t>
+                Assignment of new values for new Message Types MUST be done through
+                IANA with "Expert Review" as defined in <xref target="RFC8126" />.
+            </t>
+
+        </section>
+
         <section anchor="iana_net_usage_type" title="Network Usage Datatypes">
 
             <texttable anchor="iana_net_usage_table" title="Network Usage Datatypes">
@@ -3430,6 +3455,7 @@
 </references>
 -->
 
+<!--
 <section anchor="ann_examples" title="EAP-CREDS Example Message Flow for Provisioning Standards">
 
   <section title="EAP-CREDS and CMP">
@@ -3456,6 +3482,7 @@
       </t>
   </section>
 </section>
+-->
 
 </back>
 </rfc>

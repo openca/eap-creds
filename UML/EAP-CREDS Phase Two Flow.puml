@@ -28,16 +28,18 @@ Participant "EAP Server" as S #eee
 
 autonumber 1 "[##]"
 
-S->P: EAP-Request/EAP-CREDS(Type=ProtoFlow)\n    { Protocol, Action,\n      [ CredInfo  ], [ Params ],\n      [ ProtoData ], [ Profile ] }
+S->P: EAP-Request/EAP-CREDS(Type=Provisioning)\n    { Protocol, Action,\n      [ CredInfo  ], [ Params ],\n      [ ProtoData ], [ ProtoHeaders ] }
 note right #fff: Phase Two\nBegins
 
-P->S: EAP-Response/EAP-CREDS(Type=ProtoFlow)\n    { ProtoData, [ ProtoHeaders ] }
+P->S: EAP-Response/EAP-CREDS(Type=Provisioning)\n    { ProtoData, [ ProtoHeaders ] }
 
-S->P: EAP-Response/EAP-CREDS(Type=ProtoFlow)\n    { ProtoData, [ ProtoHeaders ] }
+autonumber stop
 
 ...
 
-S->P: EAP-Request/EAP-CREDS(Type=ProtoFlow)\n    { [ ProtoData ] }
+S->P: [N] EAP-Response/EAP-CREDS(Type=Provisioning)\n    { [ CredInfo ], [ ProtoData ],\n      [ ProtoHeaders ] }
+
+P->S: [N+1] EAP-Request/EAP-CREDS(Type=Provisioning)\n    { [ ProtoData ], [ ProtoHeaders ] }
 note right #fff: Phase Two\nEnds
 
 

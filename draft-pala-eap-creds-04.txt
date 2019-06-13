@@ -4,8 +4,8 @@
 
 Network Working Group                                            M. Pala
 Internet-Draft                                                 CableLabs
-Intended status: Standards Track                           June 10, 2019
-Expires: December 12, 2019
+Intended status: Standards Track                           June 13, 2019
+Expires: December 15, 2019
 
 
       Credentials Provisioning and Management via EAP (EAP-CREDS)
@@ -53,7 +53,7 @@ Status of This Memo
 
 
 
-Pala                    Expires December 12, 2019               [Page 1]
+Pala                    Expires December 15, 2019               [Page 1]
 
 Internet-Draft                  EAP-CREDS                      June 2019
 
@@ -63,7 +63,7 @@ Internet-Draft                  EAP-CREDS                      June 2019
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on December 12, 2019.
+   This Internet-Draft will expire on December 15, 2019.
 
 Copyright Notice
 
@@ -84,7 +84,7 @@ Table of Contents
 
    1.  Requirements notation . . . . . . . . . . . . . . . . . . . .   4
    2.  Introduction  . . . . . . . . . . . . . . . . . . . . . . . .   4
-     2.1.  Overview of existing solutions  . . . . . . . . . . . . .   5
+     2.1.  Overview of existing solutions  . . . . . . . . . . . . .   4
      2.2.  Scope Statement . . . . . . . . . . . . . . . . . . . . .   5
      2.3.  EAP-CREDS as tunneled mechanism only  . . . . . . . . . .   5
      2.4.  Fragmentation Support . . . . . . . . . . . . . . . . . .   6
@@ -98,94 +98,89 @@ Table of Contents
        3.2.1.  Phase One State Machine . . . . . . . . . . . . . . .  11
      3.3.  Phase Two: Provisioning . . . . . . . . . . . . . . . . .  13
        3.3.1.  Phase Two State Machine . . . . . . . . . . . . . . .  14
-     3.4.  Phase Three: Validation . . . . . . . . . . . . . . . . .  15
+     3.4.  Phase Three: Validation . . . . . . . . . . . . . . . . .  16
        3.4.1.  Phase Three State Machine . . . . . . . . . . . . . .  18
    4.  EAP-CREDS Message Format  . . . . . . . . . . . . . . . . . .  19
-     4.1.  Message Header  . . . . . . . . . . . . . . . . . . . . .  20
+     4.1.  Message Header  . . . . . . . . . . . . . . . . . . . . .  19
      4.2.  Message Payload . . . . . . . . . . . . . . . . . . . . .  21
-       4.2.1.  EAP-CREDS defined TLVs  . . . . . . . . . . . . . . .  23
-         4.2.1.1.  The Action TLV  . . . . . . . . . . . . . . . . .  23
-         4.2.1.2.  The Certificate-Data TLV  . . . . . . . . . . . .  24
+       4.2.1.  EAP-CREDS defined TLVs  . . . . . . . . . . . . . . .  22
+         4.2.1.1.  The Action TLV  . . . . . . . . . . . . . . . . .  22
+         4.2.1.2.  The Certificate-Data TLV  . . . . . . . . . . . .  23
 
 
 
-Pala                    Expires December 12, 2019               [Page 2]
+Pala                    Expires December 15, 2019               [Page 2]
 
 Internet-Draft                  EAP-CREDS                      June 2019
 
 
-         4.2.1.3.  The Challenge-Data TLV  . . . . . . . . . . . . .  25
-         4.2.1.4.  The Challenge-Response TLV  . . . . . . . . . . .  26
+         4.2.1.3.  The Challenge-Data TLV  . . . . . . . . . . . . .  24
+         4.2.1.4.  The Challenge-Response TLV  . . . . . . . . . . .  25
          4.2.1.5.  The Credentials-Information TLV . . . . . . . . .  26
          4.2.1.6.  The Credentials-Data TLV  . . . . . . . . . . . .  29
-         4.2.1.7.  The Error TLV . . . . . . . . . . . . . . . . . .  30
-         4.2.1.8.  The Network-Usage TLV . . . . . . . . . . . . . .  31
-         4.2.1.9.  The Profile TLV . . . . . . . . . . . . . . . . .  33
-         4.2.1.10. The Protocol TLV  . . . . . . . . . . . . . . . .  34
-         4.2.1.11. The Provisioning-Data TLV . . . . . . . . . . . .  34
-         4.2.1.12. The Provisioning-Headers TLV  . . . . . . . . . .  35
-         4.2.1.13. The Provisioning-Params TLV . . . . . . . . . . .  36
-         4.2.1.14. The Certificate-Request TLV . . . . . . . . . . .  38
-         4.2.1.15. The Storage-Info TLV  . . . . . . . . . . . . . .  39
-         4.2.1.16. The Supported-Formats TLV . . . . . . . . . . . .  40
-         4.2.1.17. The Supported-Encoding TLV  . . . . . . . . . . .  41
-         4.2.1.18. The Token-Data TLV  . . . . . . . . . . . . . . .  41
-         4.2.1.19. The Version TLV . . . . . . . . . . . . . . . . .  42
-   5.  EAP-CREDS Messages  . . . . . . . . . . . . . . . . . . . . .  43
-     5.1.  The EAP-CREDS-Init Message  . . . . . . . . . . . . . . .  43
-       5.1.1.  EAP Server's Init Message . . . . . . . . . . . . . .  43
-       5.1.2.  EAP Peer's Init Message . . . . . . . . . . . . . . .  44
-         5.1.2.1.  Bootstrapping Peer's Trustworthiness  . . . . . .  44
-     5.2.  The EAP-CREDS-ProtoFlow Message . . . . . . . . . . . . .  45
-     5.3.  The EAP-CREDS-Validate Message  . . . . . . . . . . . . .  46
-   6.  Error Handling in EAP-CREDS . . . . . . . . . . . . . . . . .  47
-   7.  The Simple Provisioning Protocol (SPP)  . . . . . . . . . . .  47
-     7.1.  SPP Message Format  . . . . . . . . . . . . . . . . . . .  48
-     7.2.  SPP Message Flow  . . . . . . . . . . . . . . . . . . . .  48
-       7.2.1.  SPP Symmetric Secrets Management  . . . . . . . . . .  51
-         7.2.1.1.  Server Side Only Generation . . . . . . . . . . .  52
-         7.2.1.2.  Client Side Only Generation . . . . . . . . . . .  53
-         7.2.1.3.  Client and Server Side Generation . . . . . . . .  54
-       7.2.2.  SPP Key Pair Provisioning . . . . . . . . . . . . . .  55
-         7.2.2.1.  Server Side Only Generation . . . . . . . . . . .  55
-         7.2.2.2.  Client Side Only Generation . . . . . . . . . . .  55
-         7.2.2.3.  Client and Server Side Generation . . . . . . . .  55
-       7.2.3.  SPP Certificate Provisioning  . . . . . . . . . . . .  55
-         7.2.3.1.  Server Side Only Generation . . . . . . . . . . .  55
-         7.2.3.2.  Client Side Only Generation . . . . . . . . . . .  55
-         7.2.3.3.  Client and Server Side Generation . . . . . . . .  56
-       7.2.4.  SPP Token Provisioning  . . . . . . . . . . . . . . .  56
-         7.2.4.1.  Server Side Only Generation . . . . . . . . . . .  56
-         7.2.4.2.  Client Side Only Generation . . . . . . . . . . .  56
-         7.2.4.3.  Client and Server Side Generation . . . . . . . .  56
-   8.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  56
-     8.1.  Provisioning Protocols  . . . . . . . . . . . . . . . . .  56
-     8.2.  Token Types . . . . . . . . . . . . . . . . . . . . . . .  57
-     8.3.  Credentials Types . . . . . . . . . . . . . . . . . . . .  57
+         4.2.1.7.  The Error TLV . . . . . . . . . . . . . . . . . .  29
+         4.2.1.8.  The Network-Usage TLV . . . . . . . . . . . . . .  30
+         4.2.1.9.  The Profile TLV . . . . . . . . . . . . . . . . .  32
+         4.2.1.10. The Protocol TLV  . . . . . . . . . . . . . . . .  33
+         4.2.1.11. The Provisioning-Data TLV . . . . . . . . . . . .  33
+         4.2.1.12. The Provisioning-Headers TLV  . . . . . . . . . .  34
+         4.2.1.13. The Provisioning-Params TLV . . . . . . . . . . .  35
+         4.2.1.14. The Certificate-Request TLV . . . . . . . . . . .  37
+         4.2.1.15. The Storage-Info TLV  . . . . . . . . . . . . . .  38
+         4.2.1.16. The Supported-Formats TLV . . . . . . . . . . . .  39
+         4.2.1.17. The Supported-Encoding TLV  . . . . . . . . . . .  40
+         4.2.1.18. The Token-Data TLV  . . . . . . . . . . . . . . .  40
+         4.2.1.19. The Version TLV . . . . . . . . . . . . . . . . .  41
+   5.  EAP-CREDS Messages  . . . . . . . . . . . . . . . . . . . . .  42
+     5.1.  The EAP-CREDS-Init Message  . . . . . . . . . . . . . . .  42
+       5.1.1.  EAP Server's Init Message . . . . . . . . . . . . . .  42
+       5.1.2.  EAP Peer's Init Message . . . . . . . . . . . . . . .  43
+         5.1.2.1.  Bootstrapping Peer's Trustworthiness  . . . . . .  43
+     5.2.  The EAP-CREDS-Provisioning Message  . . . . . . . . . . .  44
+     5.3.  The EAP-CREDS-Validate Message  . . . . . . . . . . . . .  45
+   6.  Error Handling in EAP-CREDS . . . . . . . . . . . . . . . . .  46
+   7.  The Simple Provisioning Protocol (SPP)  . . . . . . . . . . .  46
+     7.1.  SPP Message Format  . . . . . . . . . . . . . . . . . . .  47
+     7.2.  SPP Message Flow  . . . . . . . . . . . . . . . . . . . .  47
+       7.2.1.  SPP Symmetric Secrets Management  . . . . . . . . . .  50
+         7.2.1.1.  Server Side Only Generation . . . . . . . . . . .  51
+         7.2.1.2.  Client Side Only Generation . . . . . . . . . . .  52
+         7.2.1.3.  Client and Server Side Generation . . . . . . . .  53
+       7.2.2.  SPP Key Pair Provisioning . . . . . . . . . . . . . .  54
+         7.2.2.1.  Server Side Only Generation . . . . . . . . . . .  54
+         7.2.2.2.  Client Side Only Generation . . . . . . . . . . .  54
+         7.2.2.3.  Client and Server Side Generation . . . . . . . .  54
+       7.2.3.  SPP Certificate Provisioning  . . . . . . . . . . . .  54
+         7.2.3.1.  Server Side Only Generation . . . . . . . . . . .  54
+         7.2.3.2.  Client Side Only Generation . . . . . . . . . . .  54
+         7.2.3.3.  Client and Server Side Generation . . . . . . . .  55
+       7.2.4.  SPP Token Provisioning  . . . . . . . . . . . . . . .  55
+         7.2.4.1.  Server Side Only Generation . . . . . . . . . . .  55
+         7.2.4.2.  Client Side Only Generation . . . . . . . . . . .  55
+         7.2.4.3.  Client and Server Side Generation . . . . . . . .  55
+   8.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  55
+     8.1.  Provisioning Protocols  . . . . . . . . . . . . . . . . .  55
+     8.2.  Token Types . . . . . . . . . . . . . . . . . . . . . . .  56
+     8.3.  Credentials Types . . . . . . . . . . . . . . . . . . . .  56
 
 
 
-Pala                    Expires December 12, 2019               [Page 3]
+Pala                    Expires December 15, 2019               [Page 3]
 
 Internet-Draft                  EAP-CREDS                      June 2019
 
 
-     8.4.  Credentials Algorithms  . . . . . . . . . . . . . . . . .  58
-     8.5.  Credentials Datatypes . . . . . . . . . . . . . . . . . .  58
-     8.6.  Network Usage Datatypes . . . . . . . . . . . . . . . . .  59
-     8.7.  Credentials Encoding  . . . . . . . . . . . . . . . . . .  59
-     8.8.  Action Types  . . . . . . . . . . . . . . . . . . . . . .  60
-     8.9.  Usage Metadata Types  . . . . . . . . . . . . . . . . . .  60
-   9.  Security Considerations . . . . . . . . . . . . . . . . . . .  61
-   10. Acknowledgments . . . . . . . . . . . . . . . . . . . . . . .  61
-   11. Normative References  . . . . . . . . . . . . . . . . . . . .  61
-   Appendix A.  EAP-CREDS Example Message Flow for Provisioning
-                Standards  . . . . . . . . . . . . . . . . . . . . .  62
-     A.1.  EAP-CREDS and CMP . . . . . . . . . . . . . . . . . . . .  62
-     A.2.  EAP-CREDS and EST . . . . . . . . . . . . . . . . . . . .  62
-     A.3.  EAP-CREDS and CMS . . . . . . . . . . . . . . . . . . . .  62
-     A.4.  EAP-CREDS and ACME  . . . . . . . . . . . . . . . . . . .  62
-   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .  63
+     8.4.  Credentials Algorithms  . . . . . . . . . . . . . . . . .  57
+     8.5.  Credentials Datatypes . . . . . . . . . . . . . . . . . .  57
+     8.6.  Challenge Types . . . . . . . . . . . . . . . . . . . . .  58
+     8.7.  Network Usage Datatypes . . . . . . . . . . . . . . . . .  58
+     8.8.  Credentials Encoding  . . . . . . . . . . . . . . . . . .  59
+     8.9.  Action Types  . . . . . . . . . . . . . . . . . . . . . .  59
+     8.10. Usage Metadata Types  . . . . . . . . . . . . . . . . . .  59
+   9.  Security Considerations . . . . . . . . . . . . . . . . . . .  60
+   10. Acknowledgments . . . . . . . . . . . . . . . . . . . . . . .  60
+   11. Normative References  . . . . . . . . . . . . . . . . . . . .  60
+   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .  61
 
 1.  Requirements notation
 
@@ -217,21 +212,20 @@ Internet-Draft                  EAP-CREDS                      June 2019
    side authentication to make sure that the communication is protected
    and with the right server.
 
-
-
-
-
-Pala                    Expires December 12, 2019               [Page 4]
-
-Internet-Draft                  EAP-CREDS                      June 2019
-
-
 2.1.  Overview of existing solutions
 
    Currently there are many protocols that address credentials lifecycle
    management.  In particular, when it comes to digital certificates,
    some of the most deployed management protocols are: Certificate
    Management Protocol (CMP) [RFC4210], Certificate Management over CMS
+
+
+
+Pala                    Expires December 15, 2019               [Page 4]
+
+Internet-Draft                  EAP-CREDS                      June 2019
+
+
    (CMC) [RFC5272][RFC6402], Enrollment over Secure Transport (EST)
    [RFC7030], and Automated Certificate Management Environment (ACME) .
    However, none of these protocols provide native support for client
@@ -273,19 +267,20 @@ Internet-Draft                  EAP-CREDS                      June 2019
    authenticated channel has been established to prevent the possibility
    to leak information or to allow man-in-the-middle attacks.
 
-
-
-
-
-Pala                    Expires December 12, 2019               [Page 5]
-
-Internet-Draft                  EAP-CREDS                      June 2019
-
-
    This choice was taken to simplify the message flow between Peer and
    Server, and to abstract EAP-CREDS from the secure-channel
    establishment mechanism.  EAP-TLS, or EAP-TEAP are examples of such
    mechanisms.s
+
+
+
+
+
+
+Pala                    Expires December 15, 2019               [Page 5]
+
+Internet-Draft                  EAP-CREDS                      June 2019
+
 
 2.4.  Fragmentation Support
 
@@ -327,13 +322,18 @@ Internet-Draft                  EAP-CREDS                      June 2019
    where reported by the Peer in its Phase One message) or if to
    terminate the EAP session with an error.
 
-   The Peer and the Server exchange ProtoFlow messages until an error is
-   detected (and the appropriate error message is sent to the other
+   The Peer and the Server exchange Provisioning messages until an error
+   is detected (and the appropriate error message is sent to the other
    party) or until Phase Two is successfully completed.
 
 
 
-Pala                    Expires December 12, 2019               [Page 6]
+
+
+
+
+
+Pala                    Expires December 15, 2019               [Page 6]
 
 Internet-Draft                  EAP-CREDS                      June 2019
 
@@ -379,33 +379,34 @@ Internet-Draft                  EAP-CREDS                      June 2019
    enforces the order of phases, i.e. it is not possible to move to an
    earlier phase.
 
-   Phase transitioning is controlled by the Server via the ('Phase-
-   Control') TLV: when a messages is the last of one phase or the first
-   of another one, the ('Phase-Control') TLV is added to the message
-   with the 'S' bit set appropriately, and the value set to the phase
-   number that is transitioning.
+   Phase transitioning is controlled by the Server.  In particular, the
+   server, after the last message of a phase, it can decide to either
+   (a) start the next phase by sending the first message of the next
+   phase, or (b) continue the same phase by sending another "first"
+   message of the phase (e.g., managing a second set of credentials) -
+   this is allowed only in Phase Two and Phase Three but NOT in Phase
+   One, or (c) terminate the EAP session.
 
 
 
-
-
-Pala                    Expires December 12, 2019               [Page 7]
+Pala                    Expires December 15, 2019               [Page 7]
 
 Internet-Draft                  EAP-CREDS                      June 2019
 
 
    Phase One (Required).  Initialization.  During this phase the Peer
       and the Server exchange the information needed to select the
-      appropriate credentials management protocol.  In particular, the
-      Sever sends its initial message of type ('EAP-CREDS-Init').  The
-      Peer replies with the details about which provisioning protocols
-      are supported, and additional information such as the list of
-      installed credentials and, optionally, authorization data (for new
-      credentials registration).
+      appropriate credentials management protocol.  Phase One flow is
+      composed by only messages.  In particular, the Sever sends its
+      initial message of type ('EAP-CREDS-Init').  The Peer replies with
+      the details about which provisioning protocols are supported, and
+      additional information such as the list of installed credentials
+      and, optionally, authorization data (for new credentials
+      registration).
 
    Phase Two (Optional).  Provisioning Protocol Flow.  In this phase,
       the Peer and the Server exchange the provisioning protocol's
-      messages encapsulated in a EAP-CREDS message of type ProtoFlow.
+      messages encapsulated in a EAP-CREDS message of type Provisioning.
       The messages use two main TLVs.  The first one is the
       ('Provisioning-Headers') TLV which is optional and carries
       information that might be normally coveyed via the transport
@@ -413,9 +414,9 @@ Internet-Draft                  EAP-CREDS                      June 2019
       ('Provisioning-Data'), which is required and carries the
       provisioning protocol's messages.  The server can decide to repeat
       phase two again to register new credentials or to renew a separate
-      set of credentials.  When no more credentials have to be managed,
-      the Server can start phase three or simply terminate the EAP
-      session.
+      set of credentials by issuing a new ('Provisioning') message for
+      the new target.  When no more credentials have to be managed, the
+      Server can start phase three or simply terminate the EAP session.
 
    Phase Three (Optional).  Credentials Validation.  This optional phase
       can be initiated by the server and it is used to validate that the
@@ -429,35 +430,30 @@ Internet-Draft                  EAP-CREDS                      June 2019
 
    In order to keep track of starting and ending a phase, EAP-CREDS
    defines several bits and fields in the EAP-CREDS message headers.  In
-   particular, as described in Section 4.1, the 'S' and 'E' bits are
-   used to indicate the 'S'tart or the 'E'nd of a phase, while the
-   'Phase' field (4 bits) is used to indicate the phase for this
-   message.
+   particular, as described in Section 4.1, the 'S' bit is used to
+   indicate the beginning (or Start) of a phase, while the 'Phase' field
+   (4 bits) is used to indicate the phase for this message.
 
    In EAP-CREDS, phase transitioning is under the sole control of the
-   Server, therefore the 'S' or 'E' bits are meaningful only in messages
-   sent by the Server.  The value of the 'S' and 'E' bits in Peer's
-   messages are ignored.
+   Server, therefore the value of the 'S' bit is meaningful only in
+   messages sent by the Server.  The value of the 'S' bit in Peer's
+   messages SHALL be set to '0x0' and SHALL be ignored by the server.
 
    When starting a new phase, the Server MUST set the 'S' bit to '1' and
    the 'Phase' field to the current phase number (e.g., one, two, or
-   three).  On the other hand, when a phase is to be completed, the last
+   three).
 
 
 
-Pala                    Expires December 12, 2019               [Page 8]
+Pala                    Expires December 15, 2019               [Page 8]
 
 Internet-Draft                  EAP-CREDS                      June 2019
 
 
-   message from the Server MUST have the 'E' (End) bit set to '1' and
-   the value of the 'Phase' field MUST be set to the phase number that
-   is ending.
-
    In case the first message of a phase is to be repeated (e.g., because
-   of a recoverable error or becuase processing multiple credentials),
-   the 'S' bit SHALL be set to '1' only on the first occurrency and set
-   to '0' in subsequent messages.
+   of processing multiple credentials), the 'S' bit SHALL be set to '0'
+   (i.e., it should be set to '1' only on the first occurrency and set
+   to '0' in subsequent messages).
 
       NOTE WELL: Once EAP-CREDS transitions from one phase to the next,
       the state machine MUST prohibit going back to a previous phase.
@@ -467,9 +463,9 @@ Internet-Draft                  EAP-CREDS                      June 2019
    The following figure provides the message flow for Phase One:
 
 
-    ,--------.                              ,----------.
-    |EAP Peer|                              |EAP Server|
-    `---+----'                              `----+-----'
+     ,--------.                              ,----------.
+     |EAP Peer|                              |EAP Server|
+     `---+----'                              `----+-----'
         |        Outer Tunnel Established        |
         | <-------------------------------------->
         |                                        |
@@ -478,19 +474,17 @@ Internet-Draft                  EAP-CREDS                      June 2019
         | <---------------------------------------  |Begins     |
         |                                        |  `-----------'
         | [2] EAP-Response/EAP-CREDS(Type=Init)  |
-        |     { Protocol+, Encodings,            |
-        |       Formats, [  Version  ]           |
-        |       [ Creds-Info+ ], [ Storage-Info ]|
-        |       [ Net-Usage], [ Token ],         |
-        |       [ Challenge-Rsp ], [ Profile+ ] }|
+        |     { Protocol+, [ Encoding+ ],        |
+        |       [ Format+ ] , [  Version  ]      |  ,---------!.
+        |       [ Creds-Info+ ], [ Storage-Info ]|  |Phase One|_\
+        |       [ Net-Usage], [ Token ],         |  |Ends       |
+        |       [ Challenge-Rsp ], [ Profile+ ] }|  `-----------'
         | --------------------------------------->
         |                                        |
-        |  [3] EAP-Request/EAP-CREDS(Type=Init)  |  ,---------!.
-        |      { Version }                       |  |Phase One|_\
-        | <---------------------------------------  |Ends       |
-        |                                        |  `-----------'
         |                                        |
 
+
+                     EAP-CREDS Phase One Message Flow
 
    [1] Server sends EAP-Request/EAP-CREDS(Type=Init):
 
@@ -498,18 +492,19 @@ Internet-Draft                  EAP-CREDS                      June 2019
       EAP-TEAP, EAP-TTLS, etc.), the server MAY decide to start a
       credentials management session.  In order to do that, the Server
       sends an EAP-Request/EAP-CREDS(Type=Init) message to the Peer with
-
-
-
-Pala                    Expires December 12, 2019               [Page 9]
-
-Internet-Draft                  EAP-CREDS                      June 2019
-
-
       one ('Phase-Control') TLV with the 'S' bit set to '1' and the
       value set to '1' (thus indicating the beginning of Phase One).
       Also, the Server MAY use one or more ('Version') TLVs to indicate
       the supported versions.
+
+
+
+
+
+Pala                    Expires December 15, 2019               [Page 9]
+
+Internet-Draft                  EAP-CREDS                      June 2019
+
 
       The Server MAY also specify which versions of EAP-CREDS are
       supported by adding one or more ('Version') TLVs.  If no
@@ -555,19 +550,21 @@ Internet-Draft                  EAP-CREDS                      June 2019
       configuration MAY exist on the Peer with these ecosystem-specific
       identifiers).
 
-
-
-Pala                    Expires December 12, 2019              [Page 10]
-
-Internet-Draft                  EAP-CREDS                      June 2019
-
-
       Ultimately, the Peer MAY include additional metadata regarding the
       status of the Peer.  To this end, the Peer can use a ('Storage-
       Info') TLV to provide the server with additional data about the
       Peer's capabilities and resources.  Also, the ('Network-Usage')
-      TLV can be used to provide the Server with the network resources
-      needed and the intended utilization patterns by the device.
+
+
+
+Pala                    Expires December 15, 2019              [Page 10]
+
+Internet-Draft                  EAP-CREDS                      June 2019
+
+
+      TLV can be used to provide the Server with the indication of which
+      network resources are needed by the Peer and what is its intended
+      utilization pattern(s).
 
       The server checks that the Peer's selected protocol, version, and
       parameters are supported and, if not (or if the server detects an
@@ -586,20 +583,6 @@ Internet-Draft                  EAP-CREDS                      June 2019
       the Peer (e.g., a credential is about to expire or a credential is
       simply missing).
 
-   [3] The Server sends EAP-Request/EAP-CREDS(Type=Init)
-
-      In order to terminate Phase One, the Server sends a last message
-      that carries the ('Phase-Control') TLV with the 'S' bit set to '0'
-      (end of phase) and the value shall be set to '1' (phase one).  On
-      top of that, the Server also sends one ('Version') TLV (mandatory)
-      to announce the selected EAP-CREDS version to speak.
-
-      When registering new credentials (e.g., no 'Credentials-Info' TLV
-      was sent by the Peer and the Peer is authorized to present new
-      credentials), the Server MAY add a ('Profile') TLV to indicate the
-      selected profile for the new credentials that will be provisioned
-      in Phase Two.
-
 3.2.1.  Phase One State Machine
 
    The Server's state machine is depicted in the following Figure:
@@ -613,7 +596,24 @@ Internet-Draft                  EAP-CREDS                      June 2019
 
 
 
-Pala                    Expires December 12, 2019              [Page 11]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Pala                    Expires December 15, 2019              [Page 11]
 
 Internet-Draft                  EAP-CREDS                      June 2019
 
@@ -624,30 +624,32 @@ Internet-Draft                  EAP-CREDS                      June 2019
              |
              v
    +-------------------+
-   | Send the Init Msg |<------------------+
-   +-------------------+                   |
-             |                             |
-             v                             |
-   +-------------------+                   |
-   | Receives Peer's   |                   |
-   |    Init Msg       |                   |
-   +-------------------+                   |
-             |                             | Yes
-             v                             ^
-    +------------------+  Yes   +---------------------+
-    | Checks for Error |>------>|    Recoverable ?    |
+   | Send the Init Msg |
+   +-------------------+
+             |
+             v
+   +-------------------+
+   | Receives Peer's   |
+   |    Init Msg       |
+   +-------------------+
+             |
+             v
+    +------------------+ Yes    +---------------------+
+    | Checks for Error |------->|    Send Error Msg   |
     +------------------+        +---------------------+
              |  No                         |
              v                             v
+   +-------------------+  No    +---------------------+
+   |  Provisioning ?   |------->|   End EAP Session   |
    +-------------------+        +---------------------+
-   |    End Phse One   |        |    Send Error Msg   |
-   +-------------------+        +---------------------+
-                                           |
-                                           v
-                                +---------------------+
-                                |   End EAP Session   |
-                                +---------------------+
+             |  Yes
+             v
+   +-------------------+
+   |  Start Phase Two  |
+   +-------------------+
 
+
+                     EAP Creds Phase One State Machine
 
    The first message from the server starts the phase by using the
    ('Phase-Control') TLV.
@@ -655,24 +657,26 @@ Internet-Draft                  EAP-CREDS                      June 2019
    The Server selects the action, the provisioning protocol, and
    associated parameters.  Phase Two officially begins with the next
    message exchanged (i.e. an EAP-Request/EAP-
-   CREDS(Type=ProtoFlow)),which MUST include the ('Phase-Control') TLV
-   with the 'S' bit set to '1' and the value set to '2'.  The message
-   MUST also includes, at minimum, the selected ('Action') and
+   CREDS(Type=Provisioning)),which MUST include the ('Phase-Control')
+   TLV with the 'S' bit set to '1' and the value set to '2'.  The
+   message MUST also includes, at minimum, the selected ('Action') and
    ('Protocol') TLVs.
 
    When renewing existing credentials or registering new ones, the
    Server MUST include the ('Provisioning-Params') TLVs.
 
-   When removing or renewing existing credentials, the Server MUST
-   include the ('Credentials-Info') TLV to identify the set of
-   credentials to which the action applies.
 
 
 
-Pala                    Expires December 12, 2019              [Page 12]
+
+Pala                    Expires December 15, 2019              [Page 12]
 
 Internet-Draft                  EAP-CREDS                      June 2019
 
+
+   When removing or renewing existing credentials, the Server MUST
+   include the ('Credentials-Info') TLV to identify the set of
+   credentials to which the action applies.
 
    If multiple values are detected in the message, the message shall be
    discarded and the appropriate error message shall be issued by the
@@ -683,70 +687,91 @@ Internet-Draft                  EAP-CREDS                      June 2019
    The following figure provides the message flow for Phase 2:
 
 
-    ,--------.                                 ,----------.
-    |EAP Peer|                                 |EAP Server|
-    `---+----'                                 `----+-----'
-        | [1] EAP-Request/EAP-CREDS(Type=ProtoFlow) |
-        |     { Protocol, Action,                   |  ,---------!.
-        |       [ CredInfo  ], [ Params ],          |  |Phase Two|_\
-        |       [ ProtoData ], [ Profile ] }        |  |Begins     |
-        | <------------------------------------------  `-----------'
-        |                                           |
-        | [2] EAP-Response/EAP-CREDS(Type=ProtoFlow)|
-        |     { ProtoData, [ ProtoHeaders ] }       |
-        | ------------------------------------------>
-        |                                           |
-        | [3] EAP-Response/EAP-CREDS(Type=ProtoFlow)|
-        |     { ProtoData, [ ProtoHeaders ] }       |
-        | <------------------------------------------
-        |                                           |
-        .                                           .
-        .                                           .
-        .                                           .
-        .                                           .
-        | [4] EAP-Request/EAP-CREDS(Type=ProtoFlow) |  ,---------!.
-        |     { [ ProtoData ] }                     |  |Phase Two|_\
-        | <------------------------------------------  |Ends       |
-        |                                           |  `-----------'
-        |                                           |
+   ,--------.                                     ,----------.
+   |EAP Peer|                                     |EAP Server|
+   `---+----'                                     `----+-----'
+      |  [1] EAP-Request/EAP-CREDS(Type=Provisioning) |
+      |      { Protocol, Action,                      |  ,---------!.
+      |        [ CredInfo  ], [ Params ],             |  |Phase Two|_\
+      |        [ ProtoData ], [ ProtoHeaders ] }      |  |Begins     |
+      | <----------------------------------------------  `-----------'
+      |                                               |
+      | [2] EAP-Response/EAP-CREDS(Type=Provisioning) |
+      |     { ProtoData, [ ProtoHeaders ] }           |
+      | ---------------------------------------------->
+      |                                               |
+      .                                               .
+      .                                               .
+      .                                               .
+      .                                               .
+      | [N] EAP-Response/EAP-CREDS(Type=Provisioning) |
+      |     { [ CredInfo ], [ ProtoData ],            |
+      |       [ ProtoHeaders ] }                      |
+      | <----------------------------------------------
+      |                                               |
+      | [N+1] EAP-Request/EAP-CREDS(Type=Provisioning)|  ,---------!.
+      |     { [ ProtoData ], [ ProtoHeaders ] }       |  |Phase Two|_\
+      | ---------------------------------------------->  |Ends       |
+      |                                               |  `-----------'
+      |                                               |
 
+
+                     EAP-CREDS Phase Two Message Flow
 
    [1] The Server sends EAP-Request/EAP-CREDS(Type=Init)
 
       The first message of Phase Two indicates that the Server is ready
       to initiate the selected provisioning protocol.
 
-   [2] The Peer sends EAP-Response/EAP-CREDS(Type=Init)
-
-      After that, the Peer sends its first message to the Server by
-      sending the EAP-Response/EAP-CREDS(Type=ProtoFlow) message.  This
-      message contains the selected provisioning protocol's message data
 
 
-
-
-Pala                    Expires December 12, 2019              [Page 13]
+Pala                    Expires December 15, 2019              [Page 13]
 
 Internet-Draft                  EAP-CREDS                      June 2019
 
 
-      and some extra fields (e.g., transport-protocol headers) in the
-      ('Provisioning-Data') and ('Protocol-Headers') TLVs respectively.
+   [2] The Peer sends EAP-Response/EAP-CREDS(Type=Init)
+
+      After that, the Peer sends its first message to the Server by
+      sending the EAP-Response/EAP-CREDS(Type=Provisioning) message.
+      This message contains the selected provisioning protocol's message
+      data and some extra fields (e.g., transport-protocol headers) in
+      the ('Provisioning-Data') and ('Protocol-Headers') TLVs
+      respectively.
 
    [3] The Server sends EAP-Request/EAP-CREDS(Type=Init)
 
       The Server replies to the Peer's message with EAP-Request/EAP-
-      CREDS(Type=ProtoFlow) messages until the provisioning protocol
+      CREDS(Type=Provisioning) messages until the provisioning protocol
       reaches an end or an error condition arise (non-recoverable).
 
-   [N] The Server sends EAP-Request/EAP-CREDS(Type=ProtoFlow)
+   [N] The Server sends EAP-Request/EAP-CREDS(Type=Provisioning)
 
-      The Server terminates Phase Two by sending a final message
-      carrying the ('Phase-Control') TLV with the 'S' bit set to '0' and
-      the value set to '2' (thus indicating the end of Phase Two).  The
-      final message does not need to be an empty one, i.e. other TLVs
-      are still allowed in the same message (e.g., the 'Provisioning-
-      Data' and the 'Provisioning-Headers' ones).
+      When the provisioning protocol has been executed for the specific
+      set of credentials, the server sends a last message that MUST
+      include the description of the provisioned credentials in a
+      ('Credentials-Info') TLV and MUST set the 'D' bit in the EAP-CREDS
+      message header to '1' to indicates that the server does not have
+      any more ('Provisioning') messages for this credenital.  The final
+      message does not need to be an empty one, i.e. other TLVs are
+      still allowed in the same message (e.g., the 'Provisioning-Data'
+      and the 'Provisioning-Headers' ones).
+
+   [N+1] The Peer sends EAP-Request/EAP-CREDS(Type=Provisioning)
+
+      The Peer MUST reply to the server with a ('Provisioning') message
+      that MUST have the 'D' bit in the EAP-CREDS message header set to
+      '1', thus indicating that the credentials have been installed
+      correctly.  In case of errors, the Peer MUST include the
+      appropriate ('Error') TLV.  Also in this case, the final message
+      does not need to be an empty one, i.e. other TLVs are still
+      allowed in the same message (e.g., the 'Provisioning-Data' and the
+      'Provisioning-Headers' ones).
+
+   At this point, the Server can decide to provision (or manage) another
+   set of credentials by issuing a new ('Provisioning') message, or it
+   can decide to start Phase Three by sending its first ('Validate')
+   message, or it can terminate the EAP session.
 
 3.3.1.  Phase Two State Machine
 
@@ -756,67 +781,45 @@ Internet-Draft                  EAP-CREDS                      June 2019
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Pala                    Expires December 12, 2019              [Page 14]
+Pala                    Expires December 15, 2019              [Page 14]
 
 Internet-Draft                  EAP-CREDS                      June 2019
 
 
-                    +-------------------+
-                    |  Start Phase Two  |
-                    +-------------------+
-                               |
-                               v
-                Yes +-------------------+ No
-             +-----<|  New Credentials  |>-----+
-             |      |    Available ?    |      |
-             |      +-------------------+      |
-             |                ^                |
-             v                |                v
-   +-------------------+      |      +-------------------+
-   | Action Needed for |>-----+      |   Register New    |
-   |   Credentials ?   | No          |    Credentials    |
-   +-------------------+             +-------------------+
-             v Yes                      Yes v       v No
-             |                              |       |
-             |      +-------------------+   |       |
-             +----->|   Provisioning    |<--+       |
-                    |     Protocol      |           |
-                    +-------------------+           |
-                              |  No                 |
-                              v                     |
-                    +------------------+            |
-                    | End of Provision |            |
-                    +------------------+            |
-                              |                     |
-                              v                     |
-                    +------------------+            |
-                    | End of Phase Two |<-----------+
-                    +------------------+
+                      +-------------------+
+                      |  Start Phase Two  |
+                      +-------------------+
+                                 |
+                                 v
+                      +-------------------+
+   +----------------->|  New Credentials  |
+   |            +----<|    Available ?    |>-----+
+   |            | Yes +-------------------+ No   |
+   |            |               ^                |
+   |            v               |                v
+   |  +-------------------+     |      +-------------------+
+   |  | Action Needed for |>----+      |   Register New    |
+   |  |   Credentials ?   | No         |    Credentials    |
+   |  +-------------------+            +-------------------+
+   |            v Yes                     Yes v       v No
+   |            |                             |       |
+   |            |     +-------------------+   |       |
+   |            +---->|   Provisioning    |<--+       |
+   |                  |     Protocol      |           |
+   |                  +-------------------+           |
+   |                            |                     |
+   |                            v                     |
+   |              No  +------------------+            |
+   +-----------------<| End of Provision |            |
+                      +------------------+            |
+                            Yes |                     |
+                                v                     |
+                      +------------------+            |
+                      | End of Phase Two |<-----------+
+                      +------------------+
+
+
+                     EAP-CREDS Phase Two State Machine
 
    The Server can decide to repeat phase two as many times as needed:
    each time, the combination of the ('Credentials-Info') TLV (a.k.a.
@@ -827,38 +830,38 @@ Internet-Draft                  EAP-CREDS                      June 2019
    session (no actions to be taken) and successfully complete the EAP
    session.
 
+
+
+
+
+
+
+
+Pala                    Expires December 15, 2019              [Page 15]
+
+Internet-Draft                  EAP-CREDS                      June 2019
+
+
 3.4.  Phase Three: Validation
 
    The following figure provides the message flow for Phase 3:
 
 
+   ,--------.                                ,----------.
+   |EAP Peer|                                |EAP Server|
+   `---+----'                                `----+-----'
+      | [1] EAP-Request/EAP-CREDS(Type=Validate) |  ,-----------!.
+      |     { Cred-Info, Challenge }             |  |Phase Three|_\
+      | <-----------------------------------------  |Begins       |
+      |                                          |  `-------------'
+      | [2] EAP-Response/EAP-CREDS(Type=Validate)|  ,-----------!.
+      |     { Challenge-Response }               |  |Phase Three|_\
+      | ----------------------------------------->  |Ends         |
+      |                                          |  `-------------'
+      |                                          |
 
 
-
-
-
-Pala                    Expires December 12, 2019              [Page 15]
-
-Internet-Draft                  EAP-CREDS                      June 2019
-
-
-    ,--------.                                ,----------.
-    |EAP Peer|                                |EAP Server|
-    `---+----'                                `----+-----'
-        | [1] EAP-Request/EAP-CREDS(Type=Validate) |  ,-----------!.
-        |     { Cred-Info, Challenge }             |  |Phase Three|_\
-        | <-----------------------------------------  |Begins       |
-        |                                          |  `-------------'
-        | [2] EAP-Response/EAP-CREDS(Type=Validate)|
-        |     { Challenge-Response, [ Challenge ] }|
-        | ----------------------------------------->
-        |                                          |
-        | [3] EAP-Request/EAP-CREDS(Type=Validate) |  ,-----------!.
-        |     { [ Challenge-Response ] }           |  |Phase Three|_\
-        | <-----------------------------------------  |Ends         |
-        |                                          |  `-------------'
-        |                                          |
-
+                    EAP-CREDS Phase Three Message Flow
 
    Phase three is optional and it is used by the server to request the
    client to validate (proof) that the new credentials have been
@@ -876,27 +879,31 @@ Internet-Draft                  EAP-CREDS                      June 2019
       include the ('Credentials-Info') TLV to provide the indication
       about which set of credentials the Server intends to validate.
       The Server MUST also include a randomly generated challenge in the
-      message to the client.
+      message to the client.  The type of challenge determines how the
+      ('Challenge-Response') is calculated.  EAP-CREDS defines the
+      asymmetric and symmetric challenges in Section 8.6 and others can
+      be defined according to the specified rules.
 
-      As usual, the Server MUST also include the ('Phase-Control') TLV
-      in its first message of Phase Three.  In this case, the 'S' bit
-      shall be set to '1' and the value shall be set to '3' (beginning
-      of Phase Three).
+      As usual, the Server MUST set, in the headers, the 'S' bit to '1'
+      in its first message of Phase Three and the 'Phase' value shall be
+      set to '3' (beginning of Phase Three).
 
    [2] The Peer sends EAP-Response/EAP-CREDS(Type=Validate)
+
+
+
+
+Pala                    Expires December 15, 2019              [Page 16]
+
+Internet-Draft                  EAP-CREDS                      June 2019
+
 
       When the client receives the Validate message from the server, it
       calculates the response to the challenge and sends the response
       back to the server in a EAP-Response/EAP-CREDS(Type=Validate)
-      message.  The Peer MUST calculate the response as follows:
-
-
-
-
-Pala                    Expires December 12, 2019              [Page 16]
-
-Internet-Draft                  EAP-CREDS                      June 2019
-
+      message.  When the EAP-CREDS-ASYMMETRIC-CHALLENGE and EAP-CREDS-
+      SYMMETRIC-CHALLENGE values are used in the Challenge type, the
+      Peer MUST calculate the response as follows:
 
          Public-Key
 
@@ -931,83 +938,26 @@ Internet-Draft                  EAP-CREDS                      June 2019
             provided ('Challenge-Data') TLV, and (b) the secret value
             itself (salted hash).
 
-      Optionally, the client can add a separate ('Challenge-Data') TLV
-      in its reply to request that the network proves it can calculate
-      responses.  This extra challenge is only available for symmetric
-      secrets (it is not used to verify again the identity of the
-      server, but it is used for the server to prove it does have the
-      right symmetric data on its side too).  This 'extra' challenge
-      carries the Peer-generated challenge information that the Server
-      MUST use to calculate the corresponding ('Challenge-Response')
-      TLV.
+      The initial values for the type of challenges are described in the
+      Section 8.6.  Other types of challenges MAY be defined according
+      to the specified procedures.
 
-
-
-         NOTE WELL: The Server might not be able to respond to the extra
-         challenge from the client because it might not posses the
-         secret key (e.g., in case of public-key cryptography, the
-
-
-
-Pala                    Expires December 12, 2019              [Page 17]
-
-Internet-Draft                  EAP-CREDS                      June 2019
-
-
-         private key might not be shared with the Server, therefore it
-         cannot generate signatures that the client can verify).  In
-         that case, the Server will NOT add the ('Challenge-Response')
-         TLV to its reply, but it MUST add the appropriate ('Errror')
-         TLV.
-
-   [3] The Server sends EAP-Request/EAP-CREDS(Type=Validate)
-
-      When the server receives the EAP-Response/EAP-CREDS(Type=Validate)
-      with the Challenge TLV in it, it MUST calculate the response to
-      the challenge and send back the response to the client in an EAP-
-      Request/EAP-CREDS(Type=Validate) with the ('Challenge-Response')
-      TLV.
-
-      In case of issues with the validation of the newly deployed
+      In case of issues with the validation of newly deployed
       credentials, both the Server and the Peer should consider those
       credentials invalid (or unusable) and should issue the required
       failure message(s).
+
+
+
+Pala                    Expires December 15, 2019              [Page 17]
+
+Internet-Draft                  EAP-CREDS                      June 2019
+
 
 3.4.1.  Phase Three State Machine
 
    The Server's state machine for Phase Three is depicted in the
    following Figure:
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Pala                    Expires December 12, 2019              [Page 18]
-
-Internet-Draft                  EAP-CREDS                      June 2019
 
 
                                     +-------------------+
@@ -1028,7 +978,7 @@ Internet-Draft                  EAP-CREDS                      June 2019
    |           |             v Yes                             |   |
    |           |             |                                 |   |
    |           |             |      +---------------------+    |   |
-   |           |             +----->|     Send Validate   |    |   |
+   |           |             +----->|    Send Validate    |    |   |
    |           |                    |       Messsage      |    |   |
    |           |                    +---------------------+    |   |
    |           |                              |                |   |
@@ -1047,24 +997,28 @@ Internet-Draft                  EAP-CREDS                      June 2019
                                    |   End Phase Three   |<--------+
                                    +---------------------+
 
+
+                    EAP-CREDS Phase Three State Machine
+
+
+
+
+
+
+Pala                    Expires December 15, 2019              [Page 18]
+
+Internet-Draft                  EAP-CREDS                      June 2019
+
+
 4.  EAP-CREDS Message Format
 
    The EAP-CREDS defines the following message types:
 
    1.  EAP-CREDS/Init
 
-   2.  EAP-CREDS/ProtoFlow
+   2.  EAP-CREDS/Provisioning
 
    3.  EAP-CREDS/Validate
-
-
-
-
-
-Pala                    Expires December 12, 2019              [Page 19]
-
-Internet-Draft                  EAP-CREDS                      June 2019
-
 
    Each of these message types have the basic structure as identified in
    Section 4.1.  EAP-CREDS messages contain zero, one, or more TLVs.
@@ -1085,7 +1039,7 @@ Internet-Draft                  EAP-CREDS                      June 2019
     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
     |     Code      |  Identifier   |             Length            |
     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-    |     Type      |J|S|E|F| Phase |         Message Length        |
+    |     Type      |J|S|F|D| Phase |         Message Length        |
     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
     |         Message Length        |               Data           ...
     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-.
@@ -1102,8 +1056,16 @@ Internet-Draft                  EAP-CREDS                      June 2019
 
    The Flags bitfield is used to convey status information (e.g., extra
    long message, phase number, phase transitioning state).  The
-   transition-control bits (i.e., 'S' and 'E' bits) are set in Server's
+   transition-control bit (i.e., the 'S' bit) are set in Server's
    messages and are ignored in Peer's messages (the Server is the entity
+
+
+
+Pala                    Expires December 15, 2019              [Page 19]
+
+Internet-Draft                  EAP-CREDS                      June 2019
+
+
    that unilaterally controls the phase transition process).  The
    meanins of the bits in the 'Flags' field are as follows:
 
@@ -1113,25 +1075,12 @@ Internet-Draft                  EAP-CREDS                      June 2019
       field.  In this case, the 'Message Length' field is added to the
       message and set to the whole message size and the 'Length' field
       is used for the current fragment length.  If not set, the 'Message
-
-
-
-
-Pala                    Expires December 12, 2019              [Page 20]
-
-Internet-Draft                  EAP-CREDS                      June 2019
-
-
       Length' field is not present in the Message and the 'Length' field
       is used for the message size (and the 'F' bit MUST be set to '0').
 
       Bit 'S' (Start) - If set, this message is the first one of a new
       EAP-CREDS phase.  The value of the new phase is encoded in the
       'Phase' field.
-
-      Bit 'E' (End) - If set, this message is the last of an EAP-CREDS
-      phase.  The value of the new phase is encoded in the 'Phase'
-      field.
 
       Bit 'F' - If set, this message is a fragment of a message.  In
       this case, the 'Data' field is to be concatenated with all
@@ -1141,9 +1090,20 @@ Internet-Draft                  EAP-CREDS                      June 2019
       use of this bit is required when the tunneling method does not
       provide support for messages up to 2^32 bits in size.
 
-   The Phase field is a uint4 and identifies the EAP-CREDS phase for the
-   current message.  The version of EAP-CREDS described in this document
-   supports three values for this field:
+      Bit 'D' - This bit is used in Phase Two and Phase Three to
+      indicate that the specific operation for the identified credential
+      is over.  For example, when multiple credentials exist on the Peer
+      and the Server needs to manage and validate one of them.  In its
+      last message, when the provisioning protocol is done, the server
+      sets the 'D' (Done) bit to indicate that it is done.  The Peer, in
+      its reply, sets the bit to indicate the end of provisioning for
+      this credentials is also over.  After that, the Server can
+      continue Phase Two, transition to Phase Three, or terminate the
+      EAP session.
+
+   The Phase field is a 4-bits value and identifies the EAP-CREDS phase
+   for the current message.  The version of EAP-CREDS described in this
+   document supports three values for this field:
 
       0x01 - Phase One
 
@@ -1153,6 +1113,14 @@ Internet-Draft                  EAP-CREDS                      June 2019
 
    A detailed explanation of the 'Phase' and 'Flags' fields of the
    message headers is provided in Section 3.1.1.
+
+
+
+
+Pala                    Expires December 15, 2019              [Page 20]
+
+Internet-Draft                  EAP-CREDS                      June 2019
+
 
    The Data field is the message payload.  The full description of this
    field is provided in the next section.
@@ -1164,18 +1132,6 @@ Internet-Draft                  EAP-CREDS                      June 2019
 
    Each TLV object has the same basic structure that is defined as
    follows:
-
-
-
-
-
-
-
-
-
-Pala                    Expires December 12, 2019              [Page 21]
-
-Internet-Draft                  EAP-CREDS                      June 2019
 
 
      0                   1                   2                   3
@@ -1217,19 +1173,7 @@ Internet-Draft                  EAP-CREDS                      June 2019
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-Pala                    Expires December 12, 2019              [Page 22]
+Pala                    Expires December 15, 2019              [Page 21]
 
 Internet-Draft                  EAP-CREDS                      June 2019
 
@@ -1285,7 +1229,7 @@ Internet-Draft                  EAP-CREDS                      June 2019
 
 
 
-Pala                    Expires December 12, 2019              [Page 23]
+Pala                    Expires December 15, 2019              [Page 22]
 
 Internet-Draft                  EAP-CREDS                      June 2019
 
@@ -1341,7 +1285,7 @@ Internet-Draft                  EAP-CREDS                      June 2019
 
 
 
-Pala                    Expires December 12, 2019              [Page 24]
+Pala                    Expires December 15, 2019              [Page 23]
 
 Internet-Draft                  EAP-CREDS                      June 2019
 
@@ -1374,7 +1318,7 @@ Internet-Draft                  EAP-CREDS                      June 2019
    Encoding (uint8)
 
       Provides the indication of the Encoding the certificate is in.
-      The allowed values for this field are listed in Table 11.
+      The allowed values for this field are listed in Table 12.
 
    Value (octet string)
 
@@ -1388,7 +1332,7 @@ Internet-Draft                  EAP-CREDS                      June 2019
     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
     |   TLV Type    |                  TLV Length                   |
     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-    |                           Challenge Data                     ...
+    |   Ch. Type    |           Challenge Data                     ...
     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 
 
@@ -1397,7 +1341,7 @@ Internet-Draft                  EAP-CREDS                      June 2019
 
 
 
-Pala                    Expires December 12, 2019              [Page 25]
+Pala                    Expires December 15, 2019              [Page 24]
 
 Internet-Draft                  EAP-CREDS                      June 2019
 
@@ -1407,6 +1351,15 @@ Internet-Draft                  EAP-CREDS                      June 2019
    Length (uint24)
 
       3 octets
+
+   Challenge Type (uint8)
+
+      This field carries the type of Challenge.  In particular, the
+      challenge type determines how the Peer MUST calculate the
+      ('Challenge-Response').  The initial values for this fiel are
+      listed in Section 8.6.  Please refer to Section 3.4 for a detailed
+      explanation of how to calculate the response to the challenge for
+      the challenge types defined in this document.
 
    Challenge Data (> 1 octet)
 
@@ -1438,24 +1391,18 @@ Internet-Draft                  EAP-CREDS                      June 2019
       This field carries the data that resulted from the use of the
       credentials to be validated.
 
-4.2.1.5.  The Credentials-Information TLV
 
 
 
 
 
 
-
-
-
-
-
-
-
-
-Pala                    Expires December 12, 2019              [Page 26]
+Pala                    Expires December 15, 2019              [Page 25]
 
 Internet-Draft                  EAP-CREDS                      June 2019
+
+
+4.2.1.5.  The Credentials-Information TLV
 
 
      0                   1                   2                   3
@@ -1502,17 +1449,19 @@ Internet-Draft                  EAP-CREDS                      June 2019
 
       Provides a BITMASK that can be used to provide information about
       the status of the credentials (e.g., if the use marks the
+
+
+
+
+Pala                    Expires December 15, 2019              [Page 26]
+
+Internet-Draft                  EAP-CREDS                      June 2019
+
+
       credentials to be compromised).  The bits have the following
       meaning:
 
          Bit 0 - If set, the credential is marked as compromised
-
-
-
-Pala                    Expires December 12, 2019              [Page 27]
-
-Internet-Draft                  EAP-CREDS                      June 2019
-
 
          Bit 1 - If set, the credential is immutable and cannot be
          updated
@@ -1557,18 +1506,19 @@ Internet-Draft                  EAP-CREDS                      June 2019
 
          YYYYMMDDHHmmssZ
 
+
+
+
+Pala                    Expires December 15, 2019              [Page 27]
+
+Internet-Draft                  EAP-CREDS                      June 2019
+
+
       Where:
 
          YYYY - is the 4 digits representation of the year
 
          MM - is the 2 digits representation of the month
-
-
-
-Pala                    Expires December 12, 2019              [Page 28]
-
-Internet-Draft                  EAP-CREDS                      June 2019
-
 
          DD - is the 2 digits representation of the day of the month
 
@@ -1608,7 +1558,6 @@ Internet-Draft                  EAP-CREDS                      June 2019
       context) identify the credentials, the value of this field can be
       calculated in any way.
 
-4.2.1.6.  The Credentials-Data TLV
 
 
 
@@ -1616,14 +1565,12 @@ Internet-Draft                  EAP-CREDS                      June 2019
 
 
 
-
-
-
-
-
-Pala                    Expires December 12, 2019              [Page 29]
+Pala                    Expires December 15, 2019              [Page 28]
 
 Internet-Draft                  EAP-CREDS                      June 2019
+
+
+4.2.1.6.  The Credentials-Data TLV
 
 
      0                   1                   2                   3
@@ -1656,7 +1603,7 @@ Internet-Draft                  EAP-CREDS                      June 2019
    Encoding (uint8)
 
       Provides the indication of the Encoding the credentials are in.
-      The allowed values for this field are listed in Table 11.
+      The allowed values for this field are listed in Table 12.
 
    Value (octet string)
 
@@ -1674,10 +1621,7 @@ Internet-Draft                  EAP-CREDS                      June 2019
 
 
 
-
-
-
-Pala                    Expires December 12, 2019              [Page 30]
+Pala                    Expires December 15, 2019              [Page 29]
 
 Internet-Draft                  EAP-CREDS                      June 2019
 
@@ -1733,7 +1677,7 @@ Internet-Draft                  EAP-CREDS                      June 2019
 
 
 
-Pala                    Expires December 12, 2019              [Page 31]
+Pala                    Expires December 15, 2019              [Page 30]
 
 Internet-Draft                  EAP-CREDS                      June 2019
 
@@ -1758,13 +1702,13 @@ Internet-Draft                  EAP-CREDS                      June 2019
    Description Format (uint8)
 
       The Type of data encoded in the Peer Description Data.  The
-      initial values for this field are listed in Section 8.9.
+      initial values for this field are listed in Section 8.10.
 
    Encoding (uint8)
 
       Provides the indication of the Encoding the network usage
       description data is in.  The allowed values for this field are
-      listed in Table 11.
+      listed in Table 12.
 
    The 'U' field (1 bit)
 
@@ -1789,7 +1733,7 @@ Internet-Draft                  EAP-CREDS                      June 2019
 
 
 
-Pala                    Expires December 12, 2019              [Page 32]
+Pala                    Expires December 15, 2019              [Page 31]
 
 Internet-Draft                  EAP-CREDS                      June 2019
 
@@ -1801,7 +1745,7 @@ Internet-Draft                  EAP-CREDS                      June 2019
       register its credentials or not.
 
       The list of initial values for this field is provided in
-      Section 8.6.
+      Section 8.7.
 
    Network-Usage Data (octet string)
 
@@ -1845,7 +1789,7 @@ Internet-Draft                  EAP-CREDS                      June 2019
 
 
 
-Pala                    Expires December 12, 2019              [Page 33]
+Pala                    Expires December 15, 2019              [Page 32]
 
 Internet-Draft                  EAP-CREDS                      June 2019
 
@@ -1901,7 +1845,7 @@ Internet-Draft                  EAP-CREDS                      June 2019
 
 
 
-Pala                    Expires December 12, 2019              [Page 34]
+Pala                    Expires December 15, 2019              [Page 33]
 
 Internet-Draft                  EAP-CREDS                      June 2019
 
@@ -1957,7 +1901,7 @@ Internet-Draft                  EAP-CREDS                      June 2019
 
 
 
-Pala                    Expires December 12, 2019              [Page 35]
+Pala                    Expires December 15, 2019              [Page 34]
 
 Internet-Draft                  EAP-CREDS                      June 2019
 
@@ -2013,7 +1957,7 @@ Internet-Draft                  EAP-CREDS                      June 2019
 
 
 
-Pala                    Expires December 12, 2019              [Page 36]
+Pala                    Expires December 15, 2019              [Page 35]
 
 Internet-Draft                  EAP-CREDS                      June 2019
 
@@ -2069,7 +2013,7 @@ Internet-Draft                  EAP-CREDS                      June 2019
 
 
 
-Pala                    Expires December 12, 2019              [Page 37]
+Pala                    Expires December 15, 2019              [Page 36]
 
 Internet-Draft                  EAP-CREDS                      June 2019
 
@@ -2125,7 +2069,7 @@ Internet-Draft                  EAP-CREDS                      June 2019
 
 
 
-Pala                    Expires December 12, 2019              [Page 38]
+Pala                    Expires December 15, 2019              [Page 37]
 
 Internet-Draft                  EAP-CREDS                      June 2019
 
@@ -2141,7 +2085,7 @@ Internet-Draft                  EAP-CREDS                      June 2019
    Encoding (uint8)
 
       Provides the indication of the Encoding the credentials are in.
-      The allowed values for this field are listed in Table 11.
+      The allowed values for this field are listed in Table 12.
 
    Format (uint8)
 
@@ -2181,7 +2125,7 @@ Internet-Draft                  EAP-CREDS                      June 2019
 
 
 
-Pala                    Expires December 12, 2019              [Page 39]
+Pala                    Expires December 15, 2019              [Page 38]
 
 Internet-Draft                  EAP-CREDS                      June 2019
 
@@ -2237,7 +2181,7 @@ Internet-Draft                  EAP-CREDS                      June 2019
 
 
 
-Pala                    Expires December 12, 2019              [Page 40]
+Pala                    Expires December 15, 2019              [Page 39]
 
 Internet-Draft                  EAP-CREDS                      June 2019
 
@@ -2273,7 +2217,7 @@ Internet-Draft                  EAP-CREDS                      June 2019
       Provides the indication of the supported Encoding by the End
       Point.  This provides the indication to the Server of the
       capability of the Peer.  The allowed values for this field are
-      listed in Table 11.
+      listed in Table 12.
 
 4.2.1.18.  The Token-Data TLV
 
@@ -2293,7 +2237,7 @@ Internet-Draft                  EAP-CREDS                      June 2019
 
 
 
-Pala                    Expires December 12, 2019              [Page 41]
+Pala                    Expires December 15, 2019              [Page 40]
 
 Internet-Draft                  EAP-CREDS                      June 2019
 
@@ -2310,7 +2254,7 @@ Internet-Draft                  EAP-CREDS                      June 2019
    Encoding (uint8)
 
       Provides the indication of the Encoding the credentials are in.
-      The allowed values for this field are listed in Table 11.
+      The allowed values for this field are listed in Table 12.
 
    Value (octet string)
 
@@ -2349,7 +2293,7 @@ Internet-Draft                  EAP-CREDS                      June 2019
 
 
 
-Pala                    Expires December 12, 2019              [Page 42]
+Pala                    Expires December 15, 2019              [Page 41]
 
 Internet-Draft                  EAP-CREDS                      June 2019
 
@@ -2360,16 +2304,16 @@ Internet-Draft                  EAP-CREDS                      June 2019
    required.  EAP-CREDS defines the following values for the Message
    Type (Type):
 
-   +------------+---------------------+--------------------------------+
-   |  Message   | Name                | Description                    |
-   |    Type    |                     |                                |
-   +------------+---------------------+--------------------------------+
-   |     0      | EAP-CREDS-Init      | Initialization Phase           |
-   |     1      | EAP-CREDS-ProtoFlow | Carries Provisioning Protocol  |
-   |            |                     | Messages                       |
-   |     2      | EAP-CREDS-Validate  | Validates newly installed      |
-   |            |                     | credentials                    |
-   +------------+---------------------+--------------------------------+
+   +-----------+------------------------+------------------------------+
+   |  Message  | Name                   | Description                  |
+   |    Type   |                        |                              |
+   +-----------+------------------------+------------------------------+
+   |     0     | EAP-CREDS-Init         | Initialization Phase         |
+   |     1     | EAP-CREDS-Provisioning | Carries Provisioning         |
+   |           |                        | Protocol Messages            |
+   |     2     | EAP-CREDS-Validate     | Validates newly installed    |
+   |           |                        | credentials                  |
+   +-----------+------------------------+------------------------------+
 
                      Table 4: EAP-CREDS Message Types
 
@@ -2405,7 +2349,7 @@ Internet-Draft                  EAP-CREDS                      June 2019
 
 
 
-Pala                    Expires December 12, 2019              [Page 43]
+Pala                    Expires December 15, 2019              [Page 42]
 
 Internet-Draft                  EAP-CREDS                      June 2019
 
@@ -2461,7 +2405,7 @@ Internet-Draft                  EAP-CREDS                      June 2019
 
 
 
-Pala                    Expires December 12, 2019              [Page 44]
+Pala                    Expires December 15, 2019              [Page 43]
 
 Internet-Draft                  EAP-CREDS                      June 2019
 
@@ -2483,21 +2427,22 @@ Internet-Draft                  EAP-CREDS                      June 2019
    first (in the outer mechanism) and then verify that the target of the
    Token is the Server the Client is talking to.
 
-5.2.  The EAP-CREDS-ProtoFlow Message
+5.2.  The EAP-CREDS-Provisioning Message
 
-   The EAP-CREDS-ProtoFlow message type is used in Phase Two only of
+   The EAP-CREDS-Provisioning message type is used in Phase Two only of
    EAP-CREDS.  The message flow is depicted in Section 3.3.  This
    message type supports the following TLVs: Protocol, Profile,
    Credentials-Info, Provisioning-Headers, Provisioning-Data, Token-
    Data, and Error.
 
    After the exchange of phase one messages, the Server MAY start phase
-   two by issuing an ('EAP-CREDS-ProtoFlow') message for the Peer where
-   it encodes all the required details for starting the provisioning
-   process.  In particular, the server sends the selected ('Action'),
-   ('Protocol'), and metadata to the client in a EAP-Request/EAP-
-   CREDS(Type=ProtoFlow) message.  The header's 'S' bit MUST be set to
-   '1' (Start) and the 'Phase' value set to '2' (Phase Two begins).
+   two by issuing an ('EAP-CREDS-Provisioning') message for the Peer
+   where it encodes all the required details for starting the
+   provisioning process.  In particular, the server sends the selected
+   ('Action'), ('Protocol'), and metadata to the client in a EAP-
+   Request/EAP-CREDS(Type=Provisioning) message.  The header's 'S' bit
+   MUST be set to '1' (Start) and the 'Phase' value set to '2' (Phase
+   Two begins).
 
       NOTE WELL: After the initial message, the only TLVs that are
       allowed in messages coming from the server are the usual
@@ -2505,22 +2450,24 @@ Internet-Draft                  EAP-CREDS                      June 2019
 
    The client checks that all the selected parameters are supported for
    the selected credentials and, if no errors are detected, it sends its
-   first ('EAP-CREDS-ProtoFlow') message to the Server with the
+   first ('EAP-CREDS-Provisioning') message to the Server with the
    ('Provisioning-Headers') and ('Provisioning-Data') TLVs only.
 
    From now on, the conversation between the Peer and the Server
    continues until an error is detected or the provisioning protocol
    completes successfully.
 
-   If no other actions, the server MAY continue with phase three or
-   issue a success message and terminate the EAP session.
 
 
 
-Pala                    Expires December 12, 2019              [Page 45]
+
+Pala                    Expires December 15, 2019              [Page 44]
 
 Internet-Draft                  EAP-CREDS                      June 2019
 
+
+   If no other actions, the server MAY continue with phase three or
+   issue a success message and terminate the EAP session.
 
       NOTE WELL: When the SPP protocol is used, the protocol messages
       that are encoded inside the ('Protocol-Data') TLV are composed of
@@ -2567,17 +2514,17 @@ Internet-Draft                  EAP-CREDS                      June 2019
    ended) SHALL include the ('Phase-Control') TLV with the 'S' bit set
    to '0' (end of phase) and the value set to '3' (Phase Three ended).
 
-   At this point, EAP-CREDS has terminated all possible operations and
-   can be terminated.  The Server can now terminate the EAP session
-   successfully.  In case the Peer was not authenticated during the
 
 
 
-Pala                    Expires December 12, 2019              [Page 46]
+Pala                    Expires December 15, 2019              [Page 45]
 
 Internet-Draft                  EAP-CREDS                      June 2019
 
 
+   At this point, EAP-CREDS has terminated all possible operations and
+   can be terminated.  The Server can now terminate the EAP session
+   successfully.  In case the Peer was not authenticated during the
    tunnel establishment (i.e., no credentials were already available on
    the Peer), the Server should terminate the EAP session with a Failure
    (thus requiring the device to re-attach and authenticate to the
@@ -2623,16 +2570,17 @@ Internet-Draft                  EAP-CREDS                      June 2019
    verifiable proof-of-possession, the Peer can include a ('Challenge-
    Response') TLVs.
 
-   The ('Challenge-Data') TLV provided by the Server MUST be used to
-   convey the challenge data (usually some random value) to compute the
-   contents of the ('Challenge-Response') TLV.
 
 
 
-Pala                    Expires December 12, 2019              [Page 47]
+Pala                    Expires December 15, 2019              [Page 46]
 
 Internet-Draft                  EAP-CREDS                      June 2019
 
+
+   The ('Challenge-Data') TLV provided by the Server MUST be used to
+   convey the challenge data (usually some random value) to compute the
+   contents of the ('Challenge-Response') TLV.
 
    The ('Challenge-Response') TLV is used, instead, to encode the
    response to the challenge data.  The ('Challenge-Response') TLV is
@@ -2658,7 +2606,7 @@ Internet-Draft                  EAP-CREDS                      June 2019
 7.1.  SPP Message Format
 
    The SPP Messages are constructed with zero, one, or more TLVs and
-   encoded in the ('Provisioning-Data') TLV in EAP-CREDS/ProtoFlow
+   encoded in the ('Provisioning-Data') TLV in EAP-CREDS/Provisioning
    message types.  The size of the encpasulating ('Provisioning-Data')
    TLV provides the size of the whole message.
 
@@ -2681,11 +2629,7 @@ Internet-Draft                  EAP-CREDS                      June 2019
 
 
 
-
-
-
-
-Pala                    Expires December 12, 2019              [Page 48]
+Pala                    Expires December 15, 2019              [Page 47]
 
 Internet-Draft                  EAP-CREDS                      June 2019
 
@@ -2693,17 +2637,17 @@ Internet-Draft                  EAP-CREDS                      June 2019
     ,--------.                                 ,----------.
     |EAP Peer|                                 |EAP Server|
     `---+----'                                 `----+-----'
-        | [1] EAP-Request/EAP-CREDS(Type=ProtoFlow) |
+        | [1] EAP-Request/EAP-CREDS(Type=Provisioning) |
         |   { Protocol(=SPP), Action,               |
         |     [ CredsInfo ] [ Params ],             |
         |     [ ProvData(=CredsData) ] }            |
         | <------------------------------------------
         |                                           |
-        | [2] EAP-Response/EAP-CREDS(Type=ProtoFlow)|
+        | [2] EAP-Response/EAP-CREDS(Type=Provisioning)|
         |   { [ ProvData(=CredsData) ] }            |
         | ------------------------------------------>
         |                                           |
-        | [3] EAP-Response/EAP-CREDS(Type=ProtoFlow)|
+        | [3] EAP-Response/EAP-CREDS(Type=Provisioning)|
         |   { [ ProvData(=CredsData) ] }            |
         | <------------------------------------------
         |                                           |
@@ -2720,7 +2664,7 @@ Internet-Draft                  EAP-CREDS                      June 2019
    password, and token provisioning.
 
    EAP-CREDS defines several actions for a set of credentials and they
-   are listed in Section 8.8.
+   are listed in Section 8.9.
 
    When a Peer wants to join a network it may or may not have have the
    needed credentials to do so.  In case the Peer does not have valid
@@ -2729,7 +2673,7 @@ Internet-Draft                  EAP-CREDS                      June 2019
    start Phase Two when the presented credentials information from the
    Peer triggers the Renew or the Remove action.
 
-   [1] The Server sends EAP-Request/EAP-CREDS(Type=ProtoFlow)
+   [1] The Server sends EAP-Request/EAP-CREDS(Type=Provisioning)
 
       When registering new credentials, the first message from the
       Server, MUST not carry a ('Credentials-Info') TLV since there is
@@ -2741,7 +2685,7 @@ Internet-Draft                  EAP-CREDS                      June 2019
 
 
 
-Pala                    Expires December 12, 2019              [Page 49]
+Pala                    Expires December 15, 2019              [Page 48]
 
 Internet-Draft                  EAP-CREDS                      June 2019
 
@@ -2776,28 +2720,28 @@ Internet-Draft                  EAP-CREDS                      June 2019
       end Phase Two by setting the appropriate bits in the EAP-CREDS
       headers as well.
 
-   [2] The Peer sends EAP-Response/EAP-CREDS(Type=ProtoFlow)
+   [2] The Peer sends EAP-Response/EAP-CREDS(Type=Provisioning)
 
       When Peer-generation is selected (either Peer-only or combined
       Peer and Server side) and Phase Two has not terminated yet, the
-      Peer MUST reply to the Server's message with its own 'ProtoFlow'
-      response.  The response MUST carry either (a) its own generated
-      share of the key in a ('Credentials-Data') TLV (if the credentials
-      that are provisioned are symmetric and the configuration calls for
-      a share of the key to be provided by the Peer) or (b) a PKCS#10
-      request in a ('Certificate-Request') TLV (also in this case, only
-      if client-side generation was enabled by the Server) that is
-      generated by using the parameters provided by the Server in the
-      ('Provisioning-Params') TLV.
+      Peer MUST reply to the Server's message with its own
+      'Provisioning' response.  The response MUST carry either (a) its
+      own generated share of the key in a ('Credentials-Data') TLV (if
+      the credentials that are provisioned are symmetric and the
+      configuration calls for a share of the key to be provided by the
+      Peer) or (b) a PKCS#10 request in a ('Certificate-Request') TLV
+      (also in this case, only if client-side generation was enabled by
+      the Server) that is generated by using the parameters provided by
+      the Server in the ('Provisioning-Params') TLV.
 
-   [3] The Server sends EAP-Request/EAP-CREDS(Type=ProtoFlow)
+   [3] The Server sends EAP-Request/EAP-CREDS(Type=Provisioning)
 
       The last message of SPP is from the Server and it is used to
       deliver the finalized value of the credentials and/or associated
 
 
 
-Pala                    Expires December 12, 2019              [Page 50]
+Pala                    Expires December 15, 2019              [Page 49]
 
 Internet-Draft                  EAP-CREDS                      June 2019
 
@@ -2853,7 +2797,7 @@ Internet-Draft                  EAP-CREDS                      June 2019
 
 
 
-Pala                    Expires December 12, 2019              [Page 51]
+Pala                    Expires December 15, 2019              [Page 50]
 
 Internet-Draft                  EAP-CREDS                      June 2019
 
@@ -2861,17 +2805,17 @@ Internet-Draft                  EAP-CREDS                      June 2019
     ,--------.                                      ,----------.
     |EAP Peer|                                      |EAP Server|
     `---+----'                                      `----+-----'
-        | [1] EAP-Request/EAP-CREDS(Type=ProtoFlow)      |
+        | [1] EAP-Request/EAP-CREDS(Type=Provisioning)      |
         |   { Protocol(=SPP), Action, [ Creds-Info ],    |
         |     [ Prov-Params ], [ Profile ]               |
         |     [ Prov-Data(=[Creds-Info],[Creds-Data]) ] }|
         | <-----------------------------------------------
         |                                                |
-        |   [2] EAP-Response/EAP-CREDS(Type=ProtoFlow)   |
+        |   [2] EAP-Response/EAP-CREDS(Type=Provisioning)   |
         |     { [ Prov-Data(=[Creds-Data]) ] }           |
         | ----------------------------------------------->
         |                                                |
-        |  [3] EAP-Response/EAP-CREDS(Type=ProtoFlow)    |
+        |  [3] EAP-Response/EAP-CREDS(Type=Provisioning)    |
         |    { [ Prov-Data(=Creds-Info,[Creds-Data]) ] } |
         | <-----------------------------------------------
         |                                                |
@@ -2909,7 +2853,7 @@ Internet-Draft                  EAP-CREDS                      June 2019
 
 
 
-Pala                    Expires December 12, 2019              [Page 52]
+Pala                    Expires December 15, 2019              [Page 51]
 
 Internet-Draft                  EAP-CREDS                      June 2019
 
@@ -2918,8 +2862,8 @@ Internet-Draft                  EAP-CREDS                      June 2019
    during registration or renewal) consists of only one message from the
    server.  The flow is depicted in Figure 1.
 
-   In this case, the Server sends the first ProtoFlow message (which is
-   also the last one), which MUST carry, the following data:
+   In this case, the Server sends the first Provisioning message (which
+   is also the last one), which MUST carry, the following data:
 
    o  The ('Credentials-Info') TLV that specifies the info for the
       provisioned secret, and
@@ -2955,8 +2899,9 @@ Internet-Draft                  EAP-CREDS                      June 2019
    during registration or renewal) consists of the full three messages
    exchange.  The flow is depicted in Figure 2.
 
-   In this case, the Server MUST include, in its first ProtoFlow message
-   and encoded in the ('Provisioning-Data') TLV, the following data:
+   In this case, the Server MUST include, in its first Provisioning
+   message and encoded in the ('Provisioning-Data') TLV, the following
+   data:
 
    o  The ('Credentials-Info') TLV that specifies the target
       credentials, and
@@ -2964,8 +2909,7 @@ Internet-Draft                  EAP-CREDS                      June 2019
 
 
 
-
-Pala                    Expires December 12, 2019              [Page 53]
+Pala                    Expires December 15, 2019              [Page 52]
 
 Internet-Draft                  EAP-CREDS                      June 2019
 
@@ -2983,7 +2927,7 @@ Internet-Draft                  EAP-CREDS                      June 2019
    in its first message because the Server is not involved in the secret
    generation (client-side only).
 
-   The Peer MUST reply with its own ProtoFlow message where the Peer
+   The Peer MUST reply with its own Provisioning message where the Peer
    MUST encode the following data in the ('Provisioning-Data') TLV:
 
       The ('Credentials-Data') TLV that provides the secret that is
@@ -3021,7 +2965,7 @@ Internet-Draft                  EAP-CREDS                      June 2019
 
 
 
-Pala                    Expires December 12, 2019              [Page 54]
+Pala                    Expires December 15, 2019              [Page 53]
 
 Internet-Draft                  EAP-CREDS                      June 2019
 
@@ -3077,7 +3021,7 @@ Internet-Draft                  EAP-CREDS                      June 2019
 
 
 
-Pala                    Expires December 12, 2019              [Page 55]
+Pala                    Expires December 15, 2019              [Page 54]
 
 Internet-Draft                  EAP-CREDS                      June 2019
 
@@ -3133,7 +3077,7 @@ Internet-Draft                  EAP-CREDS                      June 2019
 
 
 
-Pala                    Expires December 12, 2019              [Page 56]
+Pala                    Expires December 15, 2019              [Page 55]
 
 Internet-Draft                  EAP-CREDS                      June 2019
 
@@ -3189,7 +3133,7 @@ Internet-Draft                  EAP-CREDS                      June 2019
 
 
 
-Pala                    Expires December 12, 2019              [Page 57]
+Pala                    Expires December 15, 2019              [Page 56]
 
 Internet-Draft                  EAP-CREDS                      June 2019
 
@@ -3245,7 +3189,7 @@ Internet-Draft                  EAP-CREDS                      June 2019
 
 
 
-Pala                    Expires December 12, 2019              [Page 58]
+Pala                    Expires December 15, 2019              [Page 57]
 
 Internet-Draft                  EAP-CREDS                      June 2019
 
@@ -3266,7 +3210,22 @@ Internet-Draft                  EAP-CREDS                      June 2019
    Assignment of new values for new Message Types MUST be done through
    IANA with "Expert Review" as defined in [RFC8126].
 
-8.6.  Network Usage Datatypes
+8.6.  Challenge Types
+
+                       +----+----------------------+
+                       | ID | Data Type            |
+                       +----+----------------------+
+                       | 0  | Not Specified        |
+                       | 1  | EAP-CREDS-ASYMMETRIC |
+                       | 2  | EAP-CREDS-SYMMETRIC  |
+                       +----+----------------------+
+
+                         Table 10: Challenge Type
+
+   Assignment of new values for new Message Types MUST be done through
+   IANA with "Expert Review" as defined in [RFC8126].
+
+8.7.  Network Usage Datatypes
 
            +--------+------------------------------------------+
            |   ID   | Data Type                                |
@@ -3278,33 +3237,20 @@ Internet-Draft                  EAP-CREDS                      June 2019
            | 4..127 | Reserved for Future Use                  |
            +--------+------------------------------------------+
 
-                     Table 10: Network Usage Datatypes
+                     Table 11: Network Usage Datatypes
 
    Assignment of new values for new Message Types MUST be done through
    IANA with "Expert Review" as defined in [RFC8126].
 
-8.7.  Credentials Encoding
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Pala                    Expires December 12, 2019              [Page 59]
+Pala                    Expires December 15, 2019              [Page 58]
 
 Internet-Draft                  EAP-CREDS                      June 2019
 
+
+8.8.  Credentials Encoding
 
                          +---------+------------+
                          |    ID   | Encoding   |
@@ -3320,12 +3266,12 @@ Internet-Draft                  EAP-CREDS                      June 2019
                          | 200-254 | Reserved   |
                          +---------+------------+
 
-                      Table 11: Credentials Encoding
+                      Table 12: Credentials Encoding
 
    Assignment of new values for new Message Types MUST be done through
    IANA with "Expert Review" as defined in [RFC8126].
 
-8.8.  Action Types
+8.9.  Action Types
 
         +---------+--------------+--------------------------------+
         |    ID   | Data Type    | Description                    |
@@ -3336,12 +3282,12 @@ Internet-Draft                  EAP-CREDS                      June 2019
         | 200-254 | n/a          | Reserved                       |
         +---------+--------------+--------------------------------+
 
-                          Table 12: Action Types
+                          Table 13: Action Types
 
    Assignment of new values for new Message Types MUST be done through
    IANA with "Expert Review" as defined in [RFC8126].
 
-8.9.  Usage Metadata Types
+8.10.  Usage Metadata Types
 
                       +------+----------------------+
                       | Type | Description          |
@@ -3351,13 +3297,11 @@ Internet-Draft                  EAP-CREDS                      June 2019
                       |  2   | TEEP Manifest        |
                       +------+----------------------+
 
-                      Table 13: Usage Metadata Types
+                      Table 14: Usage Metadata Types
 
 
 
-
-
-Pala                    Expires December 12, 2019              [Page 60]
+Pala                    Expires December 15, 2019              [Page 59]
 
 Internet-Draft                  EAP-CREDS                      June 2019
 
@@ -3413,7 +3357,7 @@ Internet-Draft                  EAP-CREDS                      June 2019
 
 
 
-Pala                    Expires December 12, 2019              [Page 61]
+Pala                    Expires December 15, 2019              [Page 60]
 
 Internet-Draft                  EAP-CREDS                      June 2019
 
@@ -3447,33 +3391,6 @@ Internet-Draft                  EAP-CREDS                      June 2019
               DOI 10.17487/RFC8520, March 2019, <https://www.rfc-
               editor.org/info/rfc8520>.
 
-Appendix A.  EAP-CREDS Example Message Flow for Provisioning Standards
-
-A.1.  EAP-CREDS and CMP
-
-   Describe how to use EAP-CREDS with CMP.
-
-A.2.  EAP-CREDS and EST
-
-   Describe how to use EAP-CREDS with EST.
-
-A.3.  EAP-CREDS and CMS
-
-   Describe how to use EAP-CREDS with CMS.
-
-A.4.  EAP-CREDS and ACME
-
-   Describe how to use EAP-CREDS with ACME.
-
-
-
-
-
-Pala                    Expires December 12, 2019              [Page 62]
-
-Internet-Draft                  EAP-CREDS                      June 2019
-
-
 Author's Address
 
    Massimiliano Pala
@@ -3496,33 +3413,4 @@ Author's Address
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Pala                    Expires December 12, 2019              [Page 63]
+Pala                    Expires December 15, 2019              [Page 61]
