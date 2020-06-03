@@ -1,0 +1,14 @@
+     ,--------.                                         ,----------.         
+     |EAP Peer|                                         |EAP Server|         
+     `---+----'                                         `----+-----'         
+         | [1] EAP-Request/EAP-CREDS(Type=ProtoFlow)         |               
+         |     { Protocol(=SPP), Action(=Renew),             |  ,---------!. 
+         |       [ CredInfo(=Cert)  ], [ ProvParam(=Cert) ], |  |Phase Two|_\
+         |       [ ProtoData(=Cert) ], [ CertData+(=Chain)] }|  |Begins     |
+         | <--------------------------------------------------  `-----------'
+         |                                                   |               
+         |     [2] EAP-Response/EAP-CREDS(Type=ProtoFlow)    |  ,---------!. 
+         |         { << Empty Body >> }                      |  |Phase Two|_\
+         | -------------------------------------------------->  |Ends       |
+         |                                                   |  `-----------'
+         |                                                   |               

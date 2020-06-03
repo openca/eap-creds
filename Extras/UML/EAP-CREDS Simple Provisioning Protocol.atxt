@@ -1,0 +1,27 @@
+                 ,--------.                                          ,----------.         
+                 |EAP Peer|                                          |EAP Server|         
+                 `---+----'                                          `----+-----'         
+                     |      [1] EAP-Request/EAP-CREDS(Type=ProtoFlow)     |               
+                     |          { Version[=0x1], Protocol[=SPP],          |  ,---------!. 
+                     |            Action[=Register], CredInfo[=Cert],     |  |Phase Two|_\
+                     |            CredsParams[=Cert] }                    |  |Begins     |
+                     | <---------------------------------------------------  `-----------'
+                     |                                                    |               
+  ,---------------!. |  [2] EAP-Response/EAP-CREDS(Type=ProtoFlow)        |               
+  |SPP_Req is a   |_\|      { ProtoData[=PKCS#10], ProtoHeaders[=NULL] }  |               
+  |PKCS#10 Request  || --------------------------------------------------->               
+  |DER formatted    ||                                                    |               
+  `-----------------'|                                                    |               
+                     | [3] EAP-Request/EAP-CREDS(Type=ProtoFlow)          |               
+                     |     { ProtoData[=X.509 Cert], ProtoHeaders[=NULL] }|               
+                     | <---------------------------------------------------               
+                     |                                                    |               
+                     .                                                    .               
+                     .                                                    .               
+                     .                                                    .               
+                     .                                                    .               
+                     |     [4] EAP-Response/EAP-CREDS(Type=ProtoFlow)     |  ,---------!. 
+                     |         { << Empty Body >> }                       |  |Phase Two|_\
+                     | --------------------------------------------------->  |Ends       |
+                     |                                                    |  `-----------'
+                     |                                                    |               

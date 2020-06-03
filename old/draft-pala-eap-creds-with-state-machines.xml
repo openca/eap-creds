@@ -24,723 +24,892 @@
 
 <rfc category="std" docName="draft-pala-eap-creds-05" ipr="trust200902">
     
-	<?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
+<?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
 
-	<?rfc toc="yes" ?>
-	<?rfc tocdepth="5"?>
-	<?rfc symrefs="yes" ?>
-	<?rfc sortrefs="yes"?>
-	<?rfc iprnotified="no" ?>
-	<?rfc strict="yes" ?>
-	<?rfc compact="yes" ?>
-	<?rfc subcompact="no" ?>
+<?rfc toc="yes" ?>
+<?rfc tocdepth="5"?>
+<?rfc symrefs="yes" ?>
+<?rfc sortrefs="yes"?>
+<?rfc iprnotified="no" ?>
+<?rfc strict="yes" ?>
+<?rfc compact="yes" ?>
+<?rfc subcompact="no" ?>
 
   <front>
-	  <title abbrev="EAP-CREDS">Credentials Provisioning and Management via EAP (EAP-CREDS)</title>
-	  <author initials="M.P." surname="Pala" fullname="Massimiliano Pala">
-	    <organization>CableLabs</organization>
-	    <address>
-	      <postal>
-	        <street>858 Coal Creek Cir</street>
-	        <city>Louisville</city>
-	        <region>CO</region>
-	        <code>80027</code>
-	        <country>US</country>
-	      </postal>
-	      <email>m.pala@openca.org</email>
-	      <uri>http://www.linkedin.com/in/mpala</uri>
-	    </address>
-	  </author>
-	 
-	  <date month="October" year="2019" />
-	  <area>Security</area>
-	  <workgroup></workgroup>
-	  <keyword>PKI</keyword>
-	  <keyword>EAP</keyword>
-	  <keyword>Provisioning</keyword>
-	  <abstract>
-	    <t>
-	      With the increase number of devices, protocols, and applications that rely on strong credentials
-	      (e.g., digital certificates, keys, or tokens) for network access, the need for
-	      a standardized credentials provisioning and management framework is paramount.
+  <title abbrev="EAP-CREDS">Credentials Provisioning and Management via EAP (EAP-CREDS)</title>
+  <author initials="M.P." surname="Pala" fullname="Massimiliano Pala">
+    <organization>CableLabs</organization>
+    <address>
+      <postal>
+        <street>858 Coal Creek Cir</street>
+        <city>Louisville</city>
+        <region>CO</region>
+        <code>80027</code>
+        <country>US</country>
+      </postal>
+      <email>m.pala@openca.org</email>
+      <uri>http://www.linkedin.com/in/mpala</uri>
+    </address>
+  </author>
+ 
+  <date month="August" year="2019" />
+  <area>Security</area>
+  <workgroup></workgroup>
+  <keyword>PKI</keyword>
+  <keyword>EAP</keyword>
+  <keyword>Provisioning</keyword>
+  <abstract>
+    <t>
+        With the increase number of devices, protocols, and applications that rely on strong credentials
+        (e.g., digital certificates, keys, or tokens) for network access, the need for
+        a standardized credentials provisioning and management framework is paramount.
 
-	      The 802.1x architecture allows for entities (e.g., devices, applications, etc.) to authenticate to
-	      the network by providing a communication channel where different methods can be used to
-	      exchange different types of credentials.
+        The 802.1x architecture allows for entities (e.g., devices, applications, etc.) to authenticate to
+        the network by providing a communication channel where different methods can be used to
+        exchange different types of credentials.
 
-	      However, the need for managing these credentials (i.e., provisioning and renewal) is still a
-	      hard problem to solve.
+        However, the need for managing these credentials (i.e., provisioning and renewal) is still a
+        hard problem to solve.
 
-				<vspace blankLines="1" />
+	<vspace blankLines="1" />
 
-				EAP-CREDS, if implemented in Managed Networks (e.g., Cable Modems), could
-	      enable our operators to offer a registration and credentials management service
-	      integrated in the home WiFi thus enabling visibility about registered devices.
-	      During initialization, EAP-CREDS also allows for MUD files or URLs to
-	      be transferred between the EAP Peer and the EAP Server, thus giving
-	      detailed visibility about devices when they are provisioned with credentials
-				for accessing the networks. The possibility provided by EAP-CREDS can help to
-				secure home or business networks by leveraging the synergies of the security
-				teams from the network operators thanks to the extended knowledge of what
-				and how is registered/authenticated.
+	EAP-CREDS, if implemented in Managed Networks (e.g., Cable Modems), could
+        enable our operators to offer a registration and credentials management service
+        integrated in the home WiFi thus enabling visibility about registered devices.
+        During initialization, EAP-CREDS also allows for MUD files or URLs to
+        be transferred between the EAP Peer and the EAP Server, thus giving
+        detailed visibility about devices when they are provisioned with credentials
+	for accessing the networks. The possibility provided by EAP-CREDS can help to
+	secure home or business networks by leveraging the synergies of the security
+	teams from the network operators thanks to the extended knowledge of what
+	and how is registered/authenticated.
 
-	      <vspace blankLines="1" />
+        <vspace blankLines="1" />
 
-	      This specifications define how to support the provisioning and management of authentication
-	      credentials that can be exploited in different environments (e.g., Wired, WiFi, cellular, etc.)
-	      to users and/or devices by using EAP together with standard provisioning protocols.
-    	</t>
-  	</abstract>
-	</front>
+        This specifications define how to support the provisioning and management of authentication
+        credentials that can be exploited in different environments (e.g., Wired, WiFi, cellular, etc.)
+        to users and/or devices by using EAP together with standard provisioning protocols.
+   </t>
+  </abstract>
+</front>
 
-	<middle>
+<middle>
 
-	  <section title="Requirements notation">
-		  <t>
-	      The key words "MUST", "MUST NOT", "REQUIRED", "SHALL",
-	      "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY",
-	      and "OPTIONAL" in this document are to be interpreted as
-	      described in <xref target="RFC2119"/>.
-		  </t>
-	  </section>
+    <section title="Requirements notation">
+        <t>
+            The key words "MUST", "MUST NOT", "REQUIRED", "SHALL",
+            "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY",
+            and "OPTIONAL" in this document are to be interpreted as
+            described in <xref target="RFC2119"/>.
+        </t>
+    </section>
 
-	  <section anchor="intro" title="Introduction"> 
-	    <t>
-	      Many environments are, today, moving towards requiring strong authentication when
-	      it comes to gain access to networks. The 802.1x architecture provides network
-	      administrators with the possibility to check credentials presented by a device
-	      even before providing any connectivity or IP services to it.
+    <section anchor="intro" title="Introduction"> 
+      <t>
+        Many environments are, today, moving towards requiring strong authentication when
+        it comes to gain access to networks. The 802.1x architecture provides network
+        administrators with the possibility to check credentials presented by a device
+        even before providing any connectivity or IP services to it.
 
-	      <vspace blankLines="1" />
+        <vspace blankLines="1" />
 
-	      However, the provisioning and management of these credentials is a hard problem
-	      to solve and many vendors opt for long-lived credentials that can not be easily
-	      revoked, replaced, or simply renewed.
+        However, the provisioning and management of these credentials is a hard problem
+        to solve and many vendors opt for long-lived credentials that can not be easily
+        revoked, replaced, or simply renewed.
 
-	      <vspace blankLines="1" />
+        <vspace blankLines="1" />
 
-	      This specification addresses the problem of providing a simple-to-use and
-	      simple-to-deploy conduit for credentials management by extending the EAP
-	      protocol to support credentials provisioning and management functionality.
+        This specification addresses the problem of providing a simple-to-use and
+        simple-to-deploy conduit for credentials management by extending the EAP
+        protocol to support credentials provisioning and management functionality.
 
-	      In particular, the EAP-CREDS method defined here provides a generic framework
-	      that can carry the messages for provisioning different types of credentials.
-	      EAP-CREDS cannot be used as a stand-alone method, it is required that EAP-CREDS is used
-	      as an inner method of EAP-TLS, EAP-TEAP, or any other tunnelling method that can provide
-	      the required secrecy and (at minimum) server-side authentication to make sure
-	      that the communication is protected and with the right server.
-	    </t>
+        In particular, the EAP-CREDS method defined here provides a generic framework
+        that can carry the messages for provisioning different types of credentials.
+        EAP-CREDS cannot be used as a stand-alone method, it is required that EAP-CREDS is used
+        as an inner method of EAP-TLS, EAP-TEAP, or any other tunnelling method that can provide
+        the required secrecy and (at minimum) server-side authentication to make sure
+        that the communication is protected and with the right server.
+      </t>
 
-	    <section anchor="existing_solutions" title="Overview of existing solutions">
-	      <t>
-	        Currently there are many protocols that address credentials lifecycle management. In particular,
-	        when it comes to digital certificates, some of the most deployed management protocols are: 
-	        Certificate Management Protocol (CMP) <xref target="RFC4210" />, Certificate Management over CMS (CMC)
-	        <xref target="RFC5272"/><xref target="RFC6402"/>, Enrollment over Secure Transport (EST)
-	        <xref target="RFC7030"/>, and Automated Certificate Management Environment (ACME) <!-- <xref target="I-D.ietf-acme-acme"/> -->.
+      <section anchor="existing_solutions" title="Overview of existing solutions">
+        <t>
+          Currently there are many protocols that address credentials lifecycle management. In particular,
+          when it comes to digital certificates, some of the most deployed management protocols are: 
+          Certificate Management Protocol (CMP) <xref target="RFC4210" />, Certificate Management over CMS (CMC)
+          <xref target="RFC5272"/><xref target="RFC6402"/>, Enrollment over Secure Transport (EST)
+          <xref target="RFC7030"/>, and Automated Certificate Management Environment (ACME) <!-- <xref target="I-D.ietf-acme-acme"/> -->.
 
-	        However, none of these protocols provide native support for client that do not have IP connectivity
-	        yet (e.g., because they do not have network-access credentials, yet). EAP-CREDS
-	        provides the possibility to use such protocols (i.e., message-based) by defining a series of
-	        messages that can be used to encapsulate the provisioning messages for the selected
-	        provisioning protocol.
+          However, none of these protocols provide native support for client that do not have IP connectivity
+          yet (e.g., because they do not have network-access credentials, yet). EAP-CREDS
+          provides the possibility to use such protocols (i.e., message-based) by defining a series of
+          messages that can be used to encapsulate the provisioning messages for the selected
+          provisioning protocol.
 
-	        <vspace blankLines="1" />
+          <vspace blankLines="1" />
 
-	        In addition to these protocols, EAP-CREDS also defines a series of simple
-	        messages that provide a generic enrollment protocol that allows not only
-	        certificates but also other types of credentials (e.g., username/password pairs,
-	        tokens, or symmetric secrets) to be delivered to the client as part of the provisioning
-	        and/or renewal process. The set of messages that make up the generic
-	        provisioning protocol is referred to as the Simple Provisioning Protocol protocol or
-	        SPP.
-	      </t>
-	    </section>
+          In addition to these protocols, EAP-CREDS also defines a series of simple
+          messages that provide a generic enrollment protocol that allows not only
+          certificates but also other types of credentials (e.g., username/password pairs,
+          tokens, or symmetric secrets) to be delivered to the client as part of the provisioning
+          and/or renewal process. The set of messages that make up the generic
+          provisioning protocol is referred to as the Simple Provisioning Protocol protocol or
+          SPP.
+        </t>
+      </section>
 
-	    <section anchor="scope" title="Scope Statement">
-	      <t>
-	        This document focuses on the definition of the EAP-CREDS method to convey
-	        credentials provisioning and managing messages between the client and the
-	        AAA server. Moreover, the document defines how to encode messages for the
-	        main IETF provisioning protocols.
+      <section anchor="scope" title="Scope Statement">
+        <t>
+          This document focuses on the definition of the EAP-CREDS method to convey
+          credentials provisioning and managing messages between the client and the
+          AAA server. Moreover, the document defines how to encode messages for the
+          main IETF provisioning protocols.
 
-	        <vspace blankLines="1" />
+          <vspace blankLines="1" />
 
-	        This document, however, does not provide specifications for how and where
-	        the credentials are generated. In particular, the credentials could be
-	        generated directly within the AAA server or at a different location (i.e., the
-	        Certificate Service Provider or CSP) site. Different authentication
-	        mechanisms (e.g., TLS, etc.) can be used to secure the communication
-	        between the server's endpoint and the CSP.
-	      </t>
-	    </section>
+          This document, however, does not provide specifications for how and where
+          the credentials are generated. In particular, the credentials could be
+          generated directly within the AAA server or at a different location (i.e., the
+          Certificate Service Provider or CSP) site. Different authentication
+          mechanisms (e.g., TLS, etc.) can be used to secure the communication
+          between the server's endpoint and the CSP.
+        </t>
+      </section>
 
-	    <section anchor="tunnel" title="EAP-CREDS as tunneled mechanism only">
-	      <t>
-	        EAP-CREDS requires that an outer mechanism is in place between the Peer and
-	        the Server in order to provide authentication and confidentiality of the
-	        messages exchanged via EAP-CREDS. In other words, EAP-CREDS assumes that an
-	        appropriatly encrypted and authenticated channel has been established to
-	        prevent the possibility to leak information or to allow man-in-the-middle attacks.
-	      </t>
-	      <t>
-	        This choice was taken to simplify the message flow between Peer and Server, and
-	        to abstract EAP-CREDS from the secure-channel establishment mechanism. EAP-TLS,
-	        or EAP-TEAP are examples of such mechanisms.s
-	      </t>
-	    </section>
+      <section anchor="tunnel" title="EAP-CREDS as tunneled mechanism only">
+        <t>
+          EAP-CREDS requires that an outer mechanism is in place between the Peer and
+          the Server in order to provide authentication and confidentiality of the
+          messages exchanged via EAP-CREDS. In other words, EAP-CREDS assumes that an
+          appropriatly encrypted and authenticated channel has been established to
+          prevent the possibility to leak information or to allow man-in-the-middle attacks.
+        </t>
+        <t>
+          This choice was taken to simplify the message flow between Peer and Server, and
+          to abstract EAP-CREDS from the secure-channel establishment mechanism. EAP-TLS,
+          or EAP-TEAP are examples of such mechanisms.s
+        </t>
+      </section>
 
-	    <section anchor="frag" title="Fragmentation Support">
-	      <t>
-	        EAP does not directly support handling fragmented packets and it requires
-	        the outer method to provide fragmentation support.
-	      </t>
-	      <t>
-	        Because of the outer method requirements in particular, removing any
-	        support for fragmented messages in EAP-CREDS removes the duplication
-	        of packets (e.g., Acknowledgment Packets) sent across the Peer and
-	        the Server, thus resulting in a smaller number of exchanged messages
-	      </t>
-	    </section>
+      <section anchor="frag" title="Fragmentation Support">
+        <t>
+          EAP does not directly support handling fragmented packets and it requires
+          the outer method to provide fragmentation support.
+        </t>
+        <t>
+          Because of the outer method requirements in particular, removing any
+          support for fragmented messages in EAP-CREDS removes the duplication
+          of packets (e.g., Acknowledgment Packets) sent across the Peer and
+          the Server, thus resulting in a smaller number of exchanged messages
+        </t>
+      </section>
 
-	    <section anchor="teap_creds" title="Encapsulating Provisioning Protocols in EAP-CREDS">
-	      <t>
-	        In order to use EAP-CREDS together with your favorite provisioning protocol, the messages
-	        from the provisioning protcol need to be sent to the other party. In EAP-CREDS, this is
-	        done by encoding the provisioning protocol messages inside the ('Provisioning-Data') TLV.
-	        In case the provisioning protocol uses additional data for its operations (e.g., uses
-	        HTTP Headers), this data can be encoded in a separate ('Provisioning-Headers') TLV.
-	      </t>
-	      <t>
-	        Since the implementation of the provisioning endpoint could happen in a (logically or
-	        physically) different component, a method is needed to identify when a provisioning
-	        protocol has actually ended. In EAP-CREDS, the 'D' bit in the message headers
-	        is used for this purpose.
-	      </t>
-	      <t>
-	        In the first message of Phase Two, the Server provides the client with all the selected
-	        parameters for one specific credential that needs attention (or for a new credential)
-	        to be managed by the network. In particular, the server provides, at minimum, the
-	        ('Protocol') TLV, the ('Action') TLV, and the ('Provisioning-Params') or the 
-	        ('Credentials-Info') TLV.
-	      </t>
-	      <t>
-	        After checking the parameters sent by the Server, if the Peer does not support any of
-	        the proposed ones, it MUST send a message with one single ('Error') TLV with the appropriate error
-	        code(s). The server, can then decide if to manage a different set of credentials (if
-	        more where reported by the Peer in its Phase One message) or if to terminate the EAP
-	        session with an error.
-	      </t>
-	      <t>
-	        The Peer and the Server exchange Provisioning messages until an error is detected (and the
-	        appropriate error message is sent to the other party) or until Phase Two is successfully
-	        completed.
-	      </t>
-	    </section>
+      <section anchor="teap_creds" title="Encapsulating Provisioning Protocols in EAP-CREDS">
+        <t>
+          In order to use EAP-CREDS together with your favorite provisioning protocol, the messages
+          from the provisioning protcol need to be sent to the other party. In EAP-CREDS, this is
+          done by encoding the provisioning protocol messages inside the ('Provisioning-Data') TLV.
+          In case the provisioning protocol uses additional data for its operations (e.g., uses
+          HTTP Headers), this data can be encoded in a separate ('Provisioning-Headers') TLV.
+        </t>
+        <t>
+          Since the implementation of the provisioning endpoint could happen in a (logically or
+          physically) different component, a method is needed to identify when a provisioning
+          protocol has actually ended. In EAP-CREDS, the 'D' bit in the message headers
+          is used for this purpose.
+        </t>
+        <t>
+          In the first message of Phase Two, the Server provides the client with all the selected
+          parameters for one specific credential that needs attention (or for a new credential)
+          to be managed by the network. In particular, the server provides, at minimum, the
+          ('Protocol') TLV, the ('Action') TLV, and the ('Provisioning-Params') or the 
+          ('Credentials-Info') TLV.
+        </t>
+        <t>
+          After checking the parameters sent by the Server, if the Peer does not support any of
+          the proposed ones, it MUST send a message with one single ('Error') TLV with the appropriate error
+          code(s). The server, can then decide if to manage a different set of credentials (if
+          more where reported by the Peer in its Phase One message) or if to terminate the EAP
+          session with an error.
+        </t>
+        <t>
+          The Peer and the Server exchange Provisioning messages until an error is detected (and the
+          appropriate error message is sent to the other party) or until Phase Two is successfully
+          completed.
+        </t>
+      </section>
 
-	    <section anchor="eap_creds_hashing" title="Algorithm Requirements">
-	      <t>
-	          EAP-CREDS uses the SHA-256 hashing algorithm to verify credentials in phase three
-	          of the protocol. Peers and Servers MUST support SHA-256 for this purpose.
-	      </t>
-	    </section>
+      <section anchor="eap_creds_hashing" title="Algorithm Requirements">
+        <t>
+            EAP-CREDS uses the SHA-256 hashing algorithm to verify credentials in phase three
+            of the protocol. Peers and Servers MUST support SHA-256 for this purpose.
+        </t>
+      </section>
 
-	    <section anchor="notation" title="Notation" >
-	      <t>
-	          In this document we use the following notation in the diagrams to
-	          provide information about the cardinality of the data structures (TLVs)
-	          within EAP-CREDS messages:
-	      </t>
+      <section anchor="notation" title="Notation" >
+        <t>
+            In this document we use the following notation in the diagrams to
+            provide information about the cardinality of the data structures (TLVs)
+            within EAP-CREDS messages:
+        </t>
 
-	      <texttable anchor="eap_creds_notation" title="EAP-CREDS Notation">
-	        <ttcol align="center">Symbol</ttcol>
-	        <ttcol align="center">Example</ttcol>
-	        <ttcol align="left">Usage</ttcol>
+        <texttable anchor="eap_creds_notation" title="EAP-CREDS Notation">
+          <ttcol align="center">Symbol</ttcol>
+          <ttcol align="center">Example</ttcol>
+          <ttcol align="left">Usage</ttcol>
 
-	        <c>{ }</c>
-	        <c>{TLV1}</c>
-	        <c>Curly Brackets are used to indicate a set</c>
+          <c>{ }</c>
+          <c>{TLV1}</c>
+          <c>Curly Brackets are used to indicate a set</c>
 
-	        <c>[ ]</c>
-	        <c>{[TLV2]}</c>
-	        <c>Square Brackets are used to indicate that a field is optional</c>
+          <c>[ ]</c>
+          <c>{[TLV2]}</c>
+          <c>Square Brackets are used to indicate that a field is optional</c>
 
-	        <c>( )</c>
-	        <c>{TLV1(=V)}</c>
-	        <c>Round Squares are used to specify a value</c>
+          <c>( )</c>
+          <c>{TLV1(=V)}</c>
+          <c>Round Squares are used to specify a value</c>
 
-	        <c> + </c>
-	        <c>{TLV_2+}</c>
-	        <c>The Plus character indicates that one or more instances are allowed</c>
-	      </texttable>
-	    </section>
+          <c> + </c>
+          <c>{TLV_2+}</c>
+          <c>The Plus character indicates that one or more instances are allowed</c>
+        </texttable>
+      </section>
 
-  	</section> 
+    </section> <!-- End of Introduction -->
 
-  	<!--                     -->
-  	<!-- End of Introduction -->
-  	<!--                     -->
+    <section title="EAP-CREDS Protocol">
+      <t>
+        In a nutshell, EAP-CREDS provides the abstraction layer on top of which credentials
+        provisioning/managing protocols can be deployed thus enabling their use even before
+        provisioning IP services.
+      </t>
+        <t>
+            This section outlines the operation of the protocol and message flows.
+            The format of the CREDS messages is given in <xref target="creds_msg" />.
+        </t>
 
-	  <section title="EAP-CREDS Protocol">
-	    <t>
-	      In a nutshell, EAP-CREDS provides the abstraction layer on top of which credentials
-	      provisioning/managing protocols can be deployed thus enabling their use even before
-	      provisioning IP services.
-	    </t>
-	    <t>
-	        This section outlines the operation of the protocol and message flows.
-	        The format of the CREDS messages is given in <xref target="creds_msg" />.
-	    </t>
+        <section title="Message Flow">
+          <t>
+              EAP-CREDS message flow is logically subdivided into three different
+              phases: Initialization, Provisioning, and Validation. EAP-CREDS
+              enforces the order of phases, i.e. it is not possible to move to an
+              earlier phase.
+            </t>
+            <t>
+              Phase transitioning is controlled by the Server. In particular, the
+              server, after the last message of a phase, it can decide to either
+              (a) start the next phase by sending the first message of the next
+              phase, or (b) continue the same phase by sending another "first"
+              message of the phase (e.g., managing a second set of credentials) - 
+              this is allowed only in Phase Two and Phase Three but NOT in Phase One,
+              or (c) terminate the EAP session.
+            </t>
+            <t>
+              <list style="hanging">
+                <t hangText="Phase One (Required).">
+                  Initialization. During this phase the Peer and the Server
+                  exchange the information needed to select the appropriate
+                  credentials management protocol.
 
-	    <section title="Message Flow">
-	      <t>
-	          EAP-CREDS message flow is logically subdivided into three different
-	          phases: Initialization, Provisioning, and Validation. EAP-CREDS
-	          enforces the order of phases, i.e. it is not possible to move to an
-	          earlier phase.
-	      </t>
-	      <t>
-	          Phase transitioning is controlled by the Server. In particular, the
-	          server, after the last message of a phase, it can decide to either
-	          (a) start the next phase by sending the first message of the next
-	          phase, or (b) continue the same phase by sending another "first"
-	          message of the phase (e.g., managing a second set of credentials) - 
-	          this is allowed only in Phase Two and Phase Three but NOT in Phase One,
-	          or (c) terminate the EAP session.
-	      </t>
-	      <t>
-	        <list style="hanging">
-	          <t hangText="Phase One (Required).">
-	              Initialization. During this phase the Peer and the Server
-	              exchange the information needed to select the appropriate
-	              credentials management protocol.
+                  Phase One flow is composed by only messages.
 
-	              Phase One flow is composed by only messages.
+                  In particular, the Sever sends
+                  its initial message of type ('EAP-CREDS-Init'). The Peer replies with
+                  the details about which provisioning protocols are supported, and additional
+                  information such as the list of installed credentials and, optionally,
+                  authorization data (for new credentials registration).
+                </t>
+                <t hangText="Phase Two (Optional).">
+                  Provisioning Protocol Flow. In this phase, the Peer and the Server
+                  exchange the provisioning protocol's messages encapsulated in a
+                  EAP-CREDS message of type Provisioning. The messages use two main TLVs.
+                  The first one is the ('Provisioning-Headers') TLV which is optional
+                  and carries information that might be normally coveyed via the transport
+                  protocol (e.g., HTTP headers). The second one is the ('Provisioning-Data'),
+                  which is required and carries the provisioning protocol's
+                  messages. The server can decide to repeat
+                  phase two again to register new credentials or to renew a separate
+                  set of credentials by issuing a new ('Provisioning') message for the
+                  new target. When no more credentials have to be managed,
+                  the Server can start phase three or simply terminate the EAP session.
+                </t>
+                <t hangText="Phase Three (Optional).">
+                  Credentials Validation. This optional phase can be initiated by
+                  the server and it is used to validate that the Peer has properly
+                  installed the credentials and can use them to authenticate
+                  itself. Depending on the credentials' type, the messages can
+                  carry a challenge/nonce, the value of the secret/token, or other
+                  information. The format of the credentials is supposed to be
+                  known by the provider and the device.
+                </t>
+              </list>
+          </t>
 
-	              In particular, the Sever sends
-	              its initial message of type ('EAP-CREDS-Init'). The Peer replies with
-	              the details about which provisioning protocols are supported, and additional
-	              information such as the list of installed credentials and, optionally,
-	              authorization data (for new credentials registration).
-	          </t>
-	          <t hangText="Phase Two (Optional).">
-	              Provisioning Protocol Flow. In this phase, the Peer and the Server
-	              exchange the provisioning protocol's messages encapsulated in a
-	              EAP-CREDS message of type Provisioning. The messages use two main TLVs.
-	              The first one is the ('Provisioning-Headers') TLV which is optional
-	              and carries information that might be normally coveyed via the transport
-	              protocol (e.g., HTTP headers). The second one is the ('Provisioning-Data'),
-	              which is required and carries the provisioning protocol's
-	              messages. The server can decide to repeat
-	              phase two again to register new credentials or to renew a separate
-	              set of credentials by issuing a new ('Provisioning') message for the
-	              new target. When no more credentials have to be managed,
-	              the Server can start phase three or simply terminate the EAP session.
-	          </t>
-	          <t hangText="Phase Three (Optional).">
-	              Credentials Validation. This optional phase can be initiated by
-	              the server and it is used to validate that the Peer has properly
-	              installed the credentials and can use them to authenticate
-	              itself. Depending on the credentials' type, the messages can
-	              carry a challenge/nonce, the value of the secret/token, or other
-	              information. The format of the credentials is supposed to be
-	              known by the provider and the device.
-	          </t>
-	        </list>
-	      </t>
-	    </section>
+          <section anchor="phase_transitioning" title="Phase Transitioning Rules">
+            <t>
+              In order to keep track of starting and ending a phase, EAP-CREDS defines
+              several bits and fields in the EAP-CREDS message headers. In particular,
+              as described in <xref target="creds_header" />, the 'S' bit is
+              used to indicate the beginning (or Start) of a phase, while the 'Phase'
+              field (4 bits) is used to indicate the phase for this message. 
+            </t>
+            <t>
+              In EAP-CREDS, phase transitioning is under the sole control of the Server,
+              therefore the value of the 'S' bit is meaningful only in messages sent by the Server.
+              The value of the 'S' bit in Peer's messages SHALL be set to '0x0' and SHALL be
+              ignored by the server.
+            </t>
+            <t>
+              When starting a new phase, the Server MUST set the 'S' bit
+              to '1' and the 'Phase' field to the current phase number (e.g., one, two, or three).
+            </t>
+            <t>
+              In case the first message of a phase is to be repeated (e.g., because of
+              processing multiple credentials), the
+              'S' bit SHALL be set to '0' (i.e., it should be set to '1' only on the first
+              occurrency and set to '0'
+              in subsequent messages).
+            </t>
+            <!--
+            <t>
+              <list>
+                <t>
+                  NOTE WELL: Once EAP-CREDS transitions from one phase to the next, the
+                  state machine MUST prohibit going back to a previous phase.
+                </t>
+              </list>
+            </t>
+            -->
+          </section>
 
-	    <section anchor="phase_transitioning" title="Phase Transitioning Rules">
-	      <t>
-	        In order to keep track of starting and ending a phase, EAP-CREDS defines
-	        several bits and fields in the EAP-CREDS message headers. In particular,
-	        as described in <xref target="creds_header" />, the 'S' bit is
-	        used to indicate the beginning (or Start) of a phase, while the 'Phase'
-	        field (4 bits) is used to indicate the phase for this message. 
-	      </t>
-	      <t>
-	        In EAP-CREDS, phase transitioning is under the sole control of the Server,
-	        therefore the value of the 'S' bit is meaningful only in messages sent by the Server.
-	        The value of the 'S' bit in Peer's messages SHALL be set to '0x0' and SHALL be
-	        ignored by the server.
-	      </t>
-	      <t>
-	        When starting a new phase, the Server MUST set the 'S' bit
-	        to '1' and the 'Phase' field to the current phase number (e.g., one, two, or three).
-	      </t>
-	      <t>
-	        In case the first message of a phase is to be repeated (e.g., because of
-	        processing multiple credentials), the
-	        'S' bit SHALL be set to '0' (i.e., it should be set to '1' only on the first
-	        occurrency and set to '0'
-	        in subsequent messages).
-	      </t>
-	    </section>
+        </section>
 
-	    <section anchor="creds_phase_one" title="Phase One: Initialization">
+          <section anchor="creds_phase_one" title="Phase One: Initialization">
 
-	      <t>
-	        The following figure provides the message flow for Phase One:
-	      </t>
-	<figure title="EAP-CREDS Phase One Message Flow"><artwork><![CDATA[
+            <t>
+              The following figure provides the message flow for Phase One:
+            </t>
+<figure title="EAP-CREDS Phase One Message Flow"><artwork><![CDATA[
 
-	,--------.                              ,----------.         
-	|EAP Peer|                              |EAP Server|         
-	`---+----'                              `----+-----'         
-	   |        Outer Tunnel Established        |               
-	   | <-------------------------------------->               
-	   |                                        |               
-	   |  [1] EAP-Request/EAP-CREDS(Type=Init)  |  ,---------!. 
-	   |      { [ Version+ ], [ Challenge ] }   |  |Phase One|_\
-	   | <---------------------------------------  |Begins     |
-	   |                                        |  `-----------'
-	   | [2] EAP-Response/EAP-CREDS(Type=Init)  |               
-	   |     { Protocol+, [ Encoding+ ],        |               
-	   |       [ Format+ ] , [  Version  ]      |  ,---------!. 
-	   |       [ Creds-Info+ ], [ Storage-Info ]|  |Phase One|_\
-	   |       [ Net-Usage], [ Token ],         |  |Ends       |
-	   |       [ Challenge-Rsp ], [ Profile+ ] }|  `-----------'
-	   | --------------------------------------->               
-	   |                                        |               
-	   |                                        |               
+  ,--------.                              ,----------.         
+  |EAP Peer|                              |EAP Server|         
+  `---+----'                              `----+-----'         
+     |        Outer Tunnel Established        |               
+     | <-------------------------------------->               
+     |                                        |               
+     |  [1] EAP-Request/EAP-CREDS(Type=Init)  |  ,---------!. 
+     |      { [ Version+ ], [ Challenge ] }   |  |Phase One|_\
+     | <---------------------------------------  |Begins     |
+     |                                        |  `-----------'
+     | [2] EAP-Response/EAP-CREDS(Type=Init)  |               
+     |     { Protocol+, [ Encoding+ ],        |               
+     |       [ Format+ ] , [  Version  ]      |  ,---------!. 
+     |       [ Creds-Info+ ], [ Storage-Info ]|  |Phase One|_\
+     |       [ Net-Usage], [ Token ],         |  |Ends       |
+     |       [ Challenge-Rsp ], [ Profile+ ] }|  `-----------'
+     | --------------------------------------->               
+     |                                        |               
+     |                                        |               
 
-	]]></artwork></figure>
-	      <t>[1] Server sends EAP-Request/EAP-CREDS(Type=Init):
-	        <list>
-	          <t>
-	            After the establishment of the outer
-	            mechanism (e.g., EAP-TLS, EAP-TEAP, EAP-TTLS, etc.), the server MAY
-	            decide to start a credentials management session. In order to do that,
-	            the Server sends an EAP-Request/EAP-CREDS(Type=Init) message to the Peer with
-	            one ('Phase-Control') TLV with the 'S' bit set to '1' and the value set
-	            to '1' (thus indicating the beginning of Phase One). Also, the Server
-	            MAY use one or more ('Version') TLVs to indicate the supported versions.
-	          </t>
-	          <t>
-	            The Server MAY also specify which versions of EAP-CREDS are supported
-	            by adding one or more ('Version') TLVs. If no ('Version') TLV is added
-	            to the message, the Peer SHOULD assume the supported version is 1 ('0x1').
-	          </t>
-	        </list>
-	      </t>
-	      <t>[2] The Peer sends EAP-Response/EAP-CREDS(Type=Init)
-	        <list>
-	          <t>
-	            The Peer, sends back a message that carries one
-	            ('Version') TLV to indicate the selected version of EAP-CREDS (i.e.
-	            from the list provided by the server) (optional). If the client does
-	            not include the ('Version') TLV, the Server MUST use the most recent
-	            supported version of EAP-CREDS. Moreover, the Server includes one or
-	            more ('Protocol') TLVs to indicate the list of supported provisioning
-	            protocols, followed by one ('Credentials-Info') TLVs for each installed
-	            credentials to provide their status to the server (i.e., if multiple
-	            credentials are configured on the Peer for this Network, then the Peer
-	            MUST include one ('Credentials-Info') TLV for each of them).
-	          </t>
-	          <t>
-	            The Peer also provides the list of supported Encodings and Formats
-	            by adding one or more ('Supported-Encodings') and ('Supported-Formats')
-	            TLVs. The Peer MAY also provide the Server with information about the
-	            Peer's credentials storage by using the 'Storage-Status' TLV.
-	          </t>
-	          <t>
-	            When there are no abailable credentials, the Peer MAY include an authorization
-	            token that can be consumed by the Server for registering new credentials.
-	            In particular, the Peer can include the ('Token-Data') TLV to convey the
-	            value of the token. The ('Challenge-Data') and ('Challenge-Response') TLVs,
-	            instead, can be used to convey a challenge and its response
-	            based on the authorization information (e.g., maybe a public key hash is
-	            present in the Token, then the peer can generate some random data - or use the
-	            one from the Server - and generate a signature on that value: the
-	            signature SHALL be encoded in the ('Challenge-Response') TLV and it should
-	            be calculated over the concatenation of values inside the ('Challenge-Data')
-	            TLV and the ('Token-Data') TLV.
-	          </t>
-	          <t>
-	            Also, the Peer MAY add one or more ('Profile') TLVs to indicate to the Server
-	            which profiles are requested/supported (e.g., a pre-configuration MAY exist
-	            on the Peer with these ecosystem-specific identifiers).
-	          </t>
-	          <t>
-	            Ultimately, the Peer MAY include additional metadata regarding the status of
-	            the Peer. To this end, the Peer can use a ('Storage-Info') TLV to provide the server
-	            with additional data about the Peer's capabilities and resources. Also, the
-	            ('Network-Usage') TLV can be used to provide the Server with the indication of
-	            which network resources are needed by the Peer and what is its intended
-	            utilization pattern(s).
-	          </t>
-	          <t>
-	            The server checks that the Peer's selected protocol, version, and
-	            parameters are supported and, if not (or if the server detects an
-	            error), it can (a) send a non-recoverable error message to the peer,
-	            notify the outer (tunneling) layer, and terminate the EAP-CREDS session, or
-	            (b) start phase one again by sending a new ('EAP-CREDS-Init') message
-	            that will also carry an ERROR TLV that provides the Peer with the
-	            reason the initial response was not acceptable. In this case, the
-	            ('Phase-Control') TLV MUST be omitted since it is not the first message of 
-	            phase one. The server and the peer can repeat phase one until they reach
-	            an agreement or the session is terminated by the Server.
-	          </t>
-	        </list>
-	      </t>
-	      <t>
-	        <list>
-	          <t>
-	            NOTE WELL: The determination of the need to start phase two or not is based on the
-	            contents of the ('Credentials-Info') TLV sent by the Peer (e.g., a credential
-	            is about to expire or a credential is simply missing).
-	          </t>
-	        </list>
-	      </t>
+]]></artwork></figure>
+            <t>[1] Server sends EAP-Request/EAP-CREDS(Type=Init):
+              <list>
+                <t>
+                  After the establishment of the outer
+                  mechanism (e.g., EAP-TLS, EAP-TEAP, EAP-TTLS, etc.), the server MAY
+                  decide to start a credentials management session. In order to do that,
+                  the Server sends an EAP-Request/EAP-CREDS(Type=Init) message to the Peer with
+                  one ('Phase-Control') TLV with the 'S' bit set to '1' and the value set
+                  to '1' (thus indicating the beginning of Phase One). Also, the Server
+                  MAY use one or more ('Version') TLVs to indicate the supported versions.
+                </t>
+                <t>
+                  The Server MAY also specify which versions of EAP-CREDS are supported
+                  by adding one or more ('Version') TLVs. If no ('Version') TLV is added
+                  to the message, the Peer SHOULD assume the supported version is 1 ('0x1').
+                </t>
+              </list>
+            </t>
+            <t>[2] The Peer sends EAP-Response/EAP-CREDS(Type=Init)
+              <list>
+                <t>
+                  The Peer, sends back a message that carries one
+                  ('Version') TLV to indicate the selected version of EAP-CREDS (i.e.
+                  from the list provided by the server) (optional). If the client does
+                  not include the ('Version') TLV, the Server MUST use the most recent
+                  supported version of EAP-CREDS. Moreover, the Server includes one or
+                  more ('Protocol') TLVs to indicate the list of supported provisioning
+                  protocols, followed by one ('Credentials-Info') TLVs for each installed
+                  credentials to provide their status to the server (i.e., if multiple
+                  credentials are configured on the Peer for this Network, then the Peer
+                  MUST include one ('Credentials-Info') TLV for each of them).
+                </t>
+                <t>
+                  The Peer also provides the list of supported Encodings and Formats
+                  by adding one or more ('Supported-Encodings') and ('Supported-Formats')
+                  TLVs. The Peer MAY also provide the Server with information about the
+                  Peer's credentials storage by using the 'Storage-Status' TLV.
+                </t>
+                <t>
+                  When there are no abailable credentials, the Peer MAY include an authorization
+                  token that can be consumed by the Server for registering new credentials.
+                  In particular, the Peer can include the ('Token-Data') TLV to convey the
+                  value of the token. The ('Challenge-Data') and ('Challenge-Response') TLVs,
+                  instead, can be used to convey a challenge and its response
+                  based on the authorization information (e.g., maybe a public key hash is
+                  present in the Token, then the peer can generate some random data - or use the
+                  one from the Server - and generate a signature on that value: the
+                  signature SHALL be encoded in the ('Challenge-Response') TLV and it should
+                  be calculated over the concatenation of values inside the ('Challenge-Data')
+                  TLV and the ('Token-Data') TLV.
+                </t>
+                <t>
+                  Also, the Peer MAY add one or more ('Profile') TLVs to indicate to the Server
+                  which profiles are requested/supported (e.g., a pre-configuration MAY exist
+                  on the Peer with these ecosystem-specific identifiers).
+                </t>
+                <t>
+                  Ultimately, the Peer MAY include additional metadata regarding the status of
+                  the Peer. To this end, the Peer can use a ('Storage-Info') TLV to provide the server
+                  with additional data about the Peer's capabilities and resources. Also, the
+                  ('Network-Usage') TLV can be used to provide the Server with the indication of
+                  which network resources are needed by the Peer and what is its intended
+                  utilization pattern(s).
+                </t>
+                <t>
+                  The server checks that the Peer's selected protocol, version, and
+                  parameters are supported and, if not (or if the server detects an
+                  error), it can (a) send a non-recoverable error message to the peer,
+                  notify the outer (tunneling) layer, and terminate the EAP-CREDS session, or
+                  (b) start phase one again by sending a new ('EAP-CREDS-Init') message
+                  that will also carry an ERROR TLV that provides the Peer with the
+                  reason the initial response was not acceptable. In this case, the
+                  ('Phase-Control') TLV MUST be omitted since it is not the first message of 
+                  phase one. The server and the peer can repeat phase one until they reach
+                  an agreement or the session is terminated by the Server.
+                </t>
+              </list>
+            </t>
+            <t>
+              <list>
+                <t>
+                  NOTE WELL: The determination of the need to start phase two or not is based on the
+                  contents of the ('Credentials-Info') TLV sent by the Peer (e.g., a credential
+                  is about to expire or a credential is simply missing).
+                </t>
+              </list>
+            </t>
+<!--
+            <section anchor="phase_one_state_machine" title="Phase One State Machine">
+              <t>
+                The Server's state machine is depicted in the following Figure:
+              </t>
+              <figure title="EAP Creds Phase One State Machine"><artwork><![CDATA[
 
-	    </section>
++-------------------+
+|  Start Phase One  |
++-------------------+
+          |
+          v
++-------------------+
+| Send the Init Msg |
++-------------------+                   
+          |                             
+          v                             
++-------------------+                   
+| Receives Peer's   |                   
+|    Init Msg       |                   
++-------------------+                   
+          |                             
+          v                             
+ +------------------+ Yes    +---------------------+
+ | Checks for Error |------->|    Send Error Msg   |
+ +------------------+        +---------------------+
+          |  No                         |
+          v                             v
++-------------------+  No    +---------------------+
+|  Provisioning ?   |------->|   End EAP Session   |
++-------------------+        +---------------------+
+          |  Yes       
+          v           
++-------------------+
+|  Start Phase Two  |
++-------------------+
 
-	    <section anchor="creds_phase_two" title="Phase Two: Provisioning">
-	      <t>
-	        The following figure provides the message flow for Phase 2:
-	      </t>
-	<figure title="EAP-CREDS Phase Two Message Flow"><artwork><![CDATA[
+                ]]></artwork></figure>
+              <t>
+                The first message from the server starts the phase
+                by using the ('Phase-Control') TLV.
+              </t>
+              <t> 
+                  The Server selects
+                  the action, the provisioning protocol, and associated parameters.
+                  Phase Two officially begins with the next message exchanged (i.e. an
+                  EAP-Request/EAP-CREDS(Type=Provisioning)),which MUST include the
+                  ('Phase-Control') TLV with the 'S' bit set to '1' and the value set
+                  to '2'. The message MUST also includes, at minimum,
+                  the selected ('Action') and ('Protocol') TLVs.
+                </t>
+                <t>
+                  When renewing existing credentials or registering new ones, the Server
+                  MUST include the ('Provisioning-Params') TLVs.
+                </t>
+                <t>
+                  When removing or renewing existing credentials, the Server MUST include
+                  the ('Credentials-Info') TLV to identify the set of credentials to which the
+                  action applies.
+                </t>
+                <t>
+                  If multiple values are detected in the message, the message shall be
+                  discarded and the appropriate error message shall be issued by the Peer.
+              </t>
+            </section>
+          </section>
 
-	,--------.                                     ,----------.         
-	|EAP Peer|                                     |EAP Server|         
-	`---+----'                                     `----+-----'         
-	 |  [1] EAP-Request/EAP-CREDS(Type=Provisioning) |               
-	 |      { Protocol, Action,                      |  ,---------!. 
-	 |        [ CredInfo  ], [ Params ],             |  |Phase Two|_\
-	 |        [ ProtoData ], [ ProtoHeaders ] }      |  |Begins     |
-	 | <----------------------------------------------  `-----------'
-	 |                                               |               
-	 | [2] EAP-Response/EAP-CREDS(Type=Provisioning) |               
-	 |     { ProtoData, [ ProtoHeaders ] }           |               
-	 | ---------------------------------------------->               
-	 |                                               |               
-	 .                                               .               
-	 .                                               .               
-	 .                                               .               
-	 .                                               .               
-	 | [N] EAP-Response/EAP-CREDS(Type=Provisioning) |               
-	 |     { [ CredInfo ], [ ProtoData ],            |               
-	 |       [ ProtoHeaders ] }                      |               
-	 | <----------------------------------------------               
-	 |                                               |               
-	 | [N+1] EAP-Request/EAP-CREDS(Type=Provisioning)|  ,---------!. 
-	 |     { [ ProtoData ], [ ProtoHeaders ] }       |  |Phase Two|_\
-	 | ---------------------------------------------->  |Ends       |
-	 |                                               |  `-----------'
-	 |                                               |               
+-->
+          <section anchor="creds_phase_two" title="Phase Two: Provisioning">
+            <t>
+              The following figure provides the message flow for Phase 2:
+            </t>
 
-	]]></artwork></figure>
-	      <t>[1] The Server sends EAP-Request/EAP-CREDS(Type=Init)
-	        <list>
-	          <t>
-	            The first message of Phase Two indicates that the Server is
-	            ready to initiate the selected provisioning protocol.
-	          </t>
-	        </list>
-	      </t>
-	      <t>[2] The Peer sends EAP-Response/EAP-CREDS(Type=Init)
-	        <list>
-	          <t>
-	            After that, the Peer sends its first message to the Server by sending the
-	            EAP-Response/EAP-CREDS(Type=Provisioning) message. This message contains
-	            the selected provisioning protocol's message data and some extra fields
-	            (e.g., transport-protocol headers) in the ('Provisioning-Data') and 
-	            ('Protocol-Headers') TLVs respectively.
-	          </t>
-	        </list>
-	      </t>
-	      <t> [3] The Server sends EAP-Request/EAP-CREDS(Type=Init)
-	        <list>
-	          <t>
-	            The Server replies to the Peer's message with EAP-Request/EAP-CREDS(Type=Provisioning)
-	            messages until the provisioning protocol reaches an end or an error condition
-	            arise (non-recoverable).
-	          </t>
-	        </list>
-	      </t>
-	      <t>[N] The Server sends EAP-Request/EAP-CREDS(Type=Provisioning)
-	        <list>
-	          <t>
-	            When the provisioning protocol has been executed for the specific set of
-	            credentials, the server sends a last message that MUST include the description
-	            of the provisioned credentials in a ('Credentials-Info') TLV and MUST set the 'D'
-	            bit in the EAP-CREDS message header to '1' to indicates that the server does not
-	            have any more ('Provisioning') messages for this credenital.
-	            The final message does not need to be an empty one, i.e. other TLVs are still
-	            allowed in the same message (e.g., the 'Provisioning-Data' and the
-	            'Provisioning-Headers' ones).
-	          </t>
-	        </list>
-	      </t>
-	      <t>[N+1] The Peer sends EAP-Request/EAP-CREDS(Type=Provisioning)
-	        <list>
-	          <t>
-	            The Peer MUST reply to the server with a ('Provisioning') message that MUST
-	            have the 'D' bit in the EAP-CREDS message header set to '1', thus indicating
-	            that the credentials have been installed correctly. In case of errors, the Peer
-	            MUST include the appropriate ('Error') TLV.
-	            Also in this case, the final message does not need to be an empty one,
-	            i.e. other TLVs are still allowed in the same message (e.g., the 'Provisioning-Data'
-	            and the 'Provisioning-Headers' ones).
-	          </t>
-	        </list>
-	      </t>
-	      <t>
-	        At this point, the Server can decide to provision (or manage) another set of credentials
-	        by issuing a new ('Provisioning') message, or it can decide to start Phase Three by
-	        sending its first ('Validate') message, or it can terminate the EAP session.
-	      </t>
-	    </section>
+<figure title="EAP-CREDS Phase Two Message Flow"><artwork><![CDATA[
 
-	    <section anchor="creds_phase_three" title="Phase Three: Validation">
-	      <t>
-	        The following figure provides the message flow for Phase 3:
-	      </t>
-	<figure title="EAP-CREDS Phase Three Message Flow"><artwork><![CDATA[
+,--------.                                     ,----------.         
+|EAP Peer|                                     |EAP Server|         
+`---+----'                                     `----+-----'         
+   |  [1] EAP-Request/EAP-CREDS(Type=Provisioning) |               
+   |      { Protocol, Action,                      |  ,---------!. 
+   |        [ CredInfo  ], [ Params ],             |  |Phase Two|_\
+   |        [ ProtoData ], [ ProtoHeaders ] }      |  |Begins     |
+   | <----------------------------------------------  `-----------'
+   |                                               |               
+   | [2] EAP-Response/EAP-CREDS(Type=Provisioning) |               
+   |     { ProtoData, [ ProtoHeaders ] }           |               
+   | ---------------------------------------------->               
+   |                                               |               
+   .                                               .               
+   .                                               .               
+   .                                               .               
+   .                                               .               
+   | [N] EAP-Response/EAP-CREDS(Type=Provisioning) |               
+   |     { [ CredInfo ], [ ProtoData ],            |               
+   |       [ ProtoHeaders ] }                      |               
+   | <----------------------------------------------               
+   |                                               |               
+   | [N+1] EAP-Request/EAP-CREDS(Type=Provisioning)|  ,---------!. 
+   |     { [ ProtoData ], [ ProtoHeaders ] }       |  |Phase Two|_\
+   | ---------------------------------------------->  |Ends       |
+   |                                               |  `-----------'
+   |                                               |               
 
-	,--------.                                ,----------.           
-	|EAP Peer|                                |EAP Server|           
-	`---+----'                                `----+-----'           
-	 | [1] EAP-Request/EAP-CREDS(Type=Validate) |  ,-----------!. 
-	 |     { Cred-Info, Challenge }             |  |Phase Three|_\
-	 | <-----------------------------------------  |Begins       |
-	 |                                          |  `-------------'
-	 | [2] EAP-Response/EAP-CREDS(Type=Validate)|  ,-----------!. 
-	 |     { Challenge-Response }               |  |Phase Three|_\
-	 | ----------------------------------------->  |Ends         |
-	 |                                          |  `-------------'
-	 |                                          |                 
+]]></artwork></figure>
+            <t>[1] The Server sends EAP-Request/EAP-CREDS(Type=Init)
+              <list>
+                <t>
+                  The first message of Phase Two indicates that the Server is
+                  ready to initiate the selected provisioning protocol.
+                </t>
+              </list>
+            </t>
+            <t>[2] The Peer sends EAP-Response/EAP-CREDS(Type=Init)
+              <list>
+                <t>
+                  After that, the Peer sends its first message to the Server by sending the
+                  EAP-Response/EAP-CREDS(Type=Provisioning) message. This message contains
+                  the selected provisioning protocol's message data and some extra fields
+                  (e.g., transport-protocol headers) in the ('Provisioning-Data') and 
+                  ('Protocol-Headers') TLVs respectively.
+                </t>
+              </list>
+            </t>
+            <t> [3] The Server sends EAP-Request/EAP-CREDS(Type=Init)
+              <list>
+                <t>
+                  The Server replies to the Peer's message with EAP-Request/EAP-CREDS(Type=Provisioning)
+                  messages until the provisioning protocol reaches an end or an error condition
+                  arise (non-recoverable).
+                </t>
+              </list>
+            </t>
+            <t>[N] The Server sends EAP-Request/EAP-CREDS(Type=Provisioning)
+              <list>
+                <t>
+                  When the provisioning protocol has been executed for the specific set of
+                  credentials, the server sends a last message that MUST include the description
+                  of the provisioned credentials in a ('Credentials-Info') TLV and MUST set the 'D'
+                  bit in the EAP-CREDS message header to '1' to indicates that the server does not
+                  have any more ('Provisioning') messages for this credenital.
+                  The final message does not need to be an empty one, i.e. other TLVs are still
+                  allowed in the same message (e.g., the 'Provisioning-Data' and the
+                  'Provisioning-Headers' ones).
+                </t>
+              </list>
+            </t>
+            <t>[N+1] The Peer sends EAP-Request/EAP-CREDS(Type=Provisioning)
+              <list>
+                <t>
+                  The Peer MUST reply to the server with a ('Provisioning') message that MUST
+                  have the 'D' bit in the EAP-CREDS message header set to '1', thus indicating
+                  that the credentials have been installed correctly. In case of errors, the Peer
+                  MUST include the appropriate ('Error') TLV.
+                  Also in this case, the final message does not need to be an empty one,
+                  i.e. other TLVs are still allowed in the same message (e.g., the 'Provisioning-Data'
+                  and the 'Provisioning-Headers' ones).
+                </t>
+              </list>
+            </t>
+            <t>
+              At this point, the Server can decide to provision (or manage) another set of credentials
+              by issuing a new ('Provisioning') message, or it can decide to start Phase Three by
+              sending its first ('Validate') message, or it can terminate the EAP session.
+            </t>
 
-	]]></artwork></figure>
-	      <t>
-	        Phase three is optional and it is used by the server to request the client to
-	        validate (proof) that the new credentials have been installed correctly
-	        before issuing the final Success message.
-	      </t>
-	      <t>
-	          <list>
-	              <t>
-	                  NOTE WELL:
-	                  Phase Three introduces a dependency on the selected hashing algorithm
-	                  to provide common and easy way to check the integrity and functionality
-	                  of a newly installed set of credentials.
-	              </t>
-	          </list>
-	      </t>
-	      <t>[1] The Server sends EAP-Request/EAP-CREDS(Type=Validate)
-	        <list>
-	          <t>
-	            In order to start Phase Three, the Server sends an
-	            EAP-Request/EAP-CREDS(Type=Validate) message to the Peer.
-	            The Server MUST include the ('Credentials-Info') TLV to provide the indication about
-	            which set of credentials the Server intends to validate. The Server MUST also include a randomly generated challenge in the message to the client. The type of challenge
-	            determines how the ('Challenge-Response') is calculated. EAP-CREDS defines the
-	            asymmetric and symmetric challenges in <xref target="eap_creds_challenge_types" />
-	            and others can be defined according to the specified rules.
-	          </t>
-	          <t>
-	            As usual, the Server MUST set, in the headers, the 'S' bit to '1' in its first
-	            message of Phase Three and the 'Phase' value shall be set to '3'
-	            (beginning of Phase Three).
-	          </t>
-	        </list>
-	      </t>
-	      <t>
-	      	[2] The Peer sends EAP-Response/EAP-CREDS(Type=Validate)
-	        <list>
-	          <t>
-	            When the client receives the Validate message from the server, it calculates the
-	            response to the challenge and sends the response back to the server in a
-	            EAP-Response/EAP-CREDS(Type=Validate) message. 
-	            When the EAP-CREDS-ASYMMETRIC-CHALLENGE and EAP-CREDS-SYMMETRIC-CHALLENGE values
-	            are used in the Challenge type, the Peer MUST calculate the response as follows:
-	            <list>
-	              <t>
-	                Public-Key
-	                <list>
-	                  <t>
-	                  	For any public-key based credentials (e.g., certificates or
-	                  	raw key pairs), the response to the challenge is calculated by generating a
-	                  	signature over the hashed value of the challenge. The hashing algorithm
-	                  	to be used for this purpose is specified in <xref target="eap_creds_hashing" />.
-	                  	The format of the signature in the ('Challenge-Response') TLV is the
-	                  	concatenation of:
-	                  	<list style="symbols">
-	                    	<t>
-	                      	The signatureAlgorithm (DER encoded) which contains the identifier for the
-	                      	cryptographic algorithm used by the Peer to generate the signature.
-	                      	[RFC3279], [RFC4055], and [RFC4491] list supported signature
-	                      	algorithms, but other signature algorithms MAY also be supported.
-	                      	The definition of the signatureAlgorithm is provided in Section 4.1.1.2
-	                      	of <xref target="RFC5280" />.
-	                    	</t>
-	                    	<t>
-	                    	  The signatureValue (DER encoded) which contains the digital signature
-	                    	  itself. The signature value is encoded as a BIT STRING and the details
-	                    	  of how to generate the signatures' structures can be found in
-	                    	  Section 4.1.1.3 of <xref target="RFC5280" /> and referenced material.
-	                    	</t>
-	                 		</list>
-	                  </t>
-	                </list>
-	              </t>
-	              <t>
-	                Symmetric Secret
-	                <list>
-	                	<t>
-	                		For any symmetric based credentials (e.g., password or
-		                  Key), the response to the challenge is calculated by using the selected
-		                  hash function (see <xref target="eap_creds_hashing" />) on the concatenation of
-		                  (a) the value carried in the server-provided ('Challenge-Data') TLV, and
-		                  (b) the secret value itself (salted hash).
-	                  </t>
-	                </list>
-	              </t>
-	            </list>
-	          </t>
-	          <t>
-	            The initial values for the type of challenges are described in the <xref target="eap_creds_challenge_types" />. Other types of challenges MAY be defined according
-	            to the specified procedures.
-	          </t>
-	          
-	          <t>
-	            In case of issues with the validation of newly deployed credentials, both
-	            the Server and the Peer should consider those credentials invalid (or
-	            unusable) and should issue the required failure message(s).
-	          </t>
-	        </list>
-	      </t>
-	  	</section>
+<!--
+            <section anchor="phase_two_state_machine" title="Phase Two State Machine">
+            <t>
+              The Server's state machine for Phase Two is depicted in the following Figure:
+            </t>
+<figure title="EAP-CREDS Phase Two State Machine"><artwork><![CDATA[
 
-	  </section> 
+                   +-------------------+
+                   |  Start Phase Two  |
+                   +-------------------+
+                              |
+                              v
+                   +-------------------+ 
++----------------->|  New Credentials  |
+|            +----<|    Available ?    |>-----+
+|            | Yes +-------------------+ No   |
+|            |               ^                |
+|            v               |                v
+|  +-------------------+     |      +-------------------+
+|  | Action Needed for |>----+      |   Register New    |
+|  |   Credentials ?   | No         |    Credentials    |
+|  +-------------------+            +-------------------+
+|            v Yes                     Yes v       v No
+|            |                             |       |
+|            |     +-------------------+   |       |
+|            +---->|   Provisioning    |<--+       |
+|                  |     Protocol      |           |
+|                  +-------------------+           |
+|                            |                     |
+|                            v                     |
+|              No  +------------------+            |
++-----------------<| End of Provision |            |
+                   +------------------+            |
+                         Yes |                     |
+                             v                     |
+                   +------------------+            |
+                   | End of Phase Two |<-----------+
+                   +------------------+
+   
+]]></artwork></figure>
 
-	  <!--                             -->
-	  <!-- End Of EAP Protocol Section -->
-	  <!--                             -->
+                <t>
+                  The Server can decide to repeat
+                  phase two as many times as needed: each time, the combination of the
+                  ('Credentials-Info') TLV (a.k.a. CredInfo) and the ('Action') TLV
+                  MUST be unique for each session to make sure notto repeat the same
+                  operation on the same credential over and over again.
+                  In case all credentials for the Network do not need maintenance at this
+                  time, the Server can decide to end the EAP-CREDS session (no actions
+                  to be taken) and successfully complete the EAP session.
+                </t>
+            </section>
 
+          </section>
+-->
+
+          <section anchor="creds_phase_three" title="Phase Three: Validation">
+            <t>
+              The following figure provides the message flow for Phase 3:
+            </t>
+
+<figure title="EAP-CREDS Phase Three Message Flow"><artwork><![CDATA[
+
+,--------.                                ,----------.           
+|EAP Peer|                                |EAP Server|           
+`---+----'                                `----+-----'           
+   | [1] EAP-Request/EAP-CREDS(Type=Validate) |  ,-----------!. 
+   |     { Cred-Info, Challenge }             |  |Phase Three|_\
+   | <-----------------------------------------  |Begins       |
+   |                                          |  `-------------'
+   | [2] EAP-Response/EAP-CREDS(Type=Validate)|  ,-----------!. 
+   |     { Challenge-Response }               |  |Phase Three|_\
+   | ----------------------------------------->  |Ends         |
+   |                                          |  `-------------'
+   |                                          |                 
+
+]]></artwork></figure>
+            <t>
+              Phase three is optional and it is used by the server to request the client to
+              validate (proof) that the new credentials have been installed correctly
+              before issuing the final Success message.
+            </t>
+            <t>
+                <list>
+                    <t>
+                        NOTE WELL:
+                        Phase Three introduces a dependency on the selected hashing algorithm
+                        to provide common and easy way to check the integrity and functionality
+                        of a newly installed set of credentials.
+                    </t>
+                </list>
+            </t>
+            <t>[1] The Server sends EAP-Request/EAP-CREDS(Type=Validate)
+              <list>
+                <t>
+                  In order to start Phase Three, the Server sends an
+                  EAP-Request/EAP-CREDS(Type=Validate) message to the Peer.
+                  The Server MUST include the ('Credentials-Info') TLV to provide the indication about
+                  which set of credentials the Server intends to validate. The Server MUST also include a randomly generated challenge in the message to the client. The type of challenge
+                  determines how the ('Challenge-Response') is calculated. EAP-CREDS defines the
+                  asymmetric and symmetric challenges in <xref target="eap_creds_challenge_types" />
+                  and others can be defined according to the specified rules.
+                </t>
+                <t>
+                  As usual, the Server MUST set, in the headers, the 'S' bit to '1' in its first
+                  message of Phase Three and the 'Phase' value shall be set to '3'
+                  (beginning of Phase Three).
+                </t>
+              </list>
+            </t>
+            <t>[2] The Peer sends EAP-Response/EAP-CREDS(Type=Validate)
+              <list>
+                <t>
+                  When the client receives the Validate message from the server, it calculates the
+                  response to the challenge and sends the response back to the server in a
+                  EAP-Response/EAP-CREDS(Type=Validate) message. 
+                  When the EAP-CREDS-ASYMMETRIC-CHALLENGE and EAP-CREDS-SYMMETRIC-CHALLENGE values
+                  are used in the Challenge type, the Peer MUST calculate the response as follows:
+                  <list>
+                    <t>
+                        Public-Key
+                        <list>
+                        <t> For any public-key based credentials (e.g., certificates or
+                        raw key pairs), the response to the challenge is calculated by generating a
+                        signature over the hashed value of the challenge. The hashing algorithm
+                        to be used for this purpose is specified in <xref target="eap_creds_hashing" />.
+                        The format of the signature in the ('Challenge-Response') TLV is the
+                        concatenation of:
+                        <list style="symbols">
+                          <t>
+                            The signatureAlgorithm (DER encoded) which contains the identifier for the
+                            cryptographic algorithm used by the Peer to generate the signature.
+                            [RFC3279], [RFC4055], and [RFC4491] list supported signature
+                            algorithms, but other signature algorithms MAY also be supported.
+                            The definition of the signatureAlgorithm is provided in Section 4.1.1.2
+                            of <xref target="RFC5280" />.
+                          </t>
+                          <t>
+                            The signatureValue (DER encoded) which contains the digital signature
+                            itself. The signature value is encoded as a BIT STRING and the details
+                            of how to generate the signatures' structures can be found in
+                            Section 4.1.1.3 of <xref target="RFC5280" /> and referenced material.
+                          </t>
+                        </list>
+                        </t>
+                        </list>
+                    </t>
+                    <t>
+                        Symmetric Secret
+                        <list>
+                        <t>For any symmetric based credentials (e.g., password or
+                        Key), the response to the challenge is calculated by using the selected
+                        hash function (see <xref target="eap_creds_hashing" />) on the concatenation of
+                        (a) the value carried in the server-provided ('Challenge-Data') TLV, and
+                        (b) the secret value itself (salted hash).
+                        </t>
+                        </list>
+                    </t>
+                  </list>
+                </t>
+                <t>
+                  The initial values for the type of challenges are described in the <xref target="eap_creds_challenge_types" />. Other types of challenges MAY be defined according
+                  to the specified procedures.
+                </t>
+                
+                <t>
+                  In case of issues with the validation of newly deployed credentials, both
+                  the Server and the Peer should consider those credentials invalid (or
+                  unusable) and should issue the required failure message(s).
+                </t>
+              </list>
+            </t>
+
+          <!--
+            <section anchor="phase_three_state_machine" title="Phase Three State Machine">
+            <t>
+              The Server's state machine for Phase Three is depicted in the following Figure:
+            </t>
+<figure title="EAP-CREDS Phase Three State Machine"><artwork><![CDATA[
+
+                                 +-------------------+
+                                 | Start Phase Three |
+                                 +-------------------+
+                                            |
+                                            v
+                                 +---------------------+ No
++------------------------------->|   New Credentials   |>-------+
+|           +------------------->|     Available ?     |<---+   |
+|           |                    +---------------------+    |   |
+|           |                  Yes |       ^                |   |
+|           |                      v       |                |   |
+|           |   +-------------------+      |                |   |
+|           |   |     Validate      |>-----+                |   |
+|           |   |   Credentials ?   | No                    |   |
+|           |   +-------------------+                       |   |
+|           |             v Yes                             |   |
+|           |             |                                 |   |
+|           |             |      +---------------------+    |   |
+|           |             +----->|    Send Validate    |    |   |
+|           |                    |       Messsage      |    |   |
+|           |                    +---------------------+    |   |
+|           |                              |                |   |
+|           |                              v                |   |
+|   +---------------------+   No +---------------------+    |   |
+|   |  Report the Error   |<----<|   Response Error?   |----+   |
+|   +---------------------+      +---------------------+ No     |
+|                                      Yes |                    |
+|                                          v                    |
+|                            No +---------------------+         |
++------------------------------<|   End Validation ?  |         |
+                                +---------------------+         |
+                                       Yes |                    |
+                                           v                    |
+                                +---------------------+         |
+                                |   End Phase Three   |<--------+
+                                +---------------------+
+
+]]></artwork></figure>
+          </section>
+        </section>
+
+    -->
+    </section>
 
     <section anchor="creds_msg" title="EAP-CREDS Message Format">
-      <t>
-        The EAP-CREDS defines the following message types:
-        <list style="numbers">
-          <t>EAP-CREDS/Init</t>
-          <t>EAP-CREDS/Provisioning</t>
-          <t>EAP-CREDS/Validate</t>
-        </list>
-      </t>
-      <t>
-        Each of these message types have the basic structure as identified in <xref target="creds_header" />.
-        EAP-CREDS messages contain zero, one, or more TLVs.
-        The internal structure of the different types of TLVs is described in <xref target="creds_msg_payload" />,
-        while a detailed description of the EAP-CREDS message types is provided in <xref target="creds_msg_types" />.
-      </t>
+        <t>
+            The EAP-CREDS defines the following message types:
+            <list style="numbers">
+                <t>EAP-CREDS/Init</t>
+                <t>EAP-CREDS/Provisioning</t>
+                <t>EAP-CREDS/Validate</t>
+            </list>
+        </t>
+        <t>
+            Each of these message types have the basic structure as identified in <xref target="creds_header" />.
+            EAP-CREDS messages contain zero, one, or more TLVs.
+            The internal structure of the different types of TLVs is described in <xref target="creds_msg_payload" />,
+            while a detailed description of the EAP-CREDS message types is provided in <xref target="creds_msg_types" />.
+        </t>
 
       <section anchor="creds_header" title="Message Header">
         <t>
-          The EAP-CREDS messages consist of the standard EAP header (see Section 4
-          of <xref target="RFC3748" />), followed by the version of the EAP-CREDS
-          (4 bits) and a field (4 bits) reserved for future use.
-          The header has the following structure:
+            The EAP-CREDS messages consist of the standard EAP header (see Section 4
+            of <xref target="RFC3748" />), followed by the version of the EAP-CREDS
+            (4 bits) and a field (4 bits) reserved for future use.
+            The header has the following structure:
         </t>
         <figure><artwork><![CDATA[
 
@@ -775,30 +944,23 @@
           phase transition process).
           The meanins of the bits in the 'Flags' field are as follows:
           <list>
-            <t>
-              Bit 'J' (Jumbo Message) - If set, it idicates the presence of the 'Message Length' field.
+            <t>Bit 'J' (Jumbo Message) - If set, it idicates the presence of the 'Message Length' field.
                        This bit SHALL be used only when the size of the message exceeds the maximum value allowed
                        in the 'Length' field. In this case, the 'Message Length' field is
                        added to the message and set to the whole message size and the 'Length'
                        field is used for the current fragment length.
                        If not set, the 'Message Length' field is not
                        present in the Message and the 'Length' field is used for the message size
-                       (and the 'F' bit MUST be set to '0').
-            </t>
-            <t>
-            	Bit 'S' (Start) - If set, this message is the first one of a new EAP-CREDS phase.
-                       The value of the new phase is encoded in the 'Phase' field.
-            </t>
-            <t>
-            	Bit 'F' - If set, this message is a fragment of a message. In this case, the
+                       (and the 'F' bit MUST be set to '0').</t>
+            <t>Bit 'S' (Start) - If set, this message is the first one of a new EAP-CREDS phase.
+                       The value of the new phase is encoded in the 'Phase' field.</t>
+            <t>Bit 'F' - If set, this message is a fragment of a message. In this case, the
                        'Data' field is to be concatenated with all messages with the 'F' bit
                        set to '1' until the message with the 'F' bit set to '0' that indicates
                        the end of the message. If the message is not fragmented, the 'F' bit
                        MUST be set to '0'. The use of this bit is required when the tunneling
-                       method does not provide support for messages up to 2^32 bits in size.
-            </t>
-            <t>
-            	Bit 'D' - This bit is used in Phase Two and Phase Three to indicate that the
+                       method does not provide support for messages up to 2^32 bits in size.</t>
+            <t>Bit 'D' - This bit is used in Phase Two and Phase Three to indicate that the
                        specific operation for the identified credential is over. For example,
                        when multiple credentials exist on the Peer and the Server needs to
                        manage and validate one of them. In its last message, when the provisioning
@@ -806,8 +968,7 @@
                        it is done. The Peer, in its reply, sets the bit to indicate
                        the end of provisioning for this credentials is also over. After that, the
                        Server can continue Phase Two, transition to Phase Three, or terminate
-                       the EAP session.
-            </t>
+                       the EAP session.</t>
           </list>
         </t>
         <t>
@@ -849,169 +1010,170 @@
  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 
 ]]></artwork></figure>
-        <t>Where:</t>
-        <t>TLV-Type (uint8)
-          <list>
-            <t>
-              This field is used to indicate the type of data that the TLV
-              carries. The type of TLV determines its internal structure.
-              The supported values for this fields are provided in the following
-              table:
-            </t>
-          </list>
-        </t>
-        <t>Length (uint24)
-          <list>
-            <t>
-              This field carries the size of the value of the TLV. In particular,
-              the overall size of a TLV (i.e., the header plus the value) can be
-              calculated by adding the size of the header (6 octects) to the value
-              of the Length field (i.e., the size of the TLV's value).
-            </t>
-          </list>
-        </t>
-
-        <texttable anchor="eap_creds_tlvs_table" title="EAP-CREDS Supported TLVs Types">
-          <ttcol align="center">TLV Name</ttcol>
-          <ttcol align="left">TLV Type</ttcol>
-          <ttcol align="center">Scope/Usage</ttcol>
-
-            <c>&lt;TBD&gt;</c>
-            <c>Action TLV</c>
-            <c>Phase Two</c>
-
-            <c>&lt;TBD&gt;</c>              
-            <c>Certificate-Data TLV</c>
-            <c>Phase Two/SPP</c>
-
-            <c>&lt;TBD&gt;</c>
-            <c>Challenge-Data TLV</c>
-            <c>Phase Two, Phase Three</c>
-
-            <c>&lt;TBD&gt;</c>
-            <c>Challenge-Response TLV</c>
-            <c>Phase Two, Phase Three</c>
-
-            <c>&lt;TBD&gt;</c>
-            <c>Credentials-Data TLV</c>
-            <c>Phase Two/SPP</c>
-
-            <c>&lt;TBD&gt;</c>
-            <c>Credentials-Info TLV</c>
-            <c>Phase Two, Phase Three</c>
-
-            <c>&lt;TBD&gt;</c>
-            <c>Error TLV</c>
-            <c>All Phases</c>
-
-            <c>&lt;TBD&gt;</c>
-            <c>Network-Usage TLV</c>
-            <c>Phase One</c>
-
-            <!--
-            <c>&lt;TBD&gt;</c>
-            <c>Phase-Control TLV</c>
-            <c>All Phases</c>
-            -->
-
-            <c>&lt;TBD&gt;</c>
-            <c>Profile TLV</c>
-            <c>Phase Two</c>
-            
-            <c>&lt;TBD&gt;</c>
-            <c>Protocol TLV</c>
-            <c>Phase One, Phase Two</c>
-
-            <c>&lt;TBD&gt;</c>
-            <c>Provisioning-Data TLV</c>
-            <c>Phase Two</c>
-
-            <c>&lt;TBD&gt;</c>
-            <c>Provisioning-Headers TLV</c>
-            <c>Phase Two</c>
-
-            <c>&lt;TBD&gt;</c>
-            <c>Provisioning-Params TLV</c>
-            <c>Phase Two</c>
-
-            <c>&lt;TBD&gt;</c>
-            <c>Certificate-Request TLV</c>
-            <c>SPP</c>
-
-            <c>&lt;TBD&gt;</c>
-            <c>Storage-Info TLV</c>
-            <c>SPP</c>
-
-            <c>&lt;TBD&gt;</c>
-            <c>Supported-Format TLV</c>
-            <c>SPP</c>
-
-            <c>&lt;TBD&gt;</c>
-            <c>Supported-Encoding TLV</c>
-            <c>SPP</c>
-
-            <c>&lt;TBD&gt;</c>
-            <c>Token-Data TLV</c>
-            <c>Phase One</c>
-
-            <c>&lt;TBD&gt;</c>
-            <c>Version TLV</c>
-            <c>Phase One</c>
-
-        </texttable>
-
-        <t>TLV Value ( > 1 octet )
-          <list>
+          <t>Where:</t>
+          <t>TLV-Type (uint8)
+            <list>
               <t>
-                  This field carries data for the identified TLV. The internal structure
-                  is determined by the TLV Type field.
+                This field is used to indicate the type of data that the TLV
+                carries. The type of TLV determines its internal structure.
+                The supported values for this fields are provided in the following
+                table:
               </t>
-          </list>
-        </t>
+            </list>
+          </t>
+          <t>Length (uint24)
+            <list>
+              <t>
+                This field carries the size of the value of the TLV. In particular,
+                the overall size of a TLV (i.e., the header plus the value) can be
+                calculated by adding the size of the header (6 octects) to the value
+                of the Length field (i.e., the size of the TLV's value).
+              </t>
+            </list>
+          </t>
 
-        <t>
-          The rest of this section describes the structure of the different
-          supported TLVs and their usage in the different messages.
-        </t>
-      </section>
+          <texttable anchor="eap_creds_tlvs_table" title="EAP-CREDS Supported TLVs Types">
+            <ttcol align="center">TLV Name</ttcol>
+            <ttcol align="left">TLV Type</ttcol>
+            <ttcol align="center">Scope/Usage</ttcol>
+
+              <c>&lt;TBD&gt;</c>
+              <c>Action TLV</c>
+              <c>Phase Two</c>
+
+              <c>&lt;TBD&gt;</c>              
+              <c>Certificate-Data TLV</c>
+              <c>Phase Two/SPP</c>
+
+              <c>&lt;TBD&gt;</c>
+              <c>Challenge-Data TLV</c>
+              <c>Phase Two, Phase Three</c>
+
+              <c>&lt;TBD&gt;</c>
+              <c>Challenge-Response TLV</c>
+              <c>Phase Two, Phase Three</c>
+
+              <c>&lt;TBD&gt;</c>
+              <c>Credentials-Data TLV</c>
+              <c>Phase Two/SPP</c>
+
+              <c>&lt;TBD&gt;</c>
+              <c>Credentials-Info TLV</c>
+              <c>Phase Two, Phase Three</c>
+
+              <c>&lt;TBD&gt;</c>
+              <c>Error TLV</c>
+              <c>All Phases</c>
+
+              <c>&lt;TBD&gt;</c>
+              <c>Network-Usage TLV</c>
+              <c>Phase One</c>
+
+              <!--
+              <c>&lt;TBD&gt;</c>
+              <c>Phase-Control TLV</c>
+              <c>All Phases</c>
+              -->
+
+              <c>&lt;TBD&gt;</c>
+              <c>Profile TLV</c>
+              <c>Phase Two</c>
+              
+              <c>&lt;TBD&gt;</c>
+              <c>Protocol TLV</c>
+              <c>Phase One, Phase Two</c>
+
+              <c>&lt;TBD&gt;</c>
+              <c>Provisioning-Data TLV</c>
+              <c>Phase Two</c>
+
+              <c>&lt;TBD&gt;</c>
+              <c>Provisioning-Headers TLV</c>
+              <c>Phase Two</c>
+
+              <c>&lt;TBD&gt;</c>
+              <c>Provisioning-Params TLV</c>
+              <c>Phase Two</c>
+
+              <c>&lt;TBD&gt;</c>
+              <c>Certificate-Request TLV</c>
+              <c>SPP</c>
+
+              <c>&lt;TBD&gt;</c>
+              <c>Storage-Info TLV</c>
+              <c>SPP</c>
+
+              <c>&lt;TBD&gt;</c>
+              <c>Supported-Format TLV</c>
+              <c>SPP</c>
+
+              <c>&lt;TBD&gt;</c>
+              <c>Supported-Encoding TLV</c>
+              <c>SPP</c>
+
+              <c>&lt;TBD&gt;</c>
+              <c>Token-Data TLV</c>
+              <c>Phase One</c>
+
+              <c>&lt;TBD&gt;</c>
+              <c>Version TLV</c>
+              <c>Phase One</c>
+
+          </texttable>
+
+          <t>TLV Value ( > 1 octet )
+            <list>
+                <t>
+                    This field carries data for the identified TLV. The internal structure
+                    is determined by the TLV Type field.
+                </t>
+            </list>
+          </t>
+
+          <t>
+            The rest of this section describes the structure of the different
+            supported TLVs and their usage in the different messages.
+          </t>
 
       <section anchor="creds_tlvs_types" title="EAP-CREDS defined TLVs">
-	      <t>
-	        EAP-CREDS messages's payload comprieses zero, one, or more TLVs that are encoded
-	        in a single EAP-CREDS message.
-	        The values for the TLV Type that are supported by this specifications are listed
-	        in <xref target="eap_creds_tlvs_table" />.
-	      </t>
+      <t>
+        EAP-CREDS messages's payload comprieses zero, one, or more TLVs that are encoded
+        in a single EAP-CREDS message.
+        The values for the TLV Type that are supported by this specifications are listed
+        in <xref target="eap_creds_tlvs_table" />.
+      </t>
 
-	    <section anchor="tlv_action" title="The Action TLV">
+      
 
-	      <figure><artwork><![CDATA[
+    <section anchor="tlv_action" title="The Action TLV">
 
-	  0                   1                   2                   3
-	  0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
-	 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-	 |   TLV Type    |                 TLV Length                    |
-	 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-	 |     Flags     |  Action Type  |
-	 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+      <figure><artwork><![CDATA[
 
-	]]></artwork></figure>
-	    	<t>TLV Type (uint8)
-	        <list>
-	            <t>&lt;TBD&gt; - Action TLV</t>
-	        </list>
-	    	</t>
-	    	<t>TLV Length (uint24)
-	        <list>
-	            <t>Fixed value (=2)</t>
-	        </list>
-	    	</t>
-	    	<t>Flags (uint8)
-	        <list>
-	            <t>Reserved</t>
-	        </list>
-	    	</t>
-	    </section>
+  0                   1                   2                   3
+  0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+ +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+ |   TLV Type    |                 TLV Length                    |
+ +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+ |     Flags     |  Action Type  |
+ +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+]]></artwork></figure>
+    <t>TLV Type (uint8)
+        <list>
+            <t>&lt;TBD&gt; - Action TLV</t>
+        </list>
+    </t>
+    <t>TLV Length (uint24)
+        <list>
+            <t>Fixed value (=2)</t>
+        </list>
+    </t>
+    <t>Flags (uint8)
+        <list>
+            <t>Reserved</t>
+        </list>
+    </t>
+    </section>
 
     <section anchor="tlv_certificatedata" title="The Certificate-Data TLV">
 
@@ -1022,68 +1184,68 @@
  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
  |   TLV Type    |                  TLV Length                   |
  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
- |     Flags     |    Encoding     |            Value           ...
+ |     Flags     |    Format     |    Encoding     |    Value   ...
  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 
 ]]></artwork></figure>
-    	<t>TLV Type (uint8)
+    <t>TLV Type (uint8)
         <list>
             <t>&lt;TBD&gt; - Certificate-Data TLV</t>
         </list>
-    	</t>
-    	<t>Length (uint24)
+    </t>
+    <t>Length (uint24)
         <list>
             <t>Provides the length of the TLV (> 3 octets)</t>
         </list>
-    	</t>
-    	<t>Flags (uint8)
+    </t>
+    <t>Flags (uint8)
         <list>
-          <t>
-            Provides a BITMASK that can be used to provide additional information
-            related to the encapsulated certificate. The bits have the following
-            meaning:
-            <list>
-              <t>Bit 0 - If set, the certificate is trusted (Trust Anchor)</t>
-              <t>Bit 1 - If set, the certificate is a CA certificate</t>
-              <t>Bit 2 - If set, the certificate is self-signed</t>
-              <t>Bit 3 - If set, the certificate is a proxy certificate</t>
-              <t>Bit 4 - If set, the certificate is an attribute certificate</t>
-              <t>Bit 5 - Reserved</t>
-              <t>Bit 6 - Reserved</t>
-              <t>Bit 7 - Reserved</t>
-            </list>
-          </t>
+            <t>
+                Provides a BITMASK that can be used to provide additional information
+                related to the encapsulated certificate. The bits have the following
+                meaning:
+                <list>
+                    <t>Bit 0 - If set, the certificate is trusted (Trust Anchor)</t>
+                    <t>Bit 1 - If set, the certificate is a CA certificate</t>
+                    <t>Bit 2 - If set, the certificate is self-signed</t>
+                    <t>Bit 3 - If set, the certificate is a proxy certificate</t>
+                    <t>Bit 4 - If set, the certificate is an attribute certificate</t>
+                    <t>Bit 5 - Reserved</t>
+                    <t>Bit 6 - Reserved</t>
+                    <t>Bit 7 - Reserved</t>
+                </list>
+            </t>
         </list>
         For a Trusted Root CA, the value of the flags shall be 0x7 (0000 0111).
         For an intermediate CA certificate that is not implicitly trusted, the value of
         the flags field should be set to 0x02 (0000 0010).
         For an End-Entity certificate, the value of the Flags will be 0x0 (0000 0000).
-    	</t>
-    	<t>Format (uint8)
+    </t>
+    <t>Format (uint8)
         <list>
-          <t>
-            Provides the indication of the Format the certificate is in. The
-            allowed values for this field are listed in
-            <xref target="iana_creds_data_type" />.
-          </t>
+            <t>
+                Provides the indication of the Format the certificate is in. The
+                allowed values for this field are listed in
+                <xref target="iana_creds_data_type" />.
+            </t>
         </list>
-	    </t>
-  	  <t>Encoding (uint8)
+    </t>
+    <t>Encoding (uint8)
         <list>
-          <t>
-            Provides the indication of the Encoding the certificate is in. The
-            allowed values for this field are listed in 
-            <xref target="iana_creds_encoding_type" />.
-		      </t>
+            <t>
+                Provides the indication of the Encoding the certificate is in. The
+                allowed values for this field are listed in 
+                <xref target="iana_creds_encoding_table" />.
+            </t>
         </list>
-    	</t>
-    	<t>Value (octet string)
+    </t>
+    <t>Value (octet string)
         <list>
-          <t>
-              This field carries the data for the certificate.
-          </t>
+            <t>
+                This field carries the data for the certificate.
+            </t>
         </list>
-    	</t>
+    </t>
     </section>
 
     <section anchor="tlv_challenge" title="The Challenge-Data TLV">
@@ -1100,38 +1262,38 @@
 ]]></artwork></figure>
       <t>TLV Type (uint8)
         <list>
-          <t>&lt;TBD&gt; - Challenge-Data TLV</t>
+            <t>&lt;TBD&gt; - Challenge-Data TLV</t>
         </list>
-    	</t>
-    	<t>Length (uint24)
+    </t>
+    <t>Length (uint24)
         <list>
-          <t>3 octets</t>
+            <t>3 octets</t>
         </list>
-    	</t>
-    	<t>Challenge Type (uint8)
-      	<list>
-        	<t>
-	          This field carries the type of Challenge. In particular, the challenge
-	          type determines how the Peer MUST calculate the ('Challenge-Response').
-	          The initial values for this fiel are listed in <xref target="eap_creds_challenge_types" />.
-	          Please refer to <xref target="creds_phase_three" /> for a detailed explanation
-	          of how to calculate the response to the challenge for the challenge types
-	          defined in this document.
-        	</t>
-      	</list>
-    	</t>
-    	<t>Challenge Data (> 1 octet)
+    </t>
+    <t>Challenge Type (uint8)
+      <list>
+        <t>
+          This field carries the type of Challenge. In particular, the challenge
+          type determines how the Peer MUST calculate the ('Challenge-Response').
+          The initial values for this fiel are listed in <xref target="eap_creds_challenge_types" />.
+          Please refer to <xref target="creds_phase_three" /> for a detailed explanation
+          of how to calculate the response to the challenge for the challenge types
+          defined in this document.
+        </t>
+      </list>
+    </t>
+    <t>Challenge Data (> 1 octet)
         <list>
-          <t>
-            This field carries the data to be used as a challenge
-            when validating newly deployed credentials.
-          </t>
-	      </list>
-  	  </t>
+            <t>
+                This field carries the data to be used as a challenge
+                when validating newly deployed credentials.
+            </t>
+        </list>
+    </t>
     </section>
 
     <section anchor="tlv_challenge_response" title="The Challenge-Response TLV">
-      <figure><artwork><![CDATA[
+        <figure><artwork><![CDATA[
 
   0                   1                   2                   3
   0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
@@ -1144,25 +1306,25 @@
 ]]></artwork></figure>
       <t>TLV Type (uint8)
         <list>
-          <t>&lt;TBD&gt; - Challenge-Response TLV</t>
+            <t>&lt;TBD&gt; - Challenge-Response TLV</t>
         </list>
-    	</t>
-    	<t>Length (uint24)
+    </t>
+    <t>Length (uint24)
         <list>
-          <t>3 octets</t>
+            <t>3 octets</t>
         </list>
-    	</t>
-    	<t>Challenge Response (> 1 octet)
+    </t>
+    <t>Challenge Response (> 1 octet)
         <list>
-          <t>
-            This field carries the data that resulted from the use
-            of the credentials to be validated.
-          </t>
+            <t>
+                This field carries the data that resulted from the use
+                of the credentials to be validated.
+            </t>
         </list>
-	    </t>
+    </t>
     </section>
 
-		<section anchor="tlv_credinfo" title="The Credentials-Information TLV">
+<section anchor="tlv_credinfo" title="The Credentials-Information TLV">
 
       <figure><artwork><![CDATA[
 
@@ -1238,7 +1400,7 @@
         <list>
             <t>
                 This field provides the description of the type of credential. The type
-                of credentials are listed in <xref target="iana_creds_type" />
+                of credentials are listed in <xref target="iana_creds_type_table" />
             </t>
         </list>
     </t>
@@ -1248,7 +1410,7 @@
                 This field indicates the protocol that was used to retrieve the target
                 credential. When the TLV is used in a Request by the Server, this field
                 is ignored.
-                The values for this field are listed in <xref target="iana_proto" />.
+                The values for this field are listed in <xref target="iana_proto_table" />.
             </t>
         </list>
     </t>
@@ -1385,7 +1547,7 @@
         <list>
             <t>
                 Provides the indication of the type of credentials. The allowed
-                values for this field are listed in <xref target="iana_creds_type" />.
+                values for this field are listed in <xref target="iana_creds_type_table" />.
             </t>
         </list>
     </t>
@@ -1403,7 +1565,7 @@
             <t>
                 Provides the indication of the Encoding the credentials are in. The
                 allowed values for this field are listed in 
-                <xref target="iana_creds_encoding_type" />.
+                <xref target="iana_creds_encoding_table" />.
             </t>
         </list>
     </t>
@@ -1511,7 +1673,7 @@
             <t>
                 Provides the indication of the Encoding the network usage description
                 data is in. The allowed values for this field are listed in 
-                <xref target="iana_creds_encoding_type" />.
+                <xref target="iana_creds_encoding_table" />.
             </t>
         </list>
     </t>
@@ -1923,7 +2085,7 @@
             <t>
                 Provides the indication of the algorithm used for the generation of
                 the credentials. The allowed values for this field are listed in 
-                <xref target="iana_creds_algor_type" />.
+                <xref target="iana_creds_algor_table" />.
             </t>
         </list>
     </t>
@@ -2005,7 +2167,7 @@
             <t>
                 Provides the indication of the Encoding the credentials are in. The
                 allowed values for this field are listed in 
-                <xref target="iana_creds_encoding_type" />.
+                <xref target="iana_creds_encoding_table" />.
             </t>
         </list>
     </t>
@@ -2013,7 +2175,7 @@
         <list>
             <t>
                 Provides the indication of the type of credentials. The allowed
-                values for this field are listed in <xref target="iana_creds_data_type" />.
+                values for this field are listed in <xref target="iana_creds_data_table" />.
             </t>
         </list>
     </t>
@@ -2153,7 +2315,7 @@
                 Provides the indication of the supported Encoding by the End Point.
                 This provides the indication to the Server of the capability of the
                 Peer. The allowed values for this field are listed in 
-                <xref target="iana_creds_encoding_type" />.
+                <xref target="iana_creds_encoding_table" />.
             </t>
         </list>
     </t>
@@ -2186,7 +2348,7 @@
         <list>
             <t>
                 Provides the indication of the type of credentials. The allowed
-                values for this field are listed in <xref target="iana_token" />.
+                values for this field are listed in <xref target="iana_token_table" />.
             </t>
         </list>
     </t>
@@ -2195,7 +2357,7 @@
             <t>
                 Provides the indication of the Encoding the credentials are in. The
                 allowed values for this field are listed in 
-                <xref target="iana_creds_encoding_type" />.
+                <xref target="iana_creds_encoding_table" />.
             </t>
         </list>
     </t>
@@ -2247,13 +2409,13 @@
         </list>
     </t>
 
-    		</section>
-  		</section>
-  	</section>
+    </section>
 
-  	<!--                   -->
-  	<!-- End of MSG Format -->
-  	<!--                   -->
+  </section>
+
+  </section>
+
+    </section>
 
     <section anchor="creds_msg_types" title="EAP-CREDS Messages">
         <t>
@@ -2401,6 +2563,8 @@
             </section>
 -->
 
+        </section>
+
         <section anchor="creds_msg_protoflow" title="The EAP-CREDS-Provisioning Message">
 
             <t>
@@ -2498,13 +2662,7 @@
             </t>
         </section>
 
-	    </section>
-
     </section>
-    
-    <!--                           -->
-    <!-- End of EAP-CREDS Messages -->
-    <!--                           -->
 
   <section anchor="err_handling" title="Error Handling in EAP-CREDS">
     <t>
@@ -2852,7 +3010,6 @@
 
       </section>
 
-
       <section anchor="eap_creds_spp_certificate" title="SPP Key Pair Provisioning">
         <t>
             EAP-CREDS/SSP defines the following flow of messages for requesting the provisioning
@@ -2934,14 +3091,9 @@
         </section>
 
       </section>
-
     </section>
 
   </section>
-
-  <!--                    -->
-  <!-- End of SPP Section -->
-  <!--                    -->
 
     <section anchor="iana" title="IANA Considerations">
         <t>
@@ -3006,8 +3158,6 @@
                 <c>Kerberos</c>
                 <c>3</c>
                 <c>OAuth</c>
-                <c>4</c>
-                <c>Certificate</c>
                 <c>200..254</c>
                 <c>Vendor Specific</c>
             </texttable>
@@ -3050,7 +3200,7 @@
 
         <section anchor="iana_creds_algor_type" title="Credentials Algorithms">
 
-            <texttable anchor="iana_creds_algor_type_table" title="Credentials Algorithms">
+            <texttable anchor="iana_creds_algor_table" title="Credentials Algorithms">
                 <ttcol align="center">ID</ttcol>
                 <ttcol align="left">Algorithm</ttcol>
                 <c>0</c>
@@ -3082,7 +3232,7 @@
 
         <section anchor="iana_creds_data_type" title="Credentials Datatypes">
 
-            <texttable anchor="iana_creds_data_type_table" title="Credentials Datatypes">
+            <texttable anchor="iana_creds_data_table" title="Credentials Datatypes">
                 <ttcol align="center">ID</ttcol>
                 <ttcol align="left">Data Type</ttcol>
                 <c>0</c>
@@ -3154,7 +3304,7 @@
 
         <section anchor="iana_creds_encoding_type" title="Credentials Encoding">
 
-            <texttable anchor="iana_creds_encoding_type_table" title="Credentials Encoding">
+            <texttable anchor="iana_creds_encoding_table" title="Credentials Encoding">
                 <ttcol align="center">ID</ttcol>
                 <ttcol align="left">Encoding</ttcol>
                 <c>0</c>

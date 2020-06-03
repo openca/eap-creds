@@ -1,0 +1,27 @@
+     ,--------.                                     ,----------.         
+     |EAP Peer|                                     |EAP Server|         
+     `---+----'                                     `----+-----'         
+         |  [1] EAP-Request/EAP-CREDS(Type=Provisioning) |               
+         |      { Protocol, Action,                      |  ,---------!. 
+         |        [ CredInfo  ], [ Params ],             |  |Phase Two|_\
+         |        [ ProtoData ], [ ProtoHeaders ] }      |  |Begins     |
+         | <----------------------------------------------  `-----------'
+         |                                               |               
+         | [2] EAP-Response/EAP-CREDS(Type=Provisioning) |               
+         |     { ProtoData, [ ProtoHeaders ] }           |               
+         | ---------------------------------------------->               
+         |                                               |               
+         .                                               .               
+         .                                               .               
+         .                                               .               
+         .                                               .               
+         | [N] EAP-Response/EAP-CREDS(Type=Provisioning) |               
+         |     { [ CredInfo ], [ ProtoData ],            |               
+         |       [ ProtoHeaders ] }                      |               
+         | <----------------------------------------------               
+         |                                               |               
+         | [N+1] EAP-Request/EAP-CREDS(Type=Provisioning)|  ,---------!. 
+         |     { [ ProtoData ], [ ProtoHeaders ] }       |  |Phase Two|_\
+         | ---------------------------------------------->  |Ends       |
+         |                                               |  `-----------'
+         |                                               |               

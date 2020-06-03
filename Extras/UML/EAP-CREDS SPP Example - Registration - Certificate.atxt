@@ -1,0 +1,25 @@
+               ,--------.                                    ,----------.                   
+               |EAP Peer|                                    |EAP Server|                   
+               `---+----'                                    `----+-----'                   
+                   | [1] EAP-Request/EAP-CREDS(Type=ProtoFlow)    |  ,---------!.           
+                   |     { [Version(=0x1)], Protocol(=SPP),       |  |Phase Two|_\          
+                   |       Action(=Register), [ProvParam(=Cert)] }|  |Begins     |          
+                   | <---------------------------------------------  `-----------'          
+                   |                                              |                         
+  ,-------------!. |                                              |                         
+  |The client   |_\|  [2] EAP-Response/EAP-CREDS(Type=ProtoFlow)  |                         
+  |sends its own  ||      { ProtoData(=<PKCS#10 Request>) }       |                         
+  |aregistration  || --------------------------------------------->                         
+  |token          ||                                              |                         
+  `---------------'|                                              |                         
+                   |                                              |  ,-------------------!. 
+                   |  [3] EAP-Request/EAP-CREDS(Type=ProtoFlow)   |  |Provides the       |_\
+                   |      { [ ProtoData(=Cert) ], [ CertData+ ] } |  |chain of             |
+                   | <---------------------------------------------  |certs up to          |
+                   |                                              |  |the root (included)  |
+                   |                                              |  `---------------------'
+                   |  [4] EAP-Response/EAP-CREDS(Type=ProtoFlow)  |  ,---------!.           
+                   |      { << Empty Body >> }                    |  |Phase Two|_\          
+                   | --------------------------------------------->  |Ends       |          
+                   |                                              |  `-----------'          
+                   |                                              |                         
