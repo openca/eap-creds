@@ -47,6 +47,19 @@ html::
 	done ; \
 	echo
 
+pdf::
+	@echo ; \
+	for i in $(SOURCES) ; do \
+	  echo "  * Compiling: $$i [PDF]" ; \
+	  out=`echo "$$i" | sed "s|.xml|.pdf|"` ; \
+	  out=`cat "$$i" | grep docName | head -n 1 | sed "s|.*docName\=\"||" | sed "s|\".*||"`; \
+	  echo -E -n "    - [PDF] format ... " && \
+	  $(XML2RFC) "$$i" --pdf -o "$$out.pdf" \
+		2>>err-html.txt >>log-html.txt && \
+	  	echo "Ok." || echo "ERROR (check the err file)."; \
+	done ; \
+	echo
+
 banner::
 	@echo
 	@echo "IETF RFC and I-D Compiler Makefile"
