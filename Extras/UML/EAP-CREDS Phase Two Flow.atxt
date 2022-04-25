@@ -3,7 +3,7 @@
      `---+----'                                     `----+-----'         
          |  [1] EAP-Request/EAP-CREDS(Type=Provisioning) |               
          |      { Protocol, Action,                      |  ,---------!. 
-         |        [ CredInfo  ], [ Params ],             |  |Phase Two|_\
+         |        [ Creds-Info  ], [ Params ],           |  |Phase Two|_\
          |        [ ProtoData ], [ ProtoHeaders ] }      |  |Begins     |
          | <----------------------------------------------  `-----------'
          |                                               |               
@@ -16,7 +16,7 @@
          .                                               .               
          .                                               .               
          | [N] EAP-Response/EAP-CREDS(Type=Provisioning) |               
-         |     { [ CredInfo ], [ ProtoData ],            |               
+         |     { [ Creds-Info ], [ ProtoData ],          |               
          |       [ ProtoHeaders ] }                      |               
          | <----------------------------------------------               
          |                                               |               

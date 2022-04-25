@@ -2,7 +2,7 @@
      |EAP Peer|                                |EAP Server|           
      `---+----'                                `----+-----'           
          | [1] EAP-Request/EAP-CREDS(Type=Validate) |  ,-----------!. 
-         |     { Cred-Info, Challenge }             |  |Phase Three|_\
+         |     { Creds-Info, Challenge-Data }       |  |Phase Three|_\
          | <-----------------------------------------  |Begins       |
          |                                          |  `-------------'
          | [2] EAP-Response/EAP-CREDS(Type=Validate)|  ,-----------!. 

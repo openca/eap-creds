@@ -1,0 +1,19 @@
+Warning: Text around line 403 contains tab characters.  These will be expanded, assuming a tab-size of 8.
+Warning: Text around line 530 contains tab characters.  These will be expanded, assuming a tab-size of 8.
+Warning: Text around line 633 contains tab characters.  These will be expanded, assuming a tab-size of 8.
+Warning: Text around line 1013 contains tab characters.  These will be expanded, assuming a tab-size of 8.
+Warning: Text around line 403 contains tab characters.  These will be expanded, assuming a tab-size of 8.
+Warning: Text around line 530 contains tab characters.  These will be expanded, assuming a tab-size of 8.
+Warning: artwork outdented 3 characters to avoid overrunning right margin around input line 530)
+Warning: Text around line 633 contains tab characters.  These will be expanded, assuming a tab-size of 8.
+Warning: Text around line 1013 contains tab characters.  These will be expanded, assuming a tab-size of 8.
+Warning: artwork outdented 3 characters to avoid overrunning right margin around input line 1013)
+Warning: Output line (from source around line 1015) is 73 characters; longer than 72.  Excess characters: '1':
+  '          0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1'
+Warning: Output line (from source around line 1016) is 74 characters; longer than 72.  Excess characters: '-+':
+  '         +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+'
+Warning: Output line (from source around line 1017) is 74 characters; longer than 72.  Excess characters: ' |':
+  '         |   TLV Type    |                 TLV Length                    |'
+Warning: Output line (from source around line 1018) is 74 characters; longer than 72.  Excess characters: '-+':
+  '         +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+'
+ Created file draft-pala-tian-eap-creds-08.txt

@@ -1,19 +1,19 @@
-     ,--------.                              ,----------.         
-     |EAP Peer|                              |EAP Server|         
-     `---+----'                              `----+-----'         
-         |        Outer Tunnel Established        |               
-         | <-------------------------------------->               
-         |                                        |               
-         |  [1] EAP-Request/EAP-CREDS(Type=Init)  |  ,---------!. 
-         |      { [ Version+ ], [ Challenge ] }   |  |Phase One|_\
-         | <---------------------------------------  |Begins     |
-         |                                        |  `-----------'
-         | [2] EAP-Response/EAP-CREDS(Type=Init)  |               
-         |     { Protocol+, [ Encoding+ ],        |               
-         |       [ Format+ ] , [  Version  ]      |  ,---------!. 
-         |       [ Creds-Info+ ], [ Storage-Info ]|  |Phase One|_\
-         |       [ Net-Usage], [ Token ],         |  |Ends       |
-         |       [ Challenge-Rsp ], [ Profile+ ] }|  `-----------'
-         | --------------------------------------->               
-         |                                        |               
-         |                                        |               
+     ,--------.                               ,----------.         
+     |EAP Peer|                               |EAP Server|         
+     `---+----'                               `----+-----'         
+         |         Outer Tunnel Established        |               
+         | <--------------------------------------->               
+         |                                         |               
+         | [1] EAP-Request/EAP-CREDS(Type=Init)    |  ,---------!. 
+         |     { [ Version+ ], [ Challenge-Data ] }|  |Phase One|_\
+         | <----------------------------------------  |Begins     |
+         |                                         |  `-----------'
+         |  [2] EAP-Response/EAP-CREDS(Type=Init)  |               
+         |      { [ Version+ ], [ Protocols+ ],    |               
+         |        [ Creds-Info+ ], [ Encoding+ ],  |  ,---------!. 
+         |        [ Format+ ], [ Token-Data ],     |  |Phase One|_\
+         |        [ Profile+ ], [ Challenge-Rsp ], |  |Ends       |
+         |        [ Storage-Info ],[ Net-Usage] }  |  `-----------'
+         | ---------------------------------------->               
+         |                                         |               
+         |                                         |               
