@@ -5,7 +5,7 @@
 Network Working Group                                            M. Pala
 Internet-Draft                                                   Y. Tian
 Intended status: Standards Track                               CableLabs
-Expires: November 2, 2022                                    May 1, 2022
+Expires: December 23, 2022                                 June 21, 2022
 
 
       Credentials Provisioning and Management via EAP (EAP-CREDS)
@@ -21,10 +21,9 @@ Abstract
    to authenticate to the network by providing a communication channel
    where different methods can be used to exchange different types of
    credentials.  However, the need for managing these credentials (i.e.,
-   provisioning and renewal) is still a hard problem to solve.
-
-   EAP-CREDS, if implemented in Managed Networks (e.g., Cable Modems),
-   could enable our operators to offer a registration and credentials
+   provisioning and renewal) is still a hard problem to solve.  EAP-
+   CREDS, if implemented in Managed Networks (e.g., Cable Modems), could
+   enable our operators to offer a registration and credentials
    management service integrated in the home WiFi thus enabling
    visibility about registered devices.  During initialization, EAP-
    CREDS also allows for MUD files or URLs to be transferred between the
@@ -33,13 +32,11 @@ Abstract
    networks.  The possibility provided by EAP-CREDS can help to secure
    home or business networks by leveraging the synergies of the security
    teams from the network operators thanks to the extended knowledge of
-   what and how is registered/authenticated.
-
-   This specifications define how to support the provisioning and
-   management of authentication credentials that can be exploited in
-   different environments (e.g., Wired, WiFi, cellular, etc.) to users
-   and/or devices by using EAP together with standard provisioning
-   protocols.
+   what and how is registered/authenticated.  This specifications define
+   how to support the provisioning and management of authentication
+   credentials that can be exploited in different environments (e.g.,
+   Wired, WiFi, cellular, etc.) to users and/or devices by using EAP
+   together with standard provisioning protocols.
 
 Status of This Memo
 
@@ -51,19 +48,20 @@ Status of This Memo
    working documents as Internet-Drafts.  The list of current Internet-
    Drafts is at https://datatracker.ietf.org/drafts/current/.
 
-
-
-Pala & Tian             Expires November 2, 2022                [Page 1]
-
-Internet-Draft                  EAP-CREDS                       May 2022
-
-
    Internet-Drafts are draft documents valid for a maximum of six months
    and may be updated, replaced, or obsoleted by other documents at any
+
+
+
+Pala & Tian             Expires December 23, 2022               [Page 1]
+
+Internet-Draft                  EAP-CREDS                      June 2022
+
+
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on November 2, 2022.
+   This Internet-Draft will expire on December 23, 2022.
 
 Copyright Notice
 
@@ -106,16 +104,16 @@ Table of Contents
        4.3.3.  The Challenge-Response TLV  . . . . . . . . . . . . .  20
        4.3.4.  The Creds-Info TLV  . . . . . . . . . . . . . . . . .  20
        4.3.5.  The Error TLV . . . . . . . . . . . . . . . . . . . .  23
-
-
-
-Pala & Tian             Expires November 2, 2022                [Page 2]
-
-Internet-Draft                  EAP-CREDS                       May 2022
-
-
        4.3.6.  The Net-Usage TLV . . . . . . . . . . . . . . . . . .  24
        4.3.7.  The Profile TLV . . . . . . . . . . . . . . . . . . .  26
+
+
+
+Pala & Tian             Expires December 23, 2022               [Page 2]
+
+Internet-Draft                  EAP-CREDS                      June 2022
+
+
        4.3.8.  The Protocol TLV  . . . . . . . . . . . . . . . . . .  27
        4.3.9.  The ProtoData TLV . . . . . . . . . . . . . . . . . .  27
        4.3.10. The ProtoHeaders TLV  . . . . . . . . . . . . . . . .  28
@@ -157,30 +155,28 @@ Internet-Draft                  EAP-CREDS                       May 2022
    authentication when it comes to gain access to networks.  The 802.1x
    architecture provides network administrators with the possibility to
    check credentials presented by a device even before providing any
-   connectivity or IP services to it.
+   connectivity or IP services to it.  However, the provisioning and
+   management of these credentials is a hard problem to solve and many
+   vendors opt for long-lived credentials that can not be easily
+   revoked, replaced, or simply renewed.  This specification addresses
+   the problem of providing a simple-to-use and simple-to-deploy conduit
+   for credentials management by extending the EAP protocol to support
+   credentials provisioning and management functionality.  In
 
-   However, the provisioning and management of these credentials is a
-   hard problem to solve and many vendors opt for long-lived credentials
-   that can not be easily revoked, replaced, or simply renewed.
 
 
-
-Pala & Tian             Expires November 2, 2022                [Page 3]
+Pala & Tian             Expires December 23, 2022               [Page 3]
 
-Internet-Draft                  EAP-CREDS                       May 2022
+Internet-Draft                  EAP-CREDS                      June 2022
 
 
-   This specification addresses the problem of providing a simple-to-use
-   and simple-to-deploy conduit for credentials management by extending
-   the EAP protocol to support credentials provisioning and management
-   functionality.  In particular, the EAP-CREDS method defined here
-   provides a generic framework that can carry the messages for
-   provisioning different types of credentials.  EAP-CREDS cannot be
-   used as a stand-alone method, it is required that EAP-CREDS is used
-   as an inner method of EAP-TLS, EAP-TEAP, or any other tunneling
-   method that can provide the required secrecy and (at minimum) server-
-   side authentication to make sure that the communication is protected
-   and with the right server.
+   particular, the EAP-CREDS method defined here provides a generic
+   framework that can carry the messages for provisioning different
+   types of credentials.  EAP-CREDS cannot be used as a stand-alone
+   method, it is required that EAP-CREDS is used as an inner method of
+   EAP-TLS, EAP-TEAP, or any other tunneling method that can provide the
+   required secrecy and (at minimum) server-side authentication to make
+   sure that the communication is protected and with the right server.
 
 2.1.  Overview of existing solutions
 
@@ -202,15 +198,13 @@ Internet-Draft                  EAP-CREDS                       May 2022
    This document focuses on the definition of the EAP-CREDS method to
    convey credentials provisioning and managing messages between the
    client and the AAA server.  Moreover, the document defines how to
-   encode messages for the main IETF provisioning protocols.
-
-   This document, however, does not provide specifications for how and
-   where the credentials are generated.  In particular, the credentials
-   could be generated directly within the AAA server or at a different
+   encode messages for the main IETF provisioning protocols.  This
+   document, however, does not provide specifications for how and where
+   the credentials are generated.  In particular, the credentials could
+   be generated directly within the AAA server or at a different
    location (i.e., the Certificate Service Provider or CSP) site.
    Different authentication mechanisms (e.g., TLS, etc.) can be used to
    secure the communication between the server's endpoint and the CSP.
-
    Examples and details of how to use EAP-CREDS encapsulation mechanism
    with specific protocol are out of scope of this document.  For more
    details of using EAP-CREDS method with Simple Provisioning Protocol
@@ -218,16 +212,19 @@ Internet-Draft                  EAP-CREDS                       May 2022
    (SPP) .  For more details of using EAP-CREDS method with Certificate
    Management Protocol (CMP), please refer to EAP-CREDS withwith
    Certificate Management Protocol (CMP) .  These two documents can be
-
-
-
-Pala & Tian             Expires November 2, 2022                [Page 4]
-
-Internet-Draft                  EAP-CREDS                       May 2022
-
-
    used as the template for other protocols' encapulation with EAP-
    CREDS.
+
+
+
+
+
+
+
+Pala & Tian             Expires December 23, 2022               [Page 4]
+
+Internet-Draft                  EAP-CREDS                      June 2022
+
 
 2.3.  EAP-CREDS as tunneled mechanism only
 
@@ -273,17 +270,17 @@ Internet-Draft                  EAP-CREDS                       May 2022
    with all the selected parameters for one specific credential that
    needs attention (or for a new credential) to be managed by the
    network.  In particular, the server provides, at minimum, the
-
-
-
-
-Pala & Tian             Expires November 2, 2022                [Page 5]
-
-Internet-Draft                  EAP-CREDS                       May 2022
-
-
    ('Protocol') TLV, the ('Action') TLV, and the ('Params') or the
    ('Creds-Info') TLV.
+
+
+
+
+
+Pala & Tian             Expires December 23, 2022               [Page 5]
+
+Internet-Draft                  EAP-CREDS                      June 2022
+
 
    After checking the parameters sent by the Server, if the Peer does
    not support any of the proposed ones, it MUST send a message with one
@@ -333,9 +330,12 @@ Internet-Draft                  EAP-CREDS                       May 2022
 
 
 
-Pala & Tian             Expires November 2, 2022                [Page 6]
+
+
+
+Pala & Tian             Expires December 23, 2022               [Page 6]
 
-Internet-Draft                  EAP-CREDS                       May 2022
+Internet-Draft                  EAP-CREDS                      June 2022
 
 
 3.1.  Message Flow
@@ -389,9 +389,9 @@ Internet-Draft                  EAP-CREDS                       May 2022
 
 
 
-Pala & Tian             Expires November 2, 2022                [Page 7]
+Pala & Tian             Expires December 23, 2022               [Page 7]
 
-Internet-Draft                  EAP-CREDS                       May 2022
+Internet-Draft                  EAP-CREDS                      June 2022
 
 
 3.2.  Phase Transitioning Rules
@@ -445,9 +445,9 @@ Internet-Draft                  EAP-CREDS                       May 2022
 
 
 
-Pala & Tian             Expires November 2, 2022                [Page 8]
+Pala & Tian             Expires December 23, 2022               [Page 8]
 
-Internet-Draft                  EAP-CREDS                       May 2022
+Internet-Draft                  EAP-CREDS                      June 2022
 
 
        ,--------.                               ,----------.
@@ -501,9 +501,9 @@ Internet-Draft                  EAP-CREDS                       May 2022
 
 
 
-Pala & Tian             Expires November 2, 2022                [Page 9]
+Pala & Tian             Expires December 23, 2022               [Page 9]
 
-Internet-Draft                  EAP-CREDS                       May 2022
+Internet-Draft                  EAP-CREDS                      June 2022
 
 
       The Peer, sends back a message that carries one ('Version') TLV to
@@ -557,9 +557,9 @@ Internet-Draft                  EAP-CREDS                       May 2022
 
 
 
-Pala & Tian             Expires November 2, 2022               [Page 10]
+Pala & Tian             Expires December 23, 2022              [Page 10]
 
-Internet-Draft                  EAP-CREDS                       May 2022
+Internet-Draft                  EAP-CREDS                      June 2022
 
 
       ('EAP-CREDS-Init') message that will also carry an ('ERROR') TLV
@@ -579,46 +579,44 @@ Internet-Draft                  EAP-CREDS                       May 2022
    The following figure provides the message flow for Phase 2:
 
 
-    ,--------.                                     ,----------.
-    |EAP Peer|                                     |EAP Server|
-    `---+----'                                     `----+-----'
-        |  [1] EAP-Request/EAP-CREDS(Type=Provisioning) |
-        |      { Protocol, Action,                      |  ,---------!.
-        |        [ Creds-Info  ], [ Params ],           |  |Phase Two|_\
-        |        [ ProtoData ], [ ProtoHeaders ] }      |  |Begins     |
-        | <----------------------------------------------  `-----------'
-        |                                               |
-        | [2] EAP-Response/EAP-CREDS(Type=Provisioning) |
-        |     { ProtoData, [ ProtoHeaders ] }           |
-        | ---------------------------------------------->
-        |                                               |
-        .                                               .
-        .                                               .
-        .                                               .
-        .                                               .
-        | [N] EAP-Response/EAP-CREDS(Type=Provisioning) |
-        |     { [ Creds-Info ], [ ProtoData ],          |
-        |       [ ProtoHeaders ] }                      |
-        | <----------------------------------------------
-        |                                               |
-        | [N+1] EAP-Request/EAP-CREDS(Type=Provisioning)|  ,---------!.
-        |     { [ ProtoData ], [ ProtoHeaders ] }       |  |Phase Two|_\
-        | ---------------------------------------------->  |Ends       |
-        |                                               |  `-----------'
-        |                                               |
-
+   ,--------.                                     ,----------.
+   |EAP Peer|                                     |EAP Server|
+   `---+----'                                     `----+-----'
+       |  [1] EAP-Request/EAP-CREDS(Type=Provisioning) |
+       |      { Protocol, Action,                      |  ,---------!.
+       |        [ Creds-Info  ], [ Params ],           |  |Phase Two|_\
+       |        [ ProtoData ], [ ProtoHeaders ] }      |  |Begins     |
+       | <----------------------------------------------  `-----------'
+       |                                               |
+       | [2] EAP-Response/EAP-CREDS(Type=Provisioning) |
+       |     { ProtoData, [ ProtoHeaders ] }           |
+       | ---------------------------------------------->
+       |                                               |
+       .                                               .
+       .                                               .
+       .                                               .
+       .                                               .
+       | [N] EAP-Response/EAP-CREDS(Type=Provisioning) |
+       |     { [ Creds-Info ], [ ProtoData ],          |
+       |       [ ProtoHeaders ] }                      |
+       | <----------------------------------------------
+       |                                               |
+       | [N+1] EAP-Request/EAP-CREDS(Type=Provisioning)|  ,---------!.
+       |     { [ ProtoData ], [ ProtoHeaders ] }       |  |Phase Two|_\
+       | ---------------------------------------------->  |Ends       |
+       |                                               |  `-----------'
+       |                                               |
 
                      EAP-CREDS Phase Two Message Flow
 
-
-
-
-Pala & Tian             Expires November 2, 2022               [Page 11]
-
-Internet-Draft                  EAP-CREDS                       May 2022
-
-
    [1] The Server sends EAP-Request/EAP-CREDS(Type=Provisioning)
+
+
+
+Pala & Tian             Expires December 23, 2022              [Page 11]
+
+Internet-Draft                  EAP-CREDS                      June 2022
+
 
       The first message of Phase Two indicates that the Server is ready
       to initiate the selected provisioning protocol.This message
@@ -669,9 +667,11 @@ Internet-Draft                  EAP-CREDS                       May 2022
 
 
 
-Pala & Tian             Expires November 2, 2022               [Page 12]
+
+
+Pala & Tian             Expires December 23, 2022              [Page 12]
 
-Internet-Draft                  EAP-CREDS                       May 2022
+Internet-Draft                  EAP-CREDS                      June 2022
 
 
    At this point, the Server can decide to provision (or manage) another
@@ -725,9 +725,9 @@ Internet-Draft                  EAP-CREDS                       May 2022
 
 
 
-Pala & Tian             Expires November 2, 2022               [Page 13]
+Pala & Tian             Expires December 23, 2022              [Page 13]
 
-Internet-Draft                  EAP-CREDS                       May 2022
+Internet-Draft                  EAP-CREDS                      June 2022
 
 
       As usual, the Server MUST set, in the headers, the 'S' (Start) bit
@@ -781,9 +781,9 @@ Internet-Draft                  EAP-CREDS                       May 2022
 
 
 
-Pala & Tian             Expires November 2, 2022               [Page 14]
+Pala & Tian             Expires December 23, 2022              [Page 14]
 
-Internet-Draft                  EAP-CREDS                       May 2022
+Internet-Draft                  EAP-CREDS                      June 2022
 
 
       The initial values for the type of challenges are described in the
@@ -837,9 +837,9 @@ Internet-Draft                  EAP-CREDS                       May 2022
 
 
 
-Pala & Tian             Expires November 2, 2022               [Page 15]
+Pala & Tian             Expires December 23, 2022              [Page 15]
 
-Internet-Draft                  EAP-CREDS                       May 2022
+Internet-Draft                  EAP-CREDS                      June 2022
 
 
    length: the message length is carried in the 'Message Length' field
@@ -893,9 +893,9 @@ Internet-Draft                  EAP-CREDS                       May 2022
 
 
 
-Pala & Tian             Expires November 2, 2022               [Page 16]
+Pala & Tian             Expires December 23, 2022              [Page 16]
 
-Internet-Draft                  EAP-CREDS                       May 2022
+Internet-Draft                  EAP-CREDS                      June 2022
 
 
    The Phase field is a 4-bits value and identifies the EAP-CREDS phase
@@ -949,9 +949,9 @@ Internet-Draft                  EAP-CREDS                       May 2022
 
 
 
-Pala & Tian             Expires November 2, 2022               [Page 17]
+Pala & Tian             Expires December 23, 2022              [Page 17]
 
-Internet-Draft                  EAP-CREDS                       May 2022
+Internet-Draft                  EAP-CREDS                      June 2022
 
 
       octets) to the value of the Length field (i.e., the size of the
@@ -1005,18 +1005,18 @@ Internet-Draft                  EAP-CREDS                       May 2022
 
 
 
-Pala & Tian             Expires November 2, 2022               [Page 18]
+Pala & Tian             Expires December 23, 2022              [Page 18]
 
-Internet-Draft                  EAP-CREDS                       May 2022
+Internet-Draft                  EAP-CREDS                      June 2022
 
 
-          0                   1                   2                   3
-          0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
-         +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-         |   TLV Type    |                 TLV Length                    |
-         +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-         |     Flags     |  Action Type  |
-         +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+      0                   1                   2                   3
+      0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+     |   TLV Type    |                 TLV Length                    |
+     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+     |     Flags     |  Action Type  |
+     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 
 
    TLV Type (uint8)
@@ -1061,9 +1061,9 @@ Internet-Draft                  EAP-CREDS                       May 2022
 
 
 
-Pala & Tian             Expires November 2, 2022               [Page 19]
+Pala & Tian             Expires December 23, 2022              [Page 19]
 
-Internet-Draft                  EAP-CREDS                       May 2022
+Internet-Draft                  EAP-CREDS                      June 2022
 
 
       explanation of how to calculate the response to the challenge for
@@ -1117,9 +1117,9 @@ Internet-Draft                  EAP-CREDS                       May 2022
 
 
 
-Pala & Tian             Expires November 2, 2022               [Page 20]
+Pala & Tian             Expires December 23, 2022              [Page 20]
 
-Internet-Draft                  EAP-CREDS                       May 2022
+Internet-Draft                  EAP-CREDS                      June 2022
 
 
      0                   1                   2                   3
@@ -1173,9 +1173,9 @@ Internet-Draft                  EAP-CREDS                       May 2022
 
 
 
-Pala & Tian             Expires November 2, 2022               [Page 21]
+Pala & Tian             Expires December 23, 2022              [Page 21]
 
-Internet-Draft                  EAP-CREDS                       May 2022
+Internet-Draft                  EAP-CREDS                      June 2022
 
 
          Bit 1 - If set, the credential is immutable and cannot be
@@ -1229,9 +1229,9 @@ Internet-Draft                  EAP-CREDS                       May 2022
 
 
 
-Pala & Tian             Expires November 2, 2022               [Page 22]
+Pala & Tian             Expires December 23, 2022              [Page 22]
 
-Internet-Draft                  EAP-CREDS                       May 2022
+Internet-Draft                  EAP-CREDS                      June 2022
 
 
          DD - is the 2 digits representation of the day of the month
@@ -1285,9 +1285,9 @@ Internet-Draft                  EAP-CREDS                       May 2022
 
 
 
-Pala & Tian             Expires November 2, 2022               [Page 23]
+Pala & Tian             Expires December 23, 2022              [Page 23]
 
-Internet-Draft                  EAP-CREDS                       May 2022
+Internet-Draft                  EAP-CREDS                      June 2022
 
 
      0                   1                   2                   3
@@ -1341,9 +1341,9 @@ Internet-Draft                  EAP-CREDS                       May 2022
 
 
 
-Pala & Tian             Expires November 2, 2022               [Page 24]
+Pala & Tian             Expires December 23, 2022              [Page 24]
 
-Internet-Draft                  EAP-CREDS                       May 2022
+Internet-Draft                  EAP-CREDS                      June 2022
 
 
      0                   1                   2                   3
@@ -1397,9 +1397,9 @@ Internet-Draft                  EAP-CREDS                       May 2022
 
 
 
-Pala & Tian             Expires November 2, 2022               [Page 25]
+Pala & Tian             Expires December 23, 2022              [Page 25]
 
-Internet-Draft                  EAP-CREDS                       May 2022
+Internet-Draft                  EAP-CREDS                      June 2022
 
 
       Net-Usage Data field to the URL of the MUD file related to the
@@ -1453,9 +1453,9 @@ Internet-Draft                  EAP-CREDS                       May 2022
 
 
 
-Pala & Tian             Expires November 2, 2022               [Page 26]
+Pala & Tian             Expires December 23, 2022              [Page 26]
 
-Internet-Draft                  EAP-CREDS                       May 2022
+Internet-Draft                  EAP-CREDS                      June 2022
 
 
       Identifier (OID) of the specific profile supported (e.g., could be
@@ -1509,9 +1509,9 @@ Internet-Draft                  EAP-CREDS                       May 2022
 
 
 
-Pala & Tian             Expires November 2, 2022               [Page 27]
+Pala & Tian             Expires December 23, 2022              [Page 27]
 
-Internet-Draft                  EAP-CREDS                       May 2022
+Internet-Draft                  EAP-CREDS                      June 2022
 
 
    TLV Type (uint8)
@@ -1565,9 +1565,9 @@ Internet-Draft                  EAP-CREDS                       May 2022
 
 
 
-Pala & Tian             Expires November 2, 2022               [Page 28]
+Pala & Tian             Expires December 23, 2022              [Page 28]
 
-Internet-Draft                  EAP-CREDS                       May 2022
+Internet-Draft                  EAP-CREDS                      June 2022
 
 
      0                   1                   2                   3
@@ -1621,9 +1621,9 @@ Internet-Draft                  EAP-CREDS                       May 2022
 
 
 
-Pala & Tian             Expires November 2, 2022               [Page 29]
+Pala & Tian             Expires December 23, 2022              [Page 29]
 
-Internet-Draft                  EAP-CREDS                       May 2022
+Internet-Draft                  EAP-CREDS                      June 2022
 
 
       Provides the indication of the algorithm used for the generation
@@ -1677,9 +1677,9 @@ Internet-Draft                  EAP-CREDS                       May 2022
 
 
 
-Pala & Tian             Expires November 2, 2022               [Page 30]
+Pala & Tian             Expires December 23, 2022              [Page 30]
 
-Internet-Draft                  EAP-CREDS                       May 2022
+Internet-Draft                  EAP-CREDS                      June 2022
 
 
          interpretation.  Therefore, it is good practice to generate
@@ -1733,9 +1733,9 @@ Internet-Draft                  EAP-CREDS                       May 2022
 
 
 
-Pala & Tian             Expires November 2, 2022               [Page 31]
+Pala & Tian             Expires December 23, 2022              [Page 31]
 
-Internet-Draft                  EAP-CREDS                       May 2022
+Internet-Draft                  EAP-CREDS                      June 2022
 
 
       Provides the length of the TLV (> 3 octets)
@@ -1789,9 +1789,9 @@ Internet-Draft                  EAP-CREDS                       May 2022
 
 
 
-Pala & Tian             Expires November 2, 2022               [Page 32]
+Pala & Tian             Expires December 23, 2022              [Page 32]
 
-Internet-Draft                  EAP-CREDS                       May 2022
+Internet-Draft                  EAP-CREDS                      June 2022
 
 
 5.  EAP-CREDS Messages
@@ -1845,9 +1845,9 @@ Internet-Draft                  EAP-CREDS                       May 2022
 
 
 
-Pala & Tian             Expires November 2, 2022               [Page 33]
+Pala & Tian             Expires December 23, 2022              [Page 33]
 
-Internet-Draft                  EAP-CREDS                       May 2022
+Internet-Draft                  EAP-CREDS                      June 2022
 
 
 5.1.2.  EAP Peer's Init Message
@@ -1901,9 +1901,9 @@ Internet-Draft                  EAP-CREDS                       May 2022
 
 
 
-Pala & Tian             Expires November 2, 2022               [Page 34]
+Pala & Tian             Expires December 23, 2022              [Page 34]
 
-Internet-Draft                  EAP-CREDS                       May 2022
+Internet-Draft                  EAP-CREDS                      June 2022
 
 
    token in a ('Token') TLV, the challenge value in a ('Challenge-Data')
@@ -1957,9 +1957,9 @@ Internet-Draft                  EAP-CREDS                       May 2022
 
 
 
-Pala & Tian             Expires November 2, 2022               [Page 35]
+Pala & Tian             Expires December 23, 2022              [Page 35]
 
-Internet-Draft                  EAP-CREDS                       May 2022
+Internet-Draft                  EAP-CREDS                      June 2022
 
 
 5.1.4.  The EAP-CREDS-Validate Message
@@ -2013,9 +2013,9 @@ Internet-Draft                  EAP-CREDS                       May 2022
 
 
 
-Pala & Tian             Expires November 2, 2022               [Page 36]
+Pala & Tian             Expires December 23, 2022              [Page 36]
 
-Internet-Draft                  EAP-CREDS                       May 2022
+Internet-Draft                  EAP-CREDS                      June 2022
 
 
    Numbers Authority (IANA) regarding registration of values related to
@@ -2069,9 +2069,9 @@ Internet-Draft                  EAP-CREDS                       May 2022
 
 
 
-Pala & Tian             Expires November 2, 2022               [Page 37]
+Pala & Tian             Expires December 23, 2022              [Page 37]
 
-Internet-Draft                  EAP-CREDS                       May 2022
+Internet-Draft                  EAP-CREDS                      June 2022
 
 
 7.3.  Credentials Types
@@ -2125,9 +2125,9 @@ Internet-Draft                  EAP-CREDS                       May 2022
 
 
 
-Pala & Tian             Expires November 2, 2022               [Page 38]
+Pala & Tian             Expires December 23, 2022              [Page 38]
 
-Internet-Draft                  EAP-CREDS                       May 2022
+Internet-Draft                  EAP-CREDS                      June 2022
 
 
                        +----+----------------------+
@@ -2181,9 +2181,9 @@ Internet-Draft                  EAP-CREDS                       May 2022
 
 
 
-Pala & Tian             Expires November 2, 2022               [Page 39]
+Pala & Tian             Expires December 23, 2022              [Page 39]
 
-Internet-Draft                  EAP-CREDS                       May 2022
+Internet-Draft                  EAP-CREDS                      June 2022
 
 
    Assignment of new values for new Message Types MUST be done through
@@ -2237,9 +2237,9 @@ Internet-Draft                  EAP-CREDS                       May 2022
 
 
 
-Pala & Tian             Expires November 2, 2022               [Page 40]
+Pala & Tian             Expires December 23, 2022              [Page 40]
 
-Internet-Draft                  EAP-CREDS                       May 2022
+Internet-Draft                  EAP-CREDS                      June 2022
 
 
    (or negotiation).  The peer SHOULD verify the validity of the EAP
@@ -2293,9 +2293,9 @@ Internet-Draft                  EAP-CREDS                       May 2022
 
 
 
-Pala & Tian             Expires November 2, 2022               [Page 41]
+Pala & Tian             Expires December 23, 2022              [Page 41]
 
-Internet-Draft                  EAP-CREDS                       May 2022
+Internet-Draft                  EAP-CREDS                      June 2022
 
 
    [RFC4491]  Leontiev, S., Ed. and D. Shefanovski, Ed., "Using the GOST
@@ -2349,9 +2349,9 @@ Authors' Addresses
 
 
 
-Pala & Tian             Expires November 2, 2022               [Page 42]
+Pala & Tian             Expires December 23, 2022              [Page 42]
 
-Internet-Draft                  EAP-CREDS                       May 2022
+Internet-Draft                  EAP-CREDS                      June 2022
 
 
    Massimiliano Pala
@@ -2405,4 +2405,4 @@ Internet-Draft                  EAP-CREDS                       May 2022
 
 
 
-Pala & Tian             Expires November 2, 2022               [Page 43]
+Pala & Tian             Expires December 23, 2022              [Page 43]
