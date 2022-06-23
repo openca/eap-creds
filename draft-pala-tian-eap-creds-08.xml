@@ -149,7 +149,7 @@
             Certificate Management Protocol (CMP) <xref target="RFC4210" />, Certificate Management over CMS (CMC)
             <xref target="RFC5272"/><xref target="RFC6402"/>, Enrollment over Secure Transport (EST)
             <xref target="RFC7030"/>, and Automated Certificate Management Environment (ACME) 
-          <xref target="RFC8555"/>.
+            <xref target="RFC8555"/>.
 
             However, none of these protocols provide native support for client that do not have IP connectivity
             yet (e.g., because they do not have network-access credentials, yet). EAP-CREDS
