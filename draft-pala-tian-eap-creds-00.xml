@@ -26,7 +26,7 @@
     <!-- <!ENTITY ietf-acme-acme PUBLIC '' 'http://xml.resource.org/public/rfc/bibxml/reference.I-D.ietf-acme-acme.xml'> -->
 ]>
 
-<rfc category="std" docName="draft-pala-tian-eap-creds-00" ipr="trust200902">
+<rfc category="std" docName="draft-pala-tian-eap-creds-01" ipr="trust200902">
     
     <?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
 
