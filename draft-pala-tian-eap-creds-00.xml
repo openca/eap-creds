@@ -26,7 +26,7 @@
     <!-- <!ENTITY ietf-acme-acme PUBLIC '' 'http://xml.resource.org/public/rfc/bibxml/reference.I-D.ietf-acme-acme.xml'> -->
 ]>
 
-<rfc category="std" docName="draft-pala-tian-eap-creds-08" ipr="trust200902">
+<rfc category="std" docName="draft-pala-tian-eap-creds-00" ipr="trust200902">
     
     <?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
 
@@ -86,9 +86,11 @@
         exchange different types of credentials.
 
         However, the need for managing these credentials (i.e., provisioning and renewal) is still a
-        hard problem to solve.
+        hard problem to solve. Usually, credentails used in an access network can be in different levels 
+        (e.g., network-level, user-level) and sometimes tend to live unmanaged for quite a long time due
+        to the challenges of operation and implementation.  
 
-        EAP-CREDS, if implemented in Managed Networks (e.g., Cable Modems), could
+        EAP-CREDS (RFC XXXX<!--<xref target="RFC2119"/>-->), if implemented in Managed Networks (e.g., Cable Modems), could
         enable our operators to offer a registration and credentials management service
         integrated in the home WiFi thus enabling visibility about registered devices.
         During initialization, EAP-CREDS also allows for MUD files or URLs to

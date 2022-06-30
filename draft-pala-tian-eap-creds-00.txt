@@ -5,11 +5,11 @@
 Network Working Group                                            M. Pala
 Internet-Draft                                                   Y. Tian
 Intended status: Standards Track                               CableLabs
-Expires: December 23, 2022                                 June 21, 2022
+Expires: January 1, 2023                                   June 30, 2022
 
 
       Credentials Provisioning and Management via EAP (EAP-CREDS)
-                      draft-pala-tian-eap-creds-08
+                      draft-pala-tian-eap-creds-00
 
 Abstract
 
@@ -21,22 +21,26 @@ Abstract
    to authenticate to the network by providing a communication channel
    where different methods can be used to exchange different types of
    credentials.  However, the need for managing these credentials (i.e.,
-   provisioning and renewal) is still a hard problem to solve.  EAP-
-   CREDS, if implemented in Managed Networks (e.g., Cable Modems), could
-   enable our operators to offer a registration and credentials
-   management service integrated in the home WiFi thus enabling
-   visibility about registered devices.  During initialization, EAP-
-   CREDS also allows for MUD files or URLs to be transferred between the
-   EAP Peer and the EAP Server, thus giving detailed visibility about
-   devices when they are provisioned with credentials for accessing the
-   networks.  The possibility provided by EAP-CREDS can help to secure
-   home or business networks by leveraging the synergies of the security
-   teams from the network operators thanks to the extended knowledge of
-   what and how is registered/authenticated.  This specifications define
-   how to support the provisioning and management of authentication
-   credentials that can be exploited in different environments (e.g.,
-   Wired, WiFi, cellular, etc.) to users and/or devices by using EAP
-   together with standard provisioning protocols.
+   provisioning and renewal) is still a hard problem to solve.  Usually,
+   credentails used in an access network can be in different levels
+   (e.g., network-level, user-level) and sometimes tend to live
+   unmanaged for quite a long time due to the challenges of operation
+   and implementation.  EAP-CREDS (RFC XXXX), if implemented in Managed
+   Networks (e.g., Cable Modems), could enable our operators to offer a
+   registration and credentials management service integrated in the
+   home WiFi thus enabling visibility about registered devices.  During
+   initialization, EAP-CREDS also allows for MUD files or URLs to be
+   transferred between the EAP Peer and the EAP Server, thus giving
+   detailed visibility about devices when they are provisioned with
+   credentials for accessing the networks.  The possibility provided by
+   EAP-CREDS can help to secure home or business networks by leveraging
+   the synergies of the security teams from the network operators thanks
+   to the extended knowledge of what and how is registered/
+   authenticated.  This specifications define how to support the
+   provisioning and management of authentication credentials that can be
+   exploited in different environments (e.g., Wired, WiFi, cellular,
+   etc.) to users and/or devices by using EAP together with standard
+   provisioning protocols.
 
 Status of This Memo
 
@@ -45,23 +49,24 @@ Status of This Memo
 
    Internet-Drafts are working documents of the Internet Engineering
    Task Force (IETF).  Note that other groups may also distribute
+
+
+
+
+Pala & Tian              Expires January 1, 2023                [Page 1]
+
+Internet-Draft                  EAP-CREDS                      June 2022
+
+
    working documents as Internet-Drafts.  The list of current Internet-
    Drafts is at https://datatracker.ietf.org/drafts/current/.
 
    Internet-Drafts are draft documents valid for a maximum of six months
    and may be updated, replaced, or obsoleted by other documents at any
-
-
-
-Pala & Tian             Expires December 23, 2022               [Page 1]
-
-Internet-Draft                  EAP-CREDS                      June 2022
-
-
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on December 23, 2022.
+   This Internet-Draft will expire on January 1, 2023.
 
 Copyright Notice
 
@@ -101,19 +106,19 @@ Table of Contents
      4.3.  EAP-CREDS defined TLVs  . . . . . . . . . . . . . . . . .  18
        4.3.1.  The Action TLV  . . . . . . . . . . . . . . . . . . .  18
        4.3.2.  The Challenge-Data TLV  . . . . . . . . . . . . . . .  19
+
+
+
+Pala & Tian              Expires January 1, 2023                [Page 2]
+
+Internet-Draft                  EAP-CREDS                      June 2022
+
+
        4.3.3.  The Challenge-Response TLV  . . . . . . . . . . . . .  20
        4.3.4.  The Creds-Info TLV  . . . . . . . . . . . . . . . . .  20
        4.3.5.  The Error TLV . . . . . . . . . . . . . . . . . . . .  23
        4.3.6.  The Net-Usage TLV . . . . . . . . . . . . . . . . . .  24
        4.3.7.  The Profile TLV . . . . . . . . . . . . . . . . . . .  26
-
-
-
-Pala & Tian             Expires December 23, 2022               [Page 2]
-
-Internet-Draft                  EAP-CREDS                      June 2022
-
-
        4.3.8.  The Protocol TLV  . . . . . . . . . . . . . . . . . .  27
        4.3.9.  The ProtoData TLV . . . . . . . . . . . . . . . . . .  27
        4.3.10. The ProtoHeaders TLV  . . . . . . . . . . . . . . . .  28
@@ -157,19 +162,19 @@ Internet-Draft                  EAP-CREDS                      June 2022
    check credentials presented by a device even before providing any
    connectivity or IP services to it.  However, the provisioning and
    management of these credentials is a hard problem to solve and many
+
+
+
+Pala & Tian              Expires January 1, 2023                [Page 3]
+
+Internet-Draft                  EAP-CREDS                      June 2022
+
+
    vendors opt for long-lived credentials that can not be easily
    revoked, replaced, or simply renewed.  This specification addresses
    the problem of providing a simple-to-use and simple-to-deploy conduit
    for credentials management by extending the EAP protocol to support
    credentials provisioning and management functionality.  In
-
-
-
-Pala & Tian             Expires December 23, 2022               [Page 3]
-
-Internet-Draft                  EAP-CREDS                      June 2022
-
-
    particular, the EAP-CREDS method defined here provides a generic
    framework that can carry the messages for provisioning different
    types of credentials.  EAP-CREDS cannot be used as a stand-alone
@@ -212,19 +217,17 @@ Internet-Draft                  EAP-CREDS                      June 2022
    (SPP) .  For more details of using EAP-CREDS method with Certificate
    Management Protocol (CMP), please refer to EAP-CREDS withwith
    Certificate Management Protocol (CMP) .  These two documents can be
-   used as the template for other protocols' encapulation with EAP-
-   CREDS.
 
 
 
 
-
-
-
-Pala & Tian             Expires December 23, 2022               [Page 4]
+Pala & Tian              Expires January 1, 2023                [Page 4]
 
 Internet-Draft                  EAP-CREDS                      June 2022
 
+
+   used as the template for other protocols' encapulation with EAP-
+   CREDS.
 
 2.3.  EAP-CREDS as tunneled mechanism only
 
@@ -270,17 +273,17 @@ Internet-Draft                  EAP-CREDS                      June 2022
    with all the selected parameters for one specific credential that
    needs attention (or for a new credential) to be managed by the
    network.  In particular, the server provides, at minimum, the
-   ('Protocol') TLV, the ('Action') TLV, and the ('Params') or the
-   ('Creds-Info') TLV.
 
 
 
 
-
-Pala & Tian             Expires December 23, 2022               [Page 5]
+Pala & Tian              Expires January 1, 2023                [Page 5]
 
 Internet-Draft                  EAP-CREDS                      June 2022
 
+
+   ('Protocol') TLV, the ('Action') TLV, and the ('Params') or the
+   ('Creds-Info') TLV.
 
    After checking the parameters sent by the Server, if the Peer does
    not support any of the proposed ones, it MUST send a message with one
@@ -330,10 +333,7 @@ Internet-Draft                  EAP-CREDS                      June 2022
 
 
 
-
-
-
-Pala & Tian             Expires December 23, 2022               [Page 6]
+Pala & Tian              Expires January 1, 2023                [Page 6]
 
 Internet-Draft                  EAP-CREDS                      June 2022
 
@@ -389,7 +389,7 @@ Internet-Draft                  EAP-CREDS                      June 2022
 
 
 
-Pala & Tian             Expires December 23, 2022               [Page 7]
+Pala & Tian              Expires January 1, 2023                [Page 7]
 
 Internet-Draft                  EAP-CREDS                      June 2022
 
@@ -445,7 +445,7 @@ Internet-Draft                  EAP-CREDS                      June 2022
 
 
 
-Pala & Tian             Expires December 23, 2022               [Page 8]
+Pala & Tian              Expires January 1, 2023                [Page 8]
 
 Internet-Draft                  EAP-CREDS                      June 2022
 
@@ -501,7 +501,7 @@ Internet-Draft                  EAP-CREDS                      June 2022
 
 
 
-Pala & Tian             Expires December 23, 2022               [Page 9]
+Pala & Tian              Expires January 1, 2023                [Page 9]
 
 Internet-Draft                  EAP-CREDS                      June 2022
 
@@ -557,7 +557,7 @@ Internet-Draft                  EAP-CREDS                      June 2022
 
 
 
-Pala & Tian             Expires December 23, 2022              [Page 10]
+Pala & Tian              Expires January 1, 2023               [Page 10]
 
 Internet-Draft                  EAP-CREDS                      June 2022
 
@@ -613,7 +613,7 @@ Internet-Draft                  EAP-CREDS                      June 2022
 
 
 
-Pala & Tian             Expires December 23, 2022              [Page 11]
+Pala & Tian              Expires January 1, 2023               [Page 11]
 
 Internet-Draft                  EAP-CREDS                      June 2022
 
@@ -669,7 +669,7 @@ Internet-Draft                  EAP-CREDS                      June 2022
 
 
 
-Pala & Tian             Expires December 23, 2022              [Page 12]
+Pala & Tian              Expires January 1, 2023               [Page 12]
 
 Internet-Draft                  EAP-CREDS                      June 2022
 
@@ -725,7 +725,7 @@ Internet-Draft                  EAP-CREDS                      June 2022
 
 
 
-Pala & Tian             Expires December 23, 2022              [Page 13]
+Pala & Tian              Expires January 1, 2023               [Page 13]
 
 Internet-Draft                  EAP-CREDS                      June 2022
 
@@ -781,7 +781,7 @@ Internet-Draft                  EAP-CREDS                      June 2022
 
 
 
-Pala & Tian             Expires December 23, 2022              [Page 14]
+Pala & Tian              Expires January 1, 2023               [Page 14]
 
 Internet-Draft                  EAP-CREDS                      June 2022
 
@@ -837,7 +837,7 @@ Internet-Draft                  EAP-CREDS                      June 2022
 
 
 
-Pala & Tian             Expires December 23, 2022              [Page 15]
+Pala & Tian              Expires January 1, 2023               [Page 15]
 
 Internet-Draft                  EAP-CREDS                      June 2022
 
@@ -893,7 +893,7 @@ Internet-Draft                  EAP-CREDS                      June 2022
 
 
 
-Pala & Tian             Expires December 23, 2022              [Page 16]
+Pala & Tian              Expires January 1, 2023               [Page 16]
 
 Internet-Draft                  EAP-CREDS                      June 2022
 
@@ -949,7 +949,7 @@ Internet-Draft                  EAP-CREDS                      June 2022
 
 
 
-Pala & Tian             Expires December 23, 2022              [Page 17]
+Pala & Tian              Expires January 1, 2023               [Page 17]
 
 Internet-Draft                  EAP-CREDS                      June 2022
 
@@ -1005,7 +1005,7 @@ Internet-Draft                  EAP-CREDS                      June 2022
 
 
 
-Pala & Tian             Expires December 23, 2022              [Page 18]
+Pala & Tian              Expires January 1, 2023               [Page 18]
 
 Internet-Draft                  EAP-CREDS                      June 2022
 
@@ -1061,7 +1061,7 @@ Internet-Draft                  EAP-CREDS                      June 2022
 
 
 
-Pala & Tian             Expires December 23, 2022              [Page 19]
+Pala & Tian              Expires January 1, 2023               [Page 19]
 
 Internet-Draft                  EAP-CREDS                      June 2022
 
@@ -1117,7 +1117,7 @@ Internet-Draft                  EAP-CREDS                      June 2022
 
 
 
-Pala & Tian             Expires December 23, 2022              [Page 20]
+Pala & Tian              Expires January 1, 2023               [Page 20]
 
 Internet-Draft                  EAP-CREDS                      June 2022
 
@@ -1173,7 +1173,7 @@ Internet-Draft                  EAP-CREDS                      June 2022
 
 
 
-Pala & Tian             Expires December 23, 2022              [Page 21]
+Pala & Tian              Expires January 1, 2023               [Page 21]
 
 Internet-Draft                  EAP-CREDS                      June 2022
 
@@ -1229,7 +1229,7 @@ Internet-Draft                  EAP-CREDS                      June 2022
 
 
 
-Pala & Tian             Expires December 23, 2022              [Page 22]
+Pala & Tian              Expires January 1, 2023               [Page 22]
 
 Internet-Draft                  EAP-CREDS                      June 2022
 
@@ -1285,7 +1285,7 @@ Internet-Draft                  EAP-CREDS                      June 2022
 
 
 
-Pala & Tian             Expires December 23, 2022              [Page 23]
+Pala & Tian              Expires January 1, 2023               [Page 23]
 
 Internet-Draft                  EAP-CREDS                      June 2022
 
@@ -1341,7 +1341,7 @@ Internet-Draft                  EAP-CREDS                      June 2022
 
 
 
-Pala & Tian             Expires December 23, 2022              [Page 24]
+Pala & Tian              Expires January 1, 2023               [Page 24]
 
 Internet-Draft                  EAP-CREDS                      June 2022
 
@@ -1397,7 +1397,7 @@ Internet-Draft                  EAP-CREDS                      June 2022
 
 
 
-Pala & Tian             Expires December 23, 2022              [Page 25]
+Pala & Tian              Expires January 1, 2023               [Page 25]
 
 Internet-Draft                  EAP-CREDS                      June 2022
 
@@ -1453,7 +1453,7 @@ Internet-Draft                  EAP-CREDS                      June 2022
 
 
 
-Pala & Tian             Expires December 23, 2022              [Page 26]
+Pala & Tian              Expires January 1, 2023               [Page 26]
 
 Internet-Draft                  EAP-CREDS                      June 2022
 
@@ -1509,7 +1509,7 @@ Internet-Draft                  EAP-CREDS                      June 2022
 
 
 
-Pala & Tian             Expires December 23, 2022              [Page 27]
+Pala & Tian              Expires January 1, 2023               [Page 27]
 
 Internet-Draft                  EAP-CREDS                      June 2022
 
@@ -1565,7 +1565,7 @@ Internet-Draft                  EAP-CREDS                      June 2022
 
 
 
-Pala & Tian             Expires December 23, 2022              [Page 28]
+Pala & Tian              Expires January 1, 2023               [Page 28]
 
 Internet-Draft                  EAP-CREDS                      June 2022
 
@@ -1621,7 +1621,7 @@ Internet-Draft                  EAP-CREDS                      June 2022
 
 
 
-Pala & Tian             Expires December 23, 2022              [Page 29]
+Pala & Tian              Expires January 1, 2023               [Page 29]
 
 Internet-Draft                  EAP-CREDS                      June 2022
 
@@ -1677,7 +1677,7 @@ Internet-Draft                  EAP-CREDS                      June 2022
 
 
 
-Pala & Tian             Expires December 23, 2022              [Page 30]
+Pala & Tian              Expires January 1, 2023               [Page 30]
 
 Internet-Draft                  EAP-CREDS                      June 2022
 
@@ -1733,7 +1733,7 @@ Internet-Draft                  EAP-CREDS                      June 2022
 
 
 
-Pala & Tian             Expires December 23, 2022              [Page 31]
+Pala & Tian              Expires January 1, 2023               [Page 31]
 
 Internet-Draft                  EAP-CREDS                      June 2022
 
@@ -1789,7 +1789,7 @@ Internet-Draft                  EAP-CREDS                      June 2022
 
 
 
-Pala & Tian             Expires December 23, 2022              [Page 32]
+Pala & Tian              Expires January 1, 2023               [Page 32]
 
 Internet-Draft                  EAP-CREDS                      June 2022
 
@@ -1845,7 +1845,7 @@ Internet-Draft                  EAP-CREDS                      June 2022
 
 
 
-Pala & Tian             Expires December 23, 2022              [Page 33]
+Pala & Tian              Expires January 1, 2023               [Page 33]
 
 Internet-Draft                  EAP-CREDS                      June 2022
 
@@ -1901,7 +1901,7 @@ Internet-Draft                  EAP-CREDS                      June 2022
 
 
 
-Pala & Tian             Expires December 23, 2022              [Page 34]
+Pala & Tian              Expires January 1, 2023               [Page 34]
 
 Internet-Draft                  EAP-CREDS                      June 2022
 
@@ -1957,7 +1957,7 @@ Internet-Draft                  EAP-CREDS                      June 2022
 
 
 
-Pala & Tian             Expires December 23, 2022              [Page 35]
+Pala & Tian              Expires January 1, 2023               [Page 35]
 
 Internet-Draft                  EAP-CREDS                      June 2022
 
@@ -2013,7 +2013,7 @@ Internet-Draft                  EAP-CREDS                      June 2022
 
 
 
-Pala & Tian             Expires December 23, 2022              [Page 36]
+Pala & Tian              Expires January 1, 2023               [Page 36]
 
 Internet-Draft                  EAP-CREDS                      June 2022
 
@@ -2069,7 +2069,7 @@ Internet-Draft                  EAP-CREDS                      June 2022
 
 
 
-Pala & Tian             Expires December 23, 2022              [Page 37]
+Pala & Tian              Expires January 1, 2023               [Page 37]
 
 Internet-Draft                  EAP-CREDS                      June 2022
 
@@ -2125,7 +2125,7 @@ Internet-Draft                  EAP-CREDS                      June 2022
 
 
 
-Pala & Tian             Expires December 23, 2022              [Page 38]
+Pala & Tian              Expires January 1, 2023               [Page 38]
 
 Internet-Draft                  EAP-CREDS                      June 2022
 
@@ -2181,7 +2181,7 @@ Internet-Draft                  EAP-CREDS                      June 2022
 
 
 
-Pala & Tian             Expires December 23, 2022              [Page 39]
+Pala & Tian              Expires January 1, 2023               [Page 39]
 
 Internet-Draft                  EAP-CREDS                      June 2022
 
@@ -2237,7 +2237,7 @@ Internet-Draft                  EAP-CREDS                      June 2022
 
 
 
-Pala & Tian             Expires December 23, 2022              [Page 40]
+Pala & Tian              Expires January 1, 2023               [Page 40]
 
 Internet-Draft                  EAP-CREDS                      June 2022
 
@@ -2293,7 +2293,7 @@ Internet-Draft                  EAP-CREDS                      June 2022
 
 
 
-Pala & Tian             Expires December 23, 2022              [Page 41]
+Pala & Tian              Expires January 1, 2023               [Page 41]
 
 Internet-Draft                  EAP-CREDS                      June 2022
 
@@ -2349,7 +2349,7 @@ Authors' Addresses
 
 
 
-Pala & Tian             Expires December 23, 2022              [Page 42]
+Pala & Tian              Expires January 1, 2023               [Page 42]
 
 Internet-Draft                  EAP-CREDS                      June 2022
 
@@ -2405,4 +2405,4 @@ Internet-Draft                  EAP-CREDS                      June 2022
 
 
 
-Pala & Tian             Expires December 23, 2022              [Page 43]
+Pala & Tian              Expires January 1, 2023               [Page 43]
