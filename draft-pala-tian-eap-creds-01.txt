@@ -9,7 +9,7 @@ Expires: 2 November 2023                                      1 May 2023
 
 
       Credentials Provisioning and Management via EAP (EAP-CREDS)
-                      draft-pala-tian-eap-creds-03
+                      draft-pala-tian-eap-creds-01
 
 Abstract
 
