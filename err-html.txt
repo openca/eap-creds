@@ -1,1 +1,2 @@
- Created file draft-pala-tian-eap-creds-01.html
+/home/grimer/project/eap-creds/Yuan/draft-pala-tian-eap-creds.xml(8): Warning: Setting consensus="true" for IETF STD document (this is not the schema default, but is the only value permitted for this type of document)
+ Created file draft-pala-tian-eap-creds-03.html

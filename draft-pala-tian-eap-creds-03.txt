@@ -2,14 +2,14 @@
 
 
 
-Network Working Group                                            M. Pala
-Internet-Draft                                                   Y. Tian
+Network Working Group                                          M.P. Pala
+Internet-Draft                                                 Y.T. Tian
 Intended status: Standards Track                               CableLabs
-Expires: January 1, 2023                                   June 30, 2022
+Expires: 2 November 2023                                      1 May 2023
 
 
       Credentials Provisioning and Management via EAP (EAP-CREDS)
-                      draft-pala-tian-eap-creds-01
+                      draft-pala-tian-eap-creds-03
 
 Abstract
 
@@ -47,17 +47,19 @@ Status of This Memo
    This Internet-Draft is submitted in full conformance with the
    provisions of BCP 78 and BCP 79.
 
+
+
+
+
+
+
+Pala & Tian              Expires 2 November 2023                [Page 1]
+
+Internet-Draft                  EAP-CREDS                       May 2023
+
+
    Internet-Drafts are working documents of the Internet Engineering
    Task Force (IETF).  Note that other groups may also distribute
-
-
-
-
-Pala & Tian              Expires January 1, 2023                [Page 1]
-
-Internet-Draft                  EAP-CREDS                      June 2022
-
-
    working documents as Internet-Drafts.  The list of current Internet-
    Drafts is at https://datatracker.ietf.org/drafts/current/.
 
@@ -66,22 +68,21 @@ Internet-Draft                  EAP-CREDS                      June 2022
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on January 1, 2023.
+   This Internet-Draft will expire on 2 November 2023.
 
 Copyright Notice
 
-   Copyright (c) 2022 IETF Trust and the persons identified as the
+   Copyright (c) 2023 IETF Trust and the persons identified as the
    document authors.  All rights reserved.
 
    This document is subject to BCP 78 and the IETF Trust's Legal
-   Provisions Relating to IETF Documents
-   (https://trustee.ietf.org/license-info) in effect on the date of
-   publication of this document.  Please review these documents
-   carefully, as they describe your rights and restrictions with respect
-   to this document.  Code Components extracted from this document must
-   include Simplified BSD License text as described in Section 4.e of
-   the Trust Legal Provisions and are provided without warranty as
-   described in the Simplified BSD License.
+   Provisions Relating to IETF Documents (https://trustee.ietf.org/
+   license-info) in effect on the date of publication of this document.
+   Please review these documents carefully, as they describe your rights
+   and restrictions with respect to this document.  Code Components
+   extracted from this document must include Revised BSD License text as
+   described in Section 4.e of the Trust Legal Provisions and are
+   provided without warranty as described in the Revised BSD License.
 
 Table of Contents
 
@@ -99,27 +100,27 @@ Table of Contents
      3.2.  Phase Transitioning Rules . . . . . . . . . . . . . . . .   8
      3.3.  Phase One: Initialization . . . . . . . . . . . . . . . .   8
      3.4.  Phase Two: Provisioning . . . . . . . . . . . . . . . . .  11
-     3.5.  Phase Three: Validation . . . . . . . . . . . . . . . . .  13
-   4.  EAP-CREDS Message Format  . . . . . . . . . . . . . . . . . .  15
+     3.5.  Phase Three: Validation . . . . . . . . . . . . . . . . .  12
+   4.  EAP-CREDS Message Format  . . . . . . . . . . . . . . . . . .  14
      4.1.  Message Header  . . . . . . . . . . . . . . . . . . . . .  15
-     4.2.  Message Payload . . . . . . . . . . . . . . . . . . . . .  17
+     4.2.  Message Payload . . . . . . . . . . . . . . . . . . . . .  16
      4.3.  EAP-CREDS defined TLVs  . . . . . . . . . . . . . . . . .  18
-       4.3.1.  The Action TLV  . . . . . . . . . . . . . . . . . . .  18
-       4.3.2.  The Challenge-Data TLV  . . . . . . . . . . . . . . .  19
+       4.3.1.  The Action TLV  . . . . . . . . . . . . . . . . . . .  19
 
 
 
-Pala & Tian              Expires January 1, 2023                [Page 2]
+Pala & Tian              Expires 2 November 2023                [Page 2]
 
-Internet-Draft                  EAP-CREDS                      June 2022
+Internet-Draft                  EAP-CREDS                       May 2023
 
 
+       4.3.2.  The Challenge-Data TLV  . . . . . . . . . . . . . . .  19
        4.3.3.  The Challenge-Response TLV  . . . . . . . . . . . . .  20
        4.3.4.  The Creds-Info TLV  . . . . . . . . . . . . . . . . .  20
        4.3.5.  The Error TLV . . . . . . . . . . . . . . . . . . . .  23
        4.3.6.  The Net-Usage TLV . . . . . . . . . . . . . . . . . .  24
-       4.3.7.  The Profile TLV . . . . . . . . . . . . . . . . . . .  26
-       4.3.8.  The Protocol TLV  . . . . . . . . . . . . . . . . . .  27
+       4.3.7.  The Profile TLV . . . . . . . . . . . . . . . . . . .  25
+       4.3.8.  The Protocol TLV  . . . . . . . . . . . . . . . . . .  26
        4.3.9.  The ProtoData TLV . . . . . . . . . . . . . . . . . .  27
        4.3.10. The ProtoHeaders TLV  . . . . . . . . . . . . . . . .  28
        4.3.11. The Params TLV  . . . . . . . . . . . . . . . . . . .  28
@@ -129,24 +130,23 @@ Internet-Draft                  EAP-CREDS                      June 2022
      5.1.  The EAP-CREDS-Init Message  . . . . . . . . . . . . . . .  33
        5.1.1.  EAP Server's Init Message . . . . . . . . . . . . . .  33
        5.1.2.  EAP Peer's Init Message . . . . . . . . . . . . . . .  34
-         5.1.2.1.  Bootstrapping Peer's Trustworthiness  . . . . . .  34
        5.1.3.  The EAP-CREDS-Provisioning Message  . . . . . . . . .  35
        5.1.4.  The EAP-CREDS-Validate Message  . . . . . . . . . . .  36
-   6.  Error Handling in EAP-CREDS . . . . . . . . . . . . . . . . .  36
-   7.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  36
+   6.  Error Handling in EAP-CREDS . . . . . . . . . . . . . . . . .  37
+   7.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  37
      7.1.  Provisioning Protocols  . . . . . . . . . . . . . . . . .  37
-     7.2.  Token Types . . . . . . . . . . . . . . . . . . . . . . .  37
+     7.2.  Token Types . . . . . . . . . . . . . . . . . . . . . . .  38
      7.3.  Credentials Types . . . . . . . . . . . . . . . . . . . .  38
-     7.4.  Credentials Algorithms  . . . . . . . . . . . . . . . . .  38
-     7.5.  Challenge Types . . . . . . . . . . . . . . . . . . . . .  38
-     7.6.  Network Usage Datatypes . . . . . . . . . . . . . . . . .  39
-     7.7.  Credentials Encoding  . . . . . . . . . . . . . . . . . .  39
-     7.8.  Action Types  . . . . . . . . . . . . . . . . . . . . . .  40
-     7.9.  Usage Metadata Types  . . . . . . . . . . . . . . . . . .  40
-   8.  Security Considerations . . . . . . . . . . . . . . . . . . .  40
-   9.  Acknowledgments . . . . . . . . . . . . . . . . . . . . . . .  41
-   10. Normative References  . . . . . . . . . . . . . . . . . . . .  41
-   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  42
+     7.4.  Credentials Algorithms  . . . . . . . . . . . . . . . . .  39
+     7.5.  Challenge Types . . . . . . . . . . . . . . . . . . . . .  39
+     7.6.  Network Usage Datatypes . . . . . . . . . . . . . . . . .  40
+     7.7.  Credentials Encoding  . . . . . . . . . . . . . . . . . .  40
+     7.8.  Action Types  . . . . . . . . . . . . . . . . . . . . . .  41
+     7.9.  Usage Metadata Types  . . . . . . . . . . . . . . . . . .  41
+   8.  Security Considerations . . . . . . . . . . . . . . . . . . .  42
+   9.  Acknowledgments . . . . . . . . . . . . . . . . . . . . . . .  42
+   10. Normative References  . . . . . . . . . . . . . . . . . . . .  42
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  44
 
 1.  Requirements notation
 
@@ -165,9 +165,9 @@ Internet-Draft                  EAP-CREDS                      June 2022
 
 
 
-Pala & Tian              Expires January 1, 2023                [Page 3]
+Pala & Tian              Expires 2 November 2023                [Page 3]
 
-Internet-Draft                  EAP-CREDS                      June 2022
+Internet-Draft                  EAP-CREDS                       May 2023
 
 
    vendors opt for long-lived credentials that can not be easily
@@ -217,16 +217,15 @@ Internet-Draft                  EAP-CREDS                      June 2022
    (SPP) .  For more details of using EAP-CREDS method with Certificate
    Management Protocol (CMP), please refer to EAP-CREDS withwith
    Certificate Management Protocol (CMP) .  These two documents can be
-
-
-
-
-Pala & Tian              Expires January 1, 2023                [Page 4]
-
-Internet-Draft                  EAP-CREDS                      June 2022
-
-
    used as the template for other protocols' encapulation with EAP-
+
+
+
+Pala & Tian              Expires 2 November 2023                [Page 4]
+
+Internet-Draft                  EAP-CREDS                       May 2023
+
+
    CREDS.
 
 2.3.  EAP-CREDS as tunneled mechanism only
@@ -273,17 +272,15 @@ Internet-Draft                  EAP-CREDS                      June 2022
    with all the selected parameters for one specific credential that
    needs attention (or for a new credential) to be managed by the
    network.  In particular, the server provides, at minimum, the
-
-
-
-
-Pala & Tian              Expires January 1, 2023                [Page 5]
-
-Internet-Draft                  EAP-CREDS                      June 2022
-
-
    ('Protocol') TLV, the ('Action') TLV, and the ('Params') or the
    ('Creds-Info') TLV.
+
+
+
+Pala & Tian              Expires 2 November 2023                [Page 5]
+
+Internet-Draft                  EAP-CREDS                       May 2023
+
 
    After checking the parameters sent by the Server, if the Peer does
    not support any of the proposed ones, it MUST send a message with one
@@ -319,7 +316,7 @@ Internet-Draft                  EAP-CREDS                      June 2022
    |        |            | more instances are allowed                  |
    +--------+------------+---------------------------------------------+
 
-                        Table 1: EAP-CREDS Notation
+                        Figure 1: EAP-CREDS Notation
 
 3.  EAP-CREDS Protocol
 
@@ -333,9 +330,12 @@ Internet-Draft                  EAP-CREDS                      June 2022
 
 
 
-Pala & Tian              Expires January 1, 2023                [Page 6]
+
+
+
+Pala & Tian              Expires 2 November 2023                [Page 6]
 
-Internet-Draft                  EAP-CREDS                      June 2022
+Internet-Draft                  EAP-CREDS                       May 2023
 
 
 3.1.  Message Flow
@@ -377,7 +377,8 @@ Internet-Draft                  EAP-CREDS                      June 2022
       credentials have to be managed, the Server can start phase three
       or simply terminate the EAP session.
 
-   Phase Three (Optional).  Credentials Validation.  This optional phase
+   Phase Three (Optional).  Credentials Validation.  This optional
+   phase
       can be initiated by the server and it is used to validate that the
       Peer has properly installed the credentials and can use them to
       authenticate itself.  Depending on the credentials' type, the
@@ -388,10 +389,9 @@ Internet-Draft                  EAP-CREDS                      June 2022
 
 
 
-
-Pala & Tian              Expires January 1, 2023                [Page 7]
+Pala & Tian              Expires 2 November 2023                [Page 7]
 
-Internet-Draft                  EAP-CREDS                      June 2022
+Internet-Draft                  EAP-CREDS                       May 2023
 
 
 3.2.  Phase Transitioning Rules
@@ -445,9 +445,9 @@ Internet-Draft                  EAP-CREDS                      June 2022
 
 
 
-Pala & Tian              Expires January 1, 2023                [Page 8]
+Pala & Tian              Expires 2 November 2023                [Page 8]
 
-Internet-Draft                  EAP-CREDS                      June 2022
+Internet-Draft                  EAP-CREDS                       May 2023
 
 
        ,--------.                               ,----------.
@@ -469,7 +469,6 @@ Internet-Draft                  EAP-CREDS                      June 2022
            | ---------------------------------------->
            |                                         |
            |                                         |
-
 
                      EAP-CREDS Phase One Message Flow
 
@@ -496,19 +495,17 @@ Internet-Draft                  EAP-CREDS                      June 2022
       ('Challenge-Response') TLV.
 
    [2] The Peer sends EAP-Response/EAP-CREDS(Type=Init)
-
-
-
-
-
-Pala & Tian              Expires January 1, 2023                [Page 9]
-
-Internet-Draft                  EAP-CREDS                      June 2022
-
-
       The Peer, sends back a message that carries one ('Version') TLV to
       indicate the selected version of EAP-CREDS (i.e.  from the list
       provided by the server) (optional).  If the client does not
+
+
+
+Pala & Tian              Expires 2 November 2023                [Page 9]
+
+Internet-Draft                  EAP-CREDS                       May 2023
+
+
       include the ('Version') TLV, the Server MUST use the most recent
       supported version of EAP-CREDS.  Moreover, the Server includes one
       or more ('Protocol') TLVs to indicate the list of supported
@@ -554,17 +551,17 @@ Internet-Draft                  EAP-CREDS                      June 2022
       error), it can (a) send a non-recoverable error message to the
       peer, notify the outer (tunneling) layer, and terminate the EAP-
       CREDS session, or (b) start phase one again by sending a new
-
-
-
-Pala & Tian              Expires January 1, 2023               [Page 10]
-
-Internet-Draft                  EAP-CREDS                      June 2022
-
-
       ('EAP-CREDS-Init') message that will also carry an ('ERROR') TLV
       that provides the Peer with the reason the initial response was
       not acceptable.  In this case, the ('Phase') field MUST be omitted
+
+
+
+Pala & Tian              Expires 2 November 2023               [Page 10]
+
+Internet-Draft                  EAP-CREDS                       May 2023
+
+
       since it is not the first message of phase one.  The server and
       the peer can repeat phase one until they reach an agreement or the
       session is terminated by the Server.
@@ -577,7 +574,6 @@ Internet-Draft                  EAP-CREDS                      June 2022
 3.4.  Phase Two: Provisioning
 
    The following figure provides the message flow for Phase 2:
-
 
    ,--------.                                     ,----------.
    |EAP Peer|                                     |EAP Server|
@@ -610,25 +606,24 @@ Internet-Draft                  EAP-CREDS                      June 2022
                      EAP-CREDS Phase Two Message Flow
 
    [1] The Server sends EAP-Request/EAP-CREDS(Type=Provisioning)
-
-
-
-Pala & Tian              Expires January 1, 2023               [Page 11]
-
-Internet-Draft                  EAP-CREDS                      June 2022
-
-
       The first message of Phase Two indicates that the Server is ready
       to initiate the selected provisioning protocol.This message
       contains the parameters of the selected provisioning protocol in
       the ('Params') (e.g., algorithm for generating credentials), the
+
+
+
+Pala & Tian              Expires 2 November 2023               [Page 11]
+
+Internet-Draft                  EAP-CREDS                       May 2023
+
+
       description of installed credentials in the ('Creds-Info'), the
       selected provisioning protocol's message data and some extra
       fields (e.g., transport-protocol headers) in the ('ProtoData') and
       its content in ('ProtoHeaders') TLVs respectively.
 
    [2] The Peer sends EAP-Response/EAP-CREDS(Type=Provisioning)
-
       After that, the Peer sends its first message to the Server by
       sending the EAP-Response/EAP-CREDS(Type=Provisioning) message.
       This message contains the selected provisioning protocol's message
@@ -637,13 +632,11 @@ Internet-Draft                  EAP-CREDS                      June 2022
       respectively.
 
    [N=3] The Server sends EAP-Request/EAP-CREDS(Type=Provisioning)
-
       The Server replies to the Peer's message with EAP-Request/EAP-
       CREDS(Type=Provisioning) messages until the provisioning protocol
       reaches an end or an error condition arise (non-recoverable).
 
    [N] The Server sends EAP-Request/EAP-CREDS(Type=Provisioning)
-
       When the provisioning protocol has been executed for the specific
       set of credentials, the server sends a last message that MUST
       include the description of the provisioned credentials in a
@@ -655,7 +648,6 @@ Internet-Draft                  EAP-CREDS                      June 2022
       and the 'ProtoHeaders' ones).
 
    [N+1] The Peer sends EAP-Request/EAP-CREDS(Type=Provisioning)
-
       The Peer MUST reply to the server with a ('Type=Provisioning')
       message that MUST have the 'D' (Done) bit in the EAP-CREDS message
       header set to '1', thus indicating that the credentials have been
@@ -665,15 +657,6 @@ Internet-Draft                  EAP-CREDS                      June 2022
       allowed in the same message (e.g., tthe 'ProtoData' and the
       'ProtoHeaders' ones).
 
-
-
-
-
-Pala & Tian              Expires January 1, 2023               [Page 12]
-
-Internet-Draft                  EAP-CREDS                      June 2022
-
-
    At this point, the Server can decide to provision (or manage) another
    set of credentials by issuing a new ('Type=Provisioning') message, or
    it can decide to start Phase Three by sending its first
@@ -682,6 +665,13 @@ Internet-Draft                  EAP-CREDS                      June 2022
 3.5.  Phase Three: Validation
 
    The following figure provides the message flow for Phase 3:
+
+
+
+
+Pala & Tian              Expires 2 November 2023               [Page 12]
+
+Internet-Draft                  EAP-CREDS                       May 2023
 
 
        ,--------.                                ,----------.
@@ -697,7 +687,6 @@ Internet-Draft                  EAP-CREDS                      June 2022
            |                                          |  `-------------'
            |                                          |
 
-
                     EAP-CREDS Phase Three Message Flow
 
    Phase three is optional and it is used by the server to request the
@@ -711,7 +700,6 @@ Internet-Draft                  EAP-CREDS                      June 2022
       credentials.
 
    [1] The Server sends EAP-Request/EAP-CREDS(Type=Validate)
-
       In order to start Phase Three, the Server sends an EAP-Request/
       EAP-CREDS(Type=Validate) message to the Peer.  The Server MUST
       include the ('Creds-Info') TLV to provide the indication about
@@ -723,19 +711,11 @@ Internet-Draft                  EAP-CREDS                      June 2022
       challenges in Section 7.5 and others can be defined according to
       the specified rules.
 
-
-
-Pala & Tian              Expires January 1, 2023               [Page 13]
-
-Internet-Draft                  EAP-CREDS                      June 2022
-
-
       As usual, the Server MUST set, in the headers, the 'S' (Start) bit
       to '1' in its first message of Phase Three and the 'Phase' value
       shall be set to '3' (beginning of Phase Three).
 
    [2] The Peer sends EAP-Response/EAP-CREDS(Type=Validate)
-
       When the client receives the Validate message from the server, it
       calculates the response to the challenge and sends the response
       back to the server in a EAP-Response/EAP-CREDS(Type=Validate)
@@ -743,57 +723,51 @@ Internet-Draft                  EAP-CREDS                      June 2022
       CREDS-SYMMETRIC-CHALLENGE' values are used in the 'Challenge
       types', the Peer MUST calculate the response as follows:
 
+
+
+Pala & Tian              Expires 2 November 2023               [Page 13]
+
+Internet-Draft                  EAP-CREDS                       May 2023
+
+
          Public-Key
 
-            For any public-key based credentials (e.g., certificates or
-            raw key pairs), the response to the challenge is calculated
-            by generating a signature over the hashed value of the
-            challenge.  The hashing algorithm to be used for this
-            purpose is specified in Section 2.6.  The format of the
-            signature in the ('Challenge-Response') TLV is the
-            concatenation of:
+         For any public-key based credentials (e.g., certificates or raw
+         key pairs), the response to the challenge is calculated by
+         generating a signature over the hashed value of the challenge.
+         The hashing algorithm to be used for this purpose is specified
+         in Section 2.6.  The format of the signature in the
+         ('Challenge-Response') TLV is the concatenation of:
 
-            -  The signatureAlgorithm (DER encoded) which contains the
-               identifier for the cryptographic algorithm used by the
-               Peer to generate the signature using [RFC3279],
-               [RFC4055], and [RFC4491] list supported signature
-               algorithms.  Other signature algorithms MAY also be
-               supported.  The definition of the signatureAlgorithm is
-               provided in Section 4.1.1.2 of [RFC5280].
+         *  The signatureAlgorithm (DER encoded) which contains the
+            identifier for the cryptographic algorithm used by the Peer
+            to generate the signature using [RFC3279], [RFC4055], and
+            [RFC4491] list supported signature algorithms.  Other
+            signature algorithms MAY also be supported.  The definition
+            of the signatureAlgorithm is provided in Section 4.1.1.2 of
+            [RFC5280].
 
-            -  The signatureValue (DER encoded) which contains the
-               digital signature itself.  The signature value is encoded
-               as a BIT STRING and the details of how to generate the
-               signatures' structures can be found in Section 4.1.1.3 of
-               [RFC5280] and referenced material.
+         *  The signatureValue (DER encoded) which contains the digital
+            signature itself.  The signature value is encoded as a BIT
+            STRING and the details of how to generate the signatures'
+            structures can be found in Section 4.1.1.3 of [RFC5280] and
+            referenced material.
 
-         Symmetric Secret
+      Symmetric Secret
+         For any symmetric based credentials (e.g., password or Key),
+         the response to the challenge is calculated by using the
+         selected hash function (see Section 2.6) on the concatenation
+         of (a) the value carried in the server- provided ('Challenge-
+         Data') TLV, and (b) the secret value itself (salted hash).
 
-            For any symmetric based credentials (e.g., password or Key),
-            the response to the challenge is calculated by using the
-            selected hash function (see Section 2.6) on the
-            concatenation of (a) the value carried in the server-
-            provided ('Challenge-Data') TLV, and (b) the secret value
-            itself (salted hash).
+         The initial values for the type of challenges are described in
+         the Section 7.5.  Other types of challenges MAY be defined
+         according to the specified procedures.
 
-
-
-
-
-
-Pala & Tian              Expires January 1, 2023               [Page 14]
-
-Internet-Draft                  EAP-CREDS                      June 2022
-
-
-      The initial values for the type of challenges are described in the
-      Section 7.5.  Other types of challenges MAY be defined according
-      to the specified procedures.
-
-      In case of issues with the validation of newly deployed
-      credentials, both the Server and the Peer should consider those
-      credentials invalid (or unusable) and should issue the required
-      failure message(s).
+         In case of issues with the validation of newly deployed
+         credentials, both the Server and the Peer should consider those
+         credentials invalid (or unusable) and should issue the required
+         failure message(s).
 
 4.  EAP-CREDS Message Format
 
@@ -804,6 +778,13 @@ Internet-Draft                  EAP-CREDS                      June 2022
    2.  EAP-CREDS-Provisioning
 
    3.  EAP-CREDS-Validate
+
+
+
+Pala & Tian              Expires 2 November 2023               [Page 14]
+
+Internet-Draft                  EAP-CREDS                       May 2023
+
 
    Each of these message types have the basic structure as identified in
    Section 4.1.  EAP-CREDS messages contain zero, one, or more TLVs.
@@ -817,7 +798,6 @@ Internet-Draft                  EAP-CREDS                      June 2022
    Section 4 of [RFC3748]), followed by the message payload of the EAP-
    CREDS.  The header has the following structure:
 
-
      0                   1                   2                   3
      0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
@@ -828,20 +808,11 @@ Internet-Draft                  EAP-CREDS                      June 2022
     |         Message Length        |               Data           ...
     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-.
 
-
    Where the Code, Identifier, Length, and Type fields are all part of
    the EAP header as defined in [RFC3748].  Since EAP-CREDS can only be
    used as a tunneled mechanism, the presence of these fields is only
    for backward compatibility with existing parsers.  In particular, the
    'Length' field is used for fragmentation instead of the message
-
-
-
-Pala & Tian              Expires January 1, 2023               [Page 15]
-
-Internet-Draft                  EAP-CREDS                      June 2022
-
-
    length: the message length is carried in the 'Message Length' field
    if Jumbo Message is indicated in the header.
 
@@ -863,6 +834,13 @@ Internet-Draft                  EAP-CREDS                      June 2022
       Length' field is not present in the Message and the 'Length' field
       is used for the message size (and the 'F' (Fragment) bit MUST be
       set to '0').
+
+
+
+Pala & Tian              Expires 2 November 2023               [Page 15]
+
+Internet-Draft                  EAP-CREDS                       May 2023
+
 
       Bit 'S' (Start) - If set, this message is the first one of a new
       EAP-CREDS phase.  The value of the new phase is encoded in the
@@ -887,16 +865,6 @@ Internet-Draft                  EAP-CREDS                      June 2022
       this credentials is also over.  After that, the Server can
       continue Phase Two, transition to Phase Three, or terminate the
       EAP session.
-
-
-
-
-
-
-Pala & Tian              Expires January 1, 2023               [Page 16]
-
-Internet-Draft                  EAP-CREDS                      June 2022
-
 
    The Phase field is a 4-bits value and identifies the EAP-CREDS phase
    for the current message.  The version of EAP-CREDS described in this
@@ -923,6 +891,13 @@ Internet-Draft                  EAP-CREDS                      June 2022
    follows:
 
 
+
+
+Pala & Tian              Expires 2 November 2023               [Page 16]
+
+Internet-Draft                  EAP-CREDS                       May 2023
+
+
      0                   1                   2                   3
      0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
@@ -930,7 +905,6 @@ Internet-Draft                  EAP-CREDS                      June 2022
     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
     |                       TLV Value                              ...
     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-
 
    Where:
 
@@ -942,45 +916,81 @@ Internet-Draft                  EAP-CREDS                      June 2022
       table:
 
    Length (uint24)
-
       This field carries the size of the value of the TLV.  In
       particular, the overall size of a TLV (i.e., the header plus the
       value) can be calculated by adding the size of the header (6
-
-
-
-Pala & Tian              Expires January 1, 2023               [Page 17]
-
-Internet-Draft                  EAP-CREDS                      June 2022
-
-
       octets) to the value of the Length field (i.e., the size of the
       TLV's value).
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Pala & Tian              Expires 2 November 2023               [Page 17]
+
+Internet-Draft                  EAP-CREDS                       May 2023
+
+
+      +==========+========================+========================+
+      | TLV Name | TLV Type               | Scope/Usage            |
+      +==========+========================+========================+
+      | <TBD>    | Action TLV             | Phase Two              |
       +----------+------------------------+------------------------+
-      | TLV Name | TLV Type               |      Scope/Usage       |
+      | <TBD>    | Certificate-Data TLV   | Phase Two              |
       +----------+------------------------+------------------------+
-      |  <TBD>   | Action TLV             |       Phase Two        |
-      |  <TBD>   | Certificate-Data TLV   |       Phase Two        |
-      |  <TBD>   | Challenge-Data TLV     | Phase Two, Phase Three |
-      |  <TBD>   | Challenge-Response TLV | Phase Two, Phase Three |
-      |  <TBD>   | Credentials-Data TLV   |       Phase Two        |
-      |  <TBD>   | Creds-Info TLV         | Phase Two, Phase Three |
-      |  <TBD>   | Error TLV              |       All Phases       |
-      |  <TBD>   | Net-Usage TLV          |       Phase One        |
-      |  <TBD>   | Profile TLV            |       Phase Two        |
-      |  <TBD>   | Protocol TLV           |  Phase One, Phase Two  |
-      |  <TBD>   | ProtoData TLV          |       Phase Two        |
-      |  <TBD>   | ProtoHeaders TLV       |       Phase Two        |
-      |  <TBD>   | Params TLV             |       Phase Two        |
-      |  <TBD>   | Token TLV              |       Phase One        |
-      |  <TBD>   | Version TLV            |       Phase One        |
+      | <TBD>    | Challenge-Data TLV     | Phase Two, Phase Three |
+      +----------+------------------------+------------------------+
+      | <TBD>    | Challenge-Response TLV | Phase Two, Phase Three |
+      +----------+------------------------+------------------------+
+      | <TBD>    | Credentials-Data TLV   | Phase Two              |
+      +----------+------------------------+------------------------+
+      | <TBD>    | Creds-Info TLV         | Phase Two, Phase Three |
+      +----------+------------------------+------------------------+
+      | <TBD>    | Error TLV              | All Phases             |
+      +----------+------------------------+------------------------+
+      | <TBD>    | Net-Usage TLV          | Phase One              |
+      +----------+------------------------+------------------------+
+      | <TBD>    | Profile TLV            | Phase Two              |
+      +----------+------------------------+------------------------+
+      | <TBD>    | Protocol TLV           | Phase One, Phase Two   |
+      +----------+------------------------+------------------------+
+      | <TBD>    | ProtoData TLV          | Phase Two              |
+      +----------+------------------------+------------------------+
+      | <TBD>    | ProtoHeaders TLV       | Phase Two              |
+      +----------+------------------------+------------------------+
+      | <TBD>    | Params TLV             | Phase Two              |
+      +----------+------------------------+------------------------+
+      | <TBD>    | Token TLV              | Phase One              |
+      +----------+------------------------+------------------------+
+      | <TBD>    | Version TLV            | Phase One              |
       +----------+------------------------+------------------------+
 
-                  Table 2: EAP-CREDS Supported TLVs Types
+                 Table 1: EAP-CREDS Supported TLVs Types
 
    TLV Value ( > 1 octet )
-
       This field carries data for the identified TLV.  The internal
       structure is determined by the TLV Type field.
 
@@ -993,22 +1003,14 @@ Internet-Draft                  EAP-CREDS                      June 2022
    are encoded in a single EAP-CREDS message.  The values for the TLV
    Type that are supported by this specifications are listed in Table 2.
 
-4.3.1.  The Action TLV
 
 
-
-
-
-
-
-
-
-
-
-Pala & Tian              Expires January 1, 2023               [Page 18]
+Pala & Tian              Expires 2 November 2023               [Page 18]
 
-Internet-Draft                  EAP-CREDS                      June 2022
+Internet-Draft                  EAP-CREDS                       May 2023
 
+
+4.3.1.  The Action TLV
 
       0                   1                   2                   3
       0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
@@ -1017,7 +1019,6 @@ Internet-Draft                  EAP-CREDS                      June 2022
      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
      |     Flags     |  Action Type  |
      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-
 
    TLV Type (uint8)
 
@@ -1033,7 +1034,6 @@ Internet-Draft                  EAP-CREDS                      June 2022
 
 4.3.2.  The Challenge-Data TLV
 
-
      0                   1                   2                   3
      0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
@@ -1041,7 +1041,6 @@ Internet-Draft                  EAP-CREDS                      June 2022
     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
     |   Ch. Type    |           Challenge Data                     ...
     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-
 
    TLV Type (uint8)
 
@@ -1057,25 +1056,21 @@ Internet-Draft                  EAP-CREDS                      June 2022
       challenge type determines how the Peer MUST calculate the
       ('Challenge-Response').  The initial values for this field are
       listed in Section 7.5.  Please refer to Section 3.5 for a detailed
-
-
-
-
-Pala & Tian              Expires January 1, 2023               [Page 19]
-
-Internet-Draft                  EAP-CREDS                      June 2022
-
-
       explanation of how to calculate the response to the challenge for
       the challenge types defined in this document.
 
-   Challenge Data (> 1 octet)
 
+
+Pala & Tian              Expires 2 November 2023               [Page 19]
+
+Internet-Draft                  EAP-CREDS                       May 2023
+
+
+   Challenge Data (> 1 octet)
       This field carries the data to be used as a challenge when
       validating newly deployed credentials.
 
 4.3.3.  The Challenge-Response TLV
-
 
      0                   1                   2                   3
      0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
@@ -1084,7 +1079,6 @@ Internet-Draft                  EAP-CREDS                      June 2022
     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
     |                       Challenge Response                     ...
     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-
 
    TLV Type (uint8)
 
@@ -1117,9 +1111,15 @@ Internet-Draft                  EAP-CREDS                      June 2022
 
 
 
-Pala & Tian              Expires January 1, 2023               [Page 20]
+
+
+
+
+
+
+Pala & Tian              Expires 2 November 2023               [Page 20]
 
-Internet-Draft                  EAP-CREDS                      June 2022
+Internet-Draft                  EAP-CREDS                       May 2023
 
 
      0                   1                   2                   3
@@ -1144,7 +1144,6 @@ Internet-Draft                  EAP-CREDS                      June 2022
     |                           CredIDValue                        ...
     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 
-
    The Creds-Info TLV is used by the Peer to provide a description of
    the installed credentials that are relevant for the network that is
    being accessed.
@@ -1154,62 +1153,54 @@ Internet-Draft                  EAP-CREDS                      June 2022
    right one for renewal.  The TLV structure is as follows:
 
    TLV Type (uint8)
-
       <TBD> - Creds-Info TLV
 
    Length (uint24)
-
       Provides the total length of the body of the Creds-Info TLV.
 
    Flags (uint8)
-
       Provides a BITMASK that can be used to provide information about
       the status of the credentials (e.g., if the use marks the
       credentials to be compromised).  The bits have the following
       meaning:
 
-         Bit 0 - If set, the credential is marked as compromised
+      Bit 0 - If set, the credential is marked as compromised Bit 1 - If
+      set, the credential is immutable and cannot be updated
+
+      Bit 2 - Private Key or Secret Immutable, the public part of the
+      credential (e.g., a certificate) can still be updated
 
 
 
 
-Pala & Tian              Expires January 1, 2023               [Page 21]
+Pala & Tian              Expires 2 November 2023               [Page 21]
 
-Internet-Draft                  EAP-CREDS                      June 2022
+Internet-Draft                  EAP-CREDS                       May 2023
 
 
-         Bit 1 - If set, the credential is immutable and cannot be
-         updated
+      Bit 3 - If set, the credential cannot be updated (both public and
+      private parts)
 
-         Bit 2 - Private Key or Secret Immutable, the public part of the
-         credential (e.g., a certificate) can still be updated
+      Bit 4 - If set, the credential is ready to be used
 
-         Bit 3 - If set, the credential cannot be updated (both public
-         and private parts)
+      Bit 5 - If set, the credential was generated on the server
 
-         Bit 4 - If set, the credential is ready to be used
+      Bit 6 - If set, the Peer would like to update the credential even
+      if they are not expired
 
-         Bit 5 - If set, the credential was generated on the server
-
-         Bit 6 - If set, the Peer would like to update the credential
-         even if they are not expired
-
-         Bit 7 - Reserved
+      Bit 7 - Reserved
 
    CredType (uint8)
-
       This field provides the description of the type of credential.
       The type of credentials are listed in Section 7.3
 
    ProtoID (uint16)
-
       This field indicates the protocol that was used to retrieve the
       target credential.  When the TLV is used in a Request by the
       Server, this field is ignored.  The values for this field are
       listed in Section 7.1.
 
    IssuedOn (16 octets)
-
       This field carries the GMT date for when this credential was
       issued.  This field is 16 bytes long (the last byte must be set to
       '0x00') and contains the NULL-terminated ASCII string that
@@ -1217,24 +1208,13 @@ Internet-Draft                  EAP-CREDS                      June 2022
       the value is not set, the field should be set to { 0x00 }. The
       format of the string is as follows:
 
-
-
-         YYYYMMDDHHmmssZ
+      YYYYMMDDHHmmssZ
 
       Where:
-
          YYYY - is the 4 digits representation of the year
 
-         MM - is the 2 digits representation of the month
-
-
-
-Pala & Tian              Expires January 1, 2023               [Page 22]
-
-Internet-Draft                  EAP-CREDS                      June 2022
-
-
-         DD - is the 2 digits representation of the day of the month
+         MM - is the 2 digits representation of the month DD - is the 2
+         digits representation of the day of the month
 
          HH - is the 2 digits representation of the hour of the day (24
          hour format)
@@ -1246,8 +1226,15 @@ Internet-Draft                  EAP-CREDS                      June 2022
 
          Z - is the character 'Z'
 
-   ExpiresOn (16 octets)
 
+
+
+Pala & Tian              Expires 2 November 2023               [Page 22]
+
+Internet-Draft                  EAP-CREDS                       May 2023
+
+
+   ExpiresOn (16 octets)
       This field carries the GMT date for when this credential is to be
       considered expired.  This field is 16 bytes long (the last byte
       must be set to '0x00') and contains the NULL-terminated ASCII
@@ -1256,7 +1243,6 @@ Internet-Draft                  EAP-CREDS                      June 2022
       the value is not set, the field should be set to { 0x00 }.
 
    Credentials Length (uint32)
-
       Length (in bytes) of the Credentials value.  When used with a
       public-key type of credentials, this is the size of the key (e.g.,
       for an RSA 2048 bit keys, this field should carry the value of
@@ -1264,7 +1250,6 @@ Internet-Draft                  EAP-CREDS                      June 2022
       size of the secret (in bytes).
 
    CredIDValue (> 1 octet)
-
       The binary value of the credentials' identifier.  This identifier
       can be the binary value of the SHA-256 calculated over the
       certificate, a username, or it could be a random handle.  As long
@@ -1273,22 +1258,6 @@ Internet-Draft                  EAP-CREDS                      June 2022
       calculated in any way.
 
 4.3.5.  The Error TLV
-
-
-
-
-
-
-
-
-
-
-
-
-Pala & Tian              Expires January 1, 2023               [Page 23]
-
-Internet-Draft                  EAP-CREDS                      June 2022
-
 
      0                   1                   2                   3
      0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
@@ -1299,7 +1268,6 @@ Internet-Draft                  EAP-CREDS                      June 2022
     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
     |                          Description                         ...
     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-
 
    TLV Type (uint8)
 
@@ -1315,11 +1283,17 @@ Internet-Draft                  EAP-CREDS                      June 2022
       related to the EAP-CREDS operations only and it should not be used
       to carry the Provisioning-Protocol specific error codes.
 
+
+
+Pala & Tian              Expires 2 November 2023               [Page 23]
+
+Internet-Draft                  EAP-CREDS                       May 2023
+
+
       The error codes supported by this specifications are listed in
       Section 4.3.5.
 
    Secondary Error Code (2 octets)
-
       This field is used to convey an error at the encapsulation layer
       (i.e., the provisioning protocol error).  For example, this field
       can be used to convey a transport protocol error code (e.g., HTTP
@@ -1327,24 +1301,12 @@ Internet-Draft                  EAP-CREDS                      June 2022
       errors.
 
    Description ( > 1 octet)
-
       The Description field is optional (i.e., when the Description Size
       is set to zero) and carries information about the error that
       occurred.  The message may or may not be used by a user or an
       automated process for debugging purposes.
 
 4.3.6.  The Net-Usage TLV
-
-
-
-
-
-
-
-Pala & Tian              Expires January 1, 2023               [Page 24]
-
-Internet-Draft                  EAP-CREDS                      June 2022
-
 
      0                   1                   2                   3
      0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
@@ -1353,7 +1315,6 @@ Internet-Draft                  EAP-CREDS                      June 2022
     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
     |U| Desc Format |   Encoding    |   Net-Usage Data         ...
     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-
 
    TLV Type (uint8)
 
@@ -1374,14 +1335,23 @@ Internet-Draft                  EAP-CREDS                      June 2022
       register its credentials or not.  The initial values for this
       field are listed in Section 7.9.
 
-   Encoding (uint8)
 
+
+
+
+
+
+Pala & Tian              Expires 2 November 2023               [Page 24]
+
+Internet-Draft                  EAP-CREDS                       May 2023
+
+
+   Encoding (uint8)
       Provides the indication of the Encoding the network usage
       description data is in.  The allowed values for this field are
       listed in Section 7.7.
 
    The 'U' field (1 bit)
-
       The 'URL' bit ('U') is used to indicate if the value of the Net-
       Usage Data field is to be interpreted as a URL or as the actual
       data.  In particular, if the value in the 'URL' bit is '1', then
@@ -1393,20 +1363,10 @@ Internet-Draft                  EAP-CREDS                      June 2022
 
       An example use of this bit is when the Peer wants to convey the
       URL of the MUD file [RFC8520].  In this case, the Peer can set the
-
-
-
-
-Pala & Tian              Expires January 1, 2023               [Page 25]
-
-Internet-Draft                  EAP-CREDS                      June 2022
-
-
       Net-Usage Data field to the URL of the MUD file related to the
       Peer.
 
    Net-Usage Data (octet string)
-
       This is additional information related to the device.  In
       particular, this TLV can be used by the Peer to provide the Server
       with the description of the intended network usage or a URL that
@@ -1419,6 +1379,29 @@ Internet-Draft                  EAP-CREDS                      June 2022
 4.3.7.  The Profile TLV
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Pala & Tian              Expires 2 November 2023               [Page 25]
+
+Internet-Draft                  EAP-CREDS                       May 2023
+
+
      0                   1                   2                   3
      0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
@@ -1426,7 +1409,6 @@ Internet-Draft                  EAP-CREDS                      June 2022
     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
     |                    Profile Identifier                        ...
     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-
 
    TLV Type (uint8)
 
@@ -1449,19 +1431,31 @@ Internet-Draft                  EAP-CREDS                      June 2022
 
       An example of values for this field, an end-point could use the
       string representation (i.e., dotted representation) of the Object
-
-
-
-
-Pala & Tian              Expires January 1, 2023               [Page 26]
-
-Internet-Draft                  EAP-CREDS                      June 2022
-
-
       Identifier (OID) of the specific profile supported (e.g., could be
       defined in the Certificate Policy of the credentials' provider).
 
 4.3.8.  The Protocol TLV
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Pala & Tian              Expires 2 November 2023               [Page 26]
+
+Internet-Draft                  EAP-CREDS                       May 2023
 
 
      0                   1                   2                   3
@@ -1471,7 +1465,6 @@ Internet-Draft                  EAP-CREDS                      June 2022
     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
     |         Protocol ID           |             Version           |
     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-
 
    TLV Type (uint8)
 
@@ -1488,7 +1481,6 @@ Internet-Draft                  EAP-CREDS                      June 2022
       protocol identifiers can be found in Section 7.1.
 
    Version (uint16)
-
       The Version (Protocol Version) value represents the specific
       version of the identified provisioning protocol.  When no version
       is specified for a protocol (i.e., either it does not support
@@ -1498,6 +1490,30 @@ Internet-Draft                  EAP-CREDS                      June 2022
 4.3.9.  The ProtoData TLV
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Pala & Tian              Expires 2 November 2023               [Page 27]
+
+Internet-Draft                  EAP-CREDS                       May 2023
+
+
      0                   1                   2                   3
      0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
@@ -1505,14 +1521,6 @@ Internet-Draft                  EAP-CREDS                      June 2022
     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
     |                         Provisioning Data                    ...
     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-
-
-
-
-Pala & Tian              Expires January 1, 2023               [Page 27]
-
-Internet-Draft                  EAP-CREDS                      June 2022
-
 
    TLV Type (uint8)
 
@@ -1528,7 +1536,6 @@ Internet-Draft                  EAP-CREDS                      June 2022
 
 4.3.10.  The ProtoHeaders TLV
 
-
      0                   1                   2                   3
      0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
@@ -1536,7 +1543,6 @@ Internet-Draft                  EAP-CREDS                      June 2022
     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
     |                           Headers Data                       ...
     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-
 
    TLV Type (uint8)
 
@@ -1559,15 +1565,9 @@ Internet-Draft                  EAP-CREDS                      June 2022
 
 
 
-
-
-
-
-
-
-Pala & Tian              Expires January 1, 2023               [Page 28]
+Pala & Tian              Expires 2 November 2023               [Page 28]
 
-Internet-Draft                  EAP-CREDS                      June 2022
+Internet-Draft                  EAP-CREDS                       May 2023
 
 
      0                   1                   2                   3
@@ -1579,7 +1579,6 @@ Internet-Draft                  EAP-CREDS                      June 2022
     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
     |   Algorithm   |     Flags     |     OBJECT IDENTIFIER (DER)  ...
     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-
 
    TLV Type (uint8)
 
@@ -1609,7 +1608,6 @@ Internet-Draft                  EAP-CREDS                      June 2022
       DER representation of '1.2.840.10045.3.1.7').
 
    Max Length (uint16)
-
       Provides the indication maximum size of the credentials.  This
       value has meaning depending on the context of the credentials,
       however sizes are always expressed in bytes.
@@ -1617,43 +1615,45 @@ Internet-Draft                  EAP-CREDS                      June 2022
       The same considerations apply to this field as well as the ('Min
       Length') one discussed above.
 
-   Algorithm (uint8)
 
 
 
-Pala & Tian              Expires January 1, 2023               [Page 29]
+
+
+
+Pala & Tian              Expires 2 November 2023               [Page 29]
 
-Internet-Draft                  EAP-CREDS                      June 2022
+Internet-Draft                  EAP-CREDS                       May 2023
 
 
+   Algorithm (uint8)
       Provides the indication of the algorithm used for the generation
       of the credentials.  The allowed values for this field are listed
       in Section 7.4.
 
    Flags (uint8)
-
       Provides a BITMASK that can be used to provide information about
       the status of the credentials (e.g., if the use marks the
       credentials to be compromised).  The bits have the following
       meaning:
 
-         Bit 0 - Credentials (or part of it) are to be generated on the
-         server
+      Bit 0 - Credentials (or part of it) are to be generated on the
+      server
 
-         Bit 1 - Credentials (or part of it) are to be generated on the
-         peer
+      Bit 1 - Credentials (or part of it) are to be generated on the
+      peer
 
-         Bit 2 - Credentials are to be generated on dedicated hardware
+      Bit 2 - Credentials are to be generated on dedicated hardware
 
-         Bit 3 - Reserved
+      Bit 3 - Reserved
 
-         Bit 4 - Reserved
+      Bit 4 - Reserved
 
-         Bit 5 - Reserved
+      Bit 5 - Reserved
 
-         Bit 6 - Reserved
+      Bit 6 - Reserved
 
-         Bit 7 - Reserved
+      Bit 7 - Reserved
 
       When using public-key based credentials, the bits 0 and 1 are
       mutually exclusive.
@@ -1671,49 +1671,71 @@ Internet-Draft                  EAP-CREDS                      June 2022
 
 
 
-         NOTE WELL: Last but not least, since these passwords/secrets
-         are meant to be used in a automated fashion, there is no
-         restriction around the character set to use or their
 
 
 
-Pala & Tian              Expires January 1, 2023               [Page 30]
+
+
+
+Pala & Tian              Expires 2 November 2023               [Page 30]
 
-Internet-Draft                  EAP-CREDS                      June 2022
+Internet-Draft                  EAP-CREDS                       May 2023
 
 
-         interpretation.  Therefore, it is good practice to generate
-         random pass-phrases that use the full 8-bit character set (on
-         client and server) to maximize the secret's search space.
+      NOTE WELL: Last but not least, since these passwords/secrets are
+      meant to be used in a automated fashion, there is no restriction
+      around the character set to use or their interpretation.
+      Therefore, it is good practice to generate random pass-phrases
+      that use the full 8-bit character set (on client and server) to
+      maximize the secret's search space.
 
    Object Identifier (binary; > 1 octet)
-
       Provides the indication of additional parameters that are needed
       to be encoded for the credentials.  This value is used only when
       the credentials use public-key cryptography - this field carries
       additional information about the generation algorithm to be used.
       We provide some useful values that can be used as reference:
 
-   +----------------+----------------------+---------------------------+
-   | OID Name       |        Dotted        |      Binary Encoding      |
-   |                |    Representation    |                           |
-   +----------------+----------------------+---------------------------+
-   | secp256r1      | 1.2.840.10045.3.1.7  |  06 08 2A 86 48 CE 3D 03  |
-   | curve          |                      |           01 07           |
-   | secp384r1      | 1.2.840.10045.3.1.34 |  06 08 2A 86 48 CE 3D 03  |
-   | curve          |                      |           01 22           |
-   | secp521r1      | 1.2.840.10045.3.1.35 |  06 08 2A 86 48 CE 3D 03  |
-   | curve          |                      |           01 23           |
-   | X25519 curve   |     1.3.101.110      |       06 03 2B 65 6E      |
-   | X25519 curve   |     1.3.101.110      |       06 03 2B 65 6E      |
-   | X448 curve     |     1.3.101.111      |       06 03 2B 65 6F      |
-   | Ed25519 curve  |     1.3.101.112      |       06 03 2B 65 70      |
-   | Ed448 curve    |     1.3.101.113      |       06 03 2B 65 71      |
-   +----------------+----------------------+---------------------------+
+    +===============+=======================+=========================+
+    | OID Name      | Dotted Representation | Binary Encoding         |
+    +===============+=======================+=========================+
+    | secp256r1     | 1.2.840.10045.3.1.7   | 06 08 2A 86 48 CE 3D 03 |
+    +---------------+-----------------------+-------------------------+
+    | curve         |                       | 01 07                   |
+    +---------------+-----------------------+-------------------------+
+    | secp384r1     | 1.2.840.10045.3.1.34  | 06 08 2A 86 48 CE 3D 03 |
+    +---------------+-----------------------+-------------------------+
+    | curve         |                       | 01 22                   |
+    +---------------+-----------------------+-------------------------+
+    | secp521r1     | 1.2.840.10045.3.1.35  | 06 08 2A 86 48 CE 3D 03 |
+    +---------------+-----------------------+-------------------------+
+    | curve         |                       | 01 23                   |
+    +---------------+-----------------------+-------------------------+
+    | X25519 curve  | 1.3.101.110           | 06 03 2B 65 6E          |
+    +---------------+-----------------------+-------------------------+
+    | X25519 curve  | 1.3.101.110           | 06 03 2B 65 6E          |
+    +---------------+-----------------------+-------------------------+
+    | X448 curve    | 1.3.101.111           | 06 03 2B 65 6F          |
+    +---------------+-----------------------+-------------------------+
+    | Ed25519 curve | 1.3.101.112           | 06 03 2B 65 70          |
+    +---------------+-----------------------+-------------------------+
+    | Ed448 curve   | 1.3.101.113           | 06 03 2B 65 71          |
+    +---------------+-----------------------+-------------------------+
 
-                   Table 3: Object Identifiers Examples
+                    Table 2: Object Identifiers Examples
 
 4.3.12.  The Token TLV
+
+
+
+
+
+
+
+
+Pala & Tian              Expires 2 November 2023               [Page 31]
+
+Internet-Draft                  EAP-CREDS                       May 2023
 
 
      0                   1                   2                   3
@@ -1724,19 +1746,11 @@ Internet-Draft                  EAP-CREDS                      June 2022
     |  Token Type   |    Encoding   |             Value            ...
     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 
-
    TLV Type (uint8)
 
       <TBD> - Token TLV
 
    TLV Length (uint24)
-
-
-
-Pala & Tian              Expires January 1, 2023               [Page 31]
-
-Internet-Draft                  EAP-CREDS                      June 2022
-
 
       Provides the length of the TLV (> 3 octets)
 
@@ -1746,16 +1760,13 @@ Internet-Draft                  EAP-CREDS                      June 2022
       values for this field are listed in Section 7.2.
 
    Encoding (uint8)
-
       Provides the indication of the Encoding the credentials are in.
       The allowed values for this field are listed in Section 7.7.
 
    Value (octet string)
-
       This field carries the data for the credentials.
 
 4.3.13.  The Version TLV
-
 
      0                   1                   2                   3
      0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
@@ -1764,7 +1775,6 @@ Internet-Draft                  EAP-CREDS                      June 2022
     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
     |   Version     |
     +-+-+-+-+-+-+-+-+
-
 
    TLV Type (uint8)
 
@@ -1776,6 +1786,14 @@ Internet-Draft                  EAP-CREDS                      June 2022
 
    Version (uint8)
 
+
+
+
+Pala & Tian              Expires 2 November 2023               [Page 32]
+
+Internet-Draft                  EAP-CREDS                       May 2023
+
+
       The Version field represents the specific version of the EAP-CREDS
       protocol that are supported by the end point.  When multiple
       versions of EAP-CREDS are supported, multiple ('Version') TLVs can
@@ -1785,33 +1803,28 @@ Internet-Draft                  EAP-CREDS                      June 2022
       multiple versions or it does not matter), the value of this field
       should be set to '0x0' (any version).
 
-
-
-
-
-Pala & Tian              Expires January 1, 2023               [Page 32]
-
-Internet-Draft                  EAP-CREDS                      June 2022
-
-
 5.  EAP-CREDS Messages
 
    This section describes each message and what TLVs are allowed or
    required.  EAP-CREDS defines the following values for the Message
    Type (Type):
 
-   +-----------+------------------------+------------------------------+
-   |  Message  | Name                   | Description                  |
-   |    Type   |                        |                              |
-   +-----------+------------------------+------------------------------+
-   |     0     | EAP-CREDS-Init         | Initialization Phase;        |
-   |     1     | EAP-CREDS-Provisioning | Carries Provisioning         |
-   |           |                        | Protocol Messages;           |
-   |     2     | EAP-CREDS-Validate     | Validates newly installed    |
-   |           |                        | credentials;                 |
-   +-----------+------------------------+------------------------------+
+   +==============+========================+===========================+
+   | Message Type | Name                   | Description               |
+   +==============+========================+===========================+
+   | 0            | EAP-CREDS-Init         | Initialization Phase;     |
+   +--------------+------------------------+---------------------------+
+   | 1            | EAP-CREDS-Provisioning | Carries Provisioning      |
+   +--------------+------------------------+---------------------------+
+   |              |                        | Protocol Messages;        |
+   +--------------+------------------------+---------------------------+
+   | 2            | EAP-CREDS-Validate     | Validates newly           |
+   |              |                        | installed                 |
+   +--------------+------------------------+---------------------------+
+   |              |                        | credentials;              |
+   +--------------+------------------------+---------------------------+
 
-                     Table 4: EAP-CREDS Message Types
+                      Table 3: EAP-CREDS Message Types
 
 5.1.  The EAP-CREDS-Init Message
 
@@ -1830,6 +1843,13 @@ Internet-Draft                  EAP-CREDS                      June 2022
    therefore the Server MUST set the headers' 'S' (Start) bit to '1'
    (Start) and the headers' 'Phase' value to '1' (Phase One).
 
+
+
+Pala & Tian              Expires 2 November 2023               [Page 33]
+
+Internet-Draft                  EAP-CREDS                       May 2023
+
+
    The Server uses one or more ('Version') TLVs in the EAP-Request/EAP-
    CREDS(Type=Init) message to provide the Peer with the list of EAP-
    CREDS versions supported.  If omitted, the implicit version of EAP-
@@ -1841,14 +1861,6 @@ Internet-Draft                  EAP-CREDS                      June 2022
    MUST include, in its Init message, a ('Challenge-Data') field that
    can be used by the client to provide challenge data for proof-of-
    possession of secrets.
-
-
-
-
-Pala & Tian              Expires January 1, 2023               [Page 33]
-
-Internet-Draft                  EAP-CREDS                      June 2022
-
 
 5.1.2.  EAP Peer's Init Message
 
@@ -1884,6 +1896,16 @@ Internet-Draft                  EAP-CREDS                      June 2022
    TLV.  This indicates to the Server that new credentials MUST be
    registered before the Peer is allowed on the network.
 
+
+
+
+
+
+Pala & Tian              Expires 2 November 2023               [Page 34]
+
+Internet-Draft                  EAP-CREDS                       May 2023
+
+
    The Registration process might rely on information exchanged during
    the Provisioning Process in Phase Two. However, if an authorization
    mechanism is not available from the supported provisioning protocol
@@ -1898,14 +1920,6 @@ Internet-Draft                  EAP-CREDS                      June 2022
    the Server requires the use of additional authorization data) it may
    need to provide (a) a Token, (b) a challenge value, and (c) a
    response to the challenge value.  To do so, the Peer MUST encode the
-
-
-
-Pala & Tian              Expires January 1, 2023               [Page 34]
-
-Internet-Draft                  EAP-CREDS                      June 2022
-
-
    token in a ('Token') TLV, the challenge value in a ('Challenge-Data')
    TLV, and, finally, the response to the challenge in the ('Challenge-
    Response') TLV.
@@ -1939,6 +1953,15 @@ Internet-Draft                  EAP-CREDS                      June 2022
    '2' (Phase Two begins).
 
       NOTE WELL: After the initial message, the only TLVs that are
+
+
+
+
+Pala & Tian              Expires 2 November 2023               [Page 35]
+
+Internet-Draft                  EAP-CREDS                       May 2023
+
+
       allowed in messages coming from the server are the usual
       ('ProtoHeaders') ('ProtoData'), and ('Error').
 
@@ -1953,14 +1976,6 @@ Internet-Draft                  EAP-CREDS                      June 2022
 
    If no other actions, the server MAY continue with phase three or
    issue a success message and terminate the EAP session.
-
-
-
-
-Pala & Tian              Expires January 1, 2023               [Page 35]
-
-Internet-Draft                  EAP-CREDS                      June 2022
-
 
 5.1.4.  The EAP-CREDS-Validate Message
 
@@ -1995,6 +2010,14 @@ Internet-Draft                  EAP-CREDS                      June 2022
    can be terminated.  The Server can now terminate the EAP session
    successfully.  In case the Peer was not authenticated during the
    tunnel establishment (i.e., no credentials were already available on
+
+
+
+Pala & Tian              Expires 2 November 2023               [Page 36]
+
+Internet-Draft                  EAP-CREDS                       May 2023
+
+
    the Peer), the Server should terminate the EAP session with a Failure
    (thus requiring the device to re-attach and authenticate to the
    network - phase two should have provided the Peer with the
@@ -2010,14 +2033,6 @@ Internet-Draft                  EAP-CREDS                      June 2022
    This document uses a new EAP type, EAP-CREDS, whose value (TBD) MUST
    be allocated by IANA from the EAP TYPEs sub-registry of the RADIUS
    registry.  This section provides guidance to the Internet Assigned
-
-
-
-Pala & Tian              Expires January 1, 2023               [Page 36]
-
-Internet-Draft                  EAP-CREDS                      June 2022
-
-
    Numbers Authority (IANA) regarding registration of values related to
    the EAP-CREDS protocol, in accordance with [RFC8126].
 
@@ -2028,22 +2043,38 @@ Internet-Draft                  EAP-CREDS                      June 2022
 
 7.1.  Provisioning Protocols
 
-   +-----------------+-------------------------------------------------+
-   |   Message Type  | Purpose                                         |
-   +-----------------+-------------------------------------------------+
-   |        0        | Unspecified                                     |
-   |        1        | Simple Provisioning Protocol (SPP)              |
-   |        2        | Basic Certificate Management Protocol (CMP-S)   |
-   |        3        | Full Certificate Management Protocol (CMP-F)    |
-   |        4        | Enrollment over Secure Transport (EST)          |
-   |        5        | Certificate Management over CMS (CMC)           |
-   |        6        | Automatic Certificate Management Environment    |
-   |                 | (ACME)                                          |
-   |       ...       | ...                                             |
-   | 49141 ... 65534 | Vendor Specific                                 |
-   +-----------------+-------------------------------------------------+
+    +=================+===============================================+
+    | Message Type    | Purpose                                       |
+    +=================+===============================================+
+    | 0               | Unspecified                                   |
+    +-----------------+-----------------------------------------------+
+    | 1               | Simple Provisioning Protocol (SPP)            |
+    +-----------------+-----------------------------------------------+
+    | 2               | Basic Certificate Management Protocol (CMP-S) |
+    +-----------------+-----------------------------------------------+
+    | 3               | Full Certificate Management Protocol (CMP-F)  |
+    +-----------------+-----------------------------------------------+
+    | 4               | Enrollment over Secure Transport (EST)        |
+    +-----------------+-----------------------------------------------+
+    | 5               | Certificate Management over CMS (CMC)         |
+    +-----------------+-----------------------------------------------+
+    | 6               | Automatic Certificate Management Environment  |
+    +-----------------+-----------------------------------------------+
+    |                 | (ACME)                                        |
+    +-----------------+-----------------------------------------------+
+    | ...             | ...                                           |
+    +-----------------+-----------------------------------------------+
+    | 49141 ... 65534 | Vendor Specific                               |
+    +-----------------+-----------------------------------------------+
 
-               Table 5: EAP-CREDS Inner Protocol Identifiers
+
+
+Pala & Tian              Expires 2 November 2023               [Page 37]
+
+Internet-Draft                  EAP-CREDS                       May 2023
+
+
+               Table 4: EAP-CREDS Inner Protocol Identifiers
 
    Assignment of new values for new cryptosuites MUST be done through
    IANA with "Specification Required" and "IESG Approval" as defined in
@@ -2051,171 +2082,221 @@ Internet-Draft                  EAP-CREDS                      June 2022
 
 7.2.  Token Types
 
-                     +------------+-----------------+
+                     +============+=================+
                      | Token Type | Description     |
+                     +============+=================+
+                     | 0          | Unspecified     |
                      +------------+-----------------+
-                     |     0      | Unspecified     |
-                     |     1      | JWT             |
-                     |     2      | Kerberos        |
-                     |     3      | OAuth           |
-                     |     4      | Certificate     |
-                     |  200..254  | Vendor Specific |
+                     | 1          | JWT             |
+                     +------------+-----------------+
+                     | 2          | Kerberos        |
+                     +------------+-----------------+
+                     | 3          | OAuth           |
+                     +------------+-----------------+
+                     | 4          | Certificate     |
+                     +------------+-----------------+
+                     | 200..254   | Vendor Specific |
                      +------------+-----------------+
 
-                   Table 6: Token Types in ('Token') TLV
+                         Table 5: Token Types in
+                              ('Token') TLV
 
    Assignment of new values for new Message Types MUST be done through
    IANA with "Expert Review" as defined in [RFC8126].
 
-
-
-Pala & Tian              Expires January 1, 2023               [Page 37]
-
-Internet-Draft                  EAP-CREDS                      June 2022
-
-
 7.3.  Credentials Types
 
-               +------------------+-----------------------+
+               +==================+=======================+
                | Credentials Type | Description           |
+               +==================+=======================+
+               | 0                | X.509 Certificate     |
                +------------------+-----------------------+
-               |        0         | X.509 Certificate     |
-               |        1         | Public Key            |
-               |        2         | Symmetric Key         |
-               |        3         | Username and Password |
-               |        4         | AKA Subscriber Key    |
-               |        5         | Bearer Token          |
-               |        6         | One-Time Token        |
-               |        7         | API Key               |
+               | 1                | Public Key            |
+               +------------------+-----------------------+
+               | 2                | Symmetric Key         |
+               +------------------+-----------------------+
+               | 3                | Username and Password |
+               +------------------+-----------------------+
+               | 4                | AKA Subscriber Key    |
+               +------------------+-----------------------+
+               | 5                | Bearer Token          |
+               +------------------+-----------------------+
+               | 6                | One-Time Token        |
+
+
+
+Pala & Tian              Expires 2 November 2023               [Page 38]
+
+Internet-Draft                  EAP-CREDS                       May 2023
+
+
+               +------------------+-----------------------+
+               | 7                | API Key               |
                +------------------+-----------------------+
 
-             Table 7: Credentials Types in ('Creds-Info') TLV
+                  Table 6: Credentials Types in ('Creds-
+                                Info') TLV
 
    Assignment of new values for new Message Types MUST be done through
    IANA with "Expert Review" as defined in [RFC8126].
 
 7.4.  Credentials Algorithms
 
+                     +=========+====================+
+                     | ID      | Algorithm          |
+                     +=========+====================+
+                     | 0       | None               |
                      +---------+--------------------+
-                     |    ID   | Algorithm          |
+                     | 1       | RSA                |
                      +---------+--------------------+
-                     |    0    | None               |
-                     |    1    | RSA                |
-                     |    2    | ECDSA              |
-                     |    3    | XMMS               |
-                     |    4    | AKA Subscriber Key |
-                     |    5    | OAuth              |
-                     |    6    | Kerberos4          |
-                     |    7    | Kerberos5          |
+                     | 2       | ECDSA              |
+                     +---------+--------------------+
+                     | 3       | XMMS               |
+                     +---------+--------------------+
+                     | 4       | AKA Subscriber Key |
+                     +---------+--------------------+
+                     | 5       | OAuth              |
+                     +---------+--------------------+
+                     | 6       | Kerberos4          |
+                     +---------+--------------------+
+                     | 7       | Kerberos5          |
+                     +---------+--------------------+
                      | 200-254 | Reserved           |
                      +---------+--------------------+
 
-             Table 8: Credentials Algorithms in ('Param') TLV
+                           Table 7: Credentials
+                       Algorithms in ('Param') TLV
 
    Assignment of new values for new Message Types MUST be done through
    IANA with "Expert Review" as defined in [RFC8126].
 
 7.5.  Challenge Types
 
-
-
-
-
-
-
-
-
-Pala & Tian              Expires January 1, 2023               [Page 38]
-
-Internet-Draft                  EAP-CREDS                      June 2022
-
-
-                       +----+----------------------+
+                       +====+======================+
                        | ID | Data Type            |
-                       +----+----------------------+
+                       +====+======================+
                        | 0  | Not Specified        |
+                       +----+----------------------+
                        | 1  | EAP-CREDS-ASYMMETRIC |
+
+
+
+Pala & Tian              Expires 2 November 2023               [Page 39]
+
+Internet-Draft                  EAP-CREDS                       May 2023
+
+
+                       +----+----------------------+
                        | 2  | EAP-CREDS-SYMMETRIC  |
                        +----+----------------------+
 
-               Table 9: Challenge Type in ('Challenge') TLV
+                          Table 8: Challenge Type
+                            in ('Challenge') TLV
 
    Assignment of new values for new Message Types MUST be done through
    IANA with "Expert Review" as defined in [RFC8126].
 
 7.6.  Network Usage Datatypes
 
+           +========+==========================================+
+           | ID     | Data Type                                |
+           +========+==========================================+
+           | 0      | Vendor-Specific                          |
            +--------+------------------------------------------+
-           |   ID   | Data Type                                |
+           | 1      | Manufacturer Usage Description [RFC8520] |
            +--------+------------------------------------------+
-           |   0    | Vendor-Specific                          |
-           |   1    | Manufacturer Usage Description [RFC8520] |
-           |   2    | Network Access Granting System           |
-           |   3    | Firmware Manifest                        |
+           | 2      | Network Access Granting System           |
+           +--------+------------------------------------------+
+           | 3      | Firmware Manifest                        |
+           +--------+------------------------------------------+
            | 4..127 | Reserved for Future Use                  |
            +--------+------------------------------------------+
 
-          Table 10: Network Usage Datatypes in ('Net-Usage') TLV
+           Table 9: Network Usage Datatypes in ('Net-Usage') TLV
 
    Assignment of new values for new Message Types MUST be done through
    IANA with "Expert Review" as defined in [RFC8126].
 
 7.7.  Credentials Encoding
 
-                         +---------+------------+
-                         |    ID   | Encoding   |
-                         +---------+------------+
-                         |    0    | None (Raw) |
-                         |    1    | DER        |
-                         |    2    | PEM        |
-                         |    3    | Base64     |
-                         |    4    | JSON       |
-                         |    5    | XML        |
-                         |    6    | ASCII      |
-                         |    7    | UTF-8      |
-                         | 200-254 | Reserved   |
-                         +---------+------------+
-
-              Table 11: Credentials Encoding in ('Token') TLV
-
-
+                          +=========+============+
+                          | ID      | Encoding   |
+                          +=========+============+
+                          | 0       | None (Raw) |
+                          +---------+------------+
+                          | 1       | DER        |
+                          +---------+------------+
+                          | 2       | PEM        |
+                          +---------+------------+
+                          | 3       | Base64     |
+                          +---------+------------+
+                          | 4       | JSON       |
+                          +---------+------------+
+                          | 5       | XML        |
+                          +---------+------------+
 
 
-Pala & Tian              Expires January 1, 2023               [Page 39]
+
+Pala & Tian              Expires 2 November 2023               [Page 40]
 
-Internet-Draft                  EAP-CREDS                      June 2022
+Internet-Draft                  EAP-CREDS                       May 2023
 
+
+                          | 6       | ASCII      |
+                          +---------+------------+
+                          | 7       | UTF-8      |
+                          +---------+------------+
+                          | 200-254 | Reserved   |
+                          +---------+------------+
+
+                           Table 10: Credentials
+                           Encoding in ('Token')
+                                    TLV
 
    Assignment of new values for new Message Types MUST be done through
    IANA with "Expert Review" as defined in [RFC8126].
 
 7.8.  Action Types
 
+        +=========+==============+================================+
+        | ID      | Data Type    | Description                    |
+        +=========+==============+================================+
+        | 0       | Registration | Registers New Credentials      |
         +---------+--------------+--------------------------------+
-        |    ID   | Data Type    | Description                    |
+        | 1       | Renewal      | Renew an Existing Credential   |
         +---------+--------------+--------------------------------+
-        |    0    | Registration | Registers New Credentials      |
-        |    1    | Renewal      | Renew an Existing Credential   |
-        |    2    | Remove       | Removes an Existing Credential |
+        | 2       | Remove       | Removes an Existing Credential |
+        +---------+--------------+--------------------------------+
         | 200-254 | n/a          | Reserved                       |
         +---------+--------------+--------------------------------+
 
-                 Table 12: Action Types in ('Action') TLV
+                  Table 11: Action Types in ('Action') TLV
 
    Assignment of new values for new Message Types MUST be done through
    IANA with "Expert Review" as defined in [RFC8126].
 
 7.9.  Usage Metadata Types
 
-                      +------+----------------------+
+                      +======+======================+
                       | Type | Description          |
+                      +======+======================+
+                      | 0    | Binary (Unspecified) |
                       +------+----------------------+
-                      |  0   | Binary (Unspecified) |
-                      |  1   | MUD File             |
-                      |  2   | TEEP Manifest        |
+                      | 1    | MUD File             |
+                      +------+----------------------+
+                      | 2    | TEEP Manifest        |
                       +------+----------------------+
 
-            Table 13: Usage Metadata Types in ('Net-Usage') TLV
+                          Table 12: Usage Metadata
+                         Types in ('Net-Usage') TLV
+
+
+
+
+Pala & Tian              Expires 2 November 2023               [Page 41]
+
+Internet-Draft                  EAP-CREDS                       May 2023
+
 
    Assignment of new values for new Message Types MUST be done through
    IANA with "Expert Review" as defined in [RFC8126].
@@ -2234,14 +2315,6 @@ Internet-Draft                  EAP-CREDS                      June 2022
 
    For example, if certificate-based authentication is used, the server
    presents a certificate to the peer as part of the trust establishment
-
-
-
-Pala & Tian              Expires January 1, 2023               [Page 40]
-
-Internet-Draft                  EAP-CREDS                      June 2022
-
-
    (or negotiation).  The peer SHOULD verify the validity of the EAP
    server certificate and SHOULD also examine the EAP server name
    presented in the certificate in order to determine whether the EAP
@@ -2273,6 +2346,14 @@ Internet-Draft                  EAP-CREDS                      June 2022
               (EAP)", RFC 3748, DOI 10.17487/RFC3748, June 2004,
               <https://www.rfc-editor.org/info/rfc3748>.
 
+
+
+
+Pala & Tian              Expires 2 November 2023               [Page 42]
+
+Internet-Draft                  EAP-CREDS                       May 2023
+
+
    [RFC4055]  Schaad, J., Kaliski, B., and R. Housley, "Additional
               Algorithms and Identifiers for RSA Cryptography for use in
               the Internet X.509 Public Key Infrastructure Certificate
@@ -2285,18 +2366,6 @@ Internet-Draft                  EAP-CREDS                      June 2022
               Management Protocol (CMP)", RFC 4210,
               DOI 10.17487/RFC4210, September 2005,
               <https://www.rfc-editor.org/info/rfc4210>.
-
-
-
-
-
-
-
-
-Pala & Tian              Expires January 1, 2023               [Page 41]
-
-Internet-Draft                  EAP-CREDS                      June 2022
-
 
    [RFC4491]  Leontiev, S., Ed. and D. Shefanovski, Ed., "Using the GOST
               R 34.10-94, GOST R 34.10-2001, and GOST R 34.11-94
@@ -2334,6 +2403,13 @@ Internet-Draft                  EAP-CREDS                      June 2022
               DOI 10.17487/RFC8520, March 2019,
               <https://www.rfc-editor.org/info/rfc8520>.
 
+
+
+Pala & Tian              Expires 2 November 2023               [Page 43]
+
+Internet-Draft                  EAP-CREDS                       May 2023
+
+
    [RFC8555]  Barnes, R., Hoffman-Andrews, J., McCarney, D., and J.
               Kasten, "Automatic Certificate Management Environment
               (ACME)", RFC 8555, DOI 10.17487/RFC8555, March 2019,
@@ -2341,25 +2417,11 @@ Internet-Draft                  EAP-CREDS                      June 2022
 
 Authors' Addresses
 
-
-
-
-
-
-
-
-
-Pala & Tian              Expires January 1, 2023               [Page 42]
-
-Internet-Draft                  EAP-CREDS                      June 2022
-
-
    Massimiliano Pala
    CableLabs
    858 Coal Creek Cir
-   Louisville, CO  80027
+   Louisville, CO 80027
    US
-
    Email: m.pala@openca.org
    URI:   http://www.linkedin.com/in/mpala
 
@@ -2367,9 +2429,8 @@ Internet-Draft                  EAP-CREDS                      June 2022
    Yuan Tian
    CableLabs
    858 Coal Creek Cir
-   Louisville, CO  80027
+   Louisville, CO 80027
    US
-
    Email: y.tian@cablelabs.com
    URI:   http://www.linkedin.com/in/ytian21
 
@@ -2400,9 +2461,4 @@ Internet-Draft                  EAP-CREDS                      June 2022
 
 
 
-
-
-
-
-
-Pala & Tian              Expires January 1, 2023               [Page 43]
+Pala & Tian              Expires 2 November 2023               [Page 44]
